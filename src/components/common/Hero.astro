@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets'
+import hero from '@/assets/hero.jpg'
+import GradientBorderButton from './GradientBorderButton.astro'
+---
+
+<section class="relative h-screen w-full overflow-hidden">
+  <Image
+    src={hero}
+    alt="Hero"
+    layout="constrained"
+    width={2560}
+    height={1440}
+    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 2560px"
+    class="absolute inset-0 h-full w-full object-cover"
+    loading="eager"
+  />
+
+  <!-- Overlay content -->
+  <div
+    class="relative z-10 container mx-auto flex h-full w-full max-w-screen-xl flex-col items-center justify-center gap-6 px-4 text-center text-pretty text-white"
+  >
+    <h1
+      class="mb-6 text-center text-[clamp(1.75rem,5vw,3.5rem)] font-bold drop-shadow-md"
+    >
+      KP Infotech: Your Digital Transformation Partner
+    </h1>
+
+    <p class="mb-6 text-lg font-semibold text-gray-200 drop-shadow-md">
+      Enabling Business Growth with Modern Solutions
+    </p>
+    <p
+      class="mb-6 w-[90%] max-w-3xl text-sm leading-relaxed text-gray-200 backdrop-brightness-90 lg:w-[50%]"
+    >
+      At KP Infotech, we create your dream digital environment with innovative
+      solutions. We offer a full range of solutions aimed at improving your
+      online visibility, optimizing your business processes, and advancing your
+      success in the digital environment.
+    </p>
+    <GradientBorderButton rounded="md" href="#contact"
+      >Let's Talk</GradientBorderButton
+    >
+  </div>
+
+  <!-- Optional dark overlay for better contrast -->
+  <div class="absolute inset-0 z-0 bg-black/40"></div>
+</section>

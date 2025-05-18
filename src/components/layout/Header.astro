@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets'
+
+import { NavMenu } from '@/react/nav-menu'
+---
+
+<header
+  class="fixed top-0 right-0 z-50 flex w-full items-center justify-between px-10 py-4"
+>
+  <a href="/">
+    <Image
+      src="/logo.png"
+      class="rounded-full"
+      width={50}
+      height={50}
+      alt="logo"
+      loading="eager"
+    />
+  </a>
+  <NavMenu client:load />
+</header>
