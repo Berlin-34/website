@@ -1,0 +1,23 @@
+---
+interface Props {
+  links: Array<{ href: string; label: string }>
+}
+
+const { links } = Astro.props
+---
+
+<section class="flex flex-col gap-6">
+  <h2 class="font-md uppercase"><slot /></h2>
+  <nav
+    class="text-muted-foreground flex flex-col gap-2 text-sm uppercase"
+    aria-label="Legal"
+  >
+    {
+      links.map((link) => (
+        <a href={link.href} class="">
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+</section>
