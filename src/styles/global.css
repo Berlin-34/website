@@ -86,7 +86,8 @@
 }
 
 @theme {
-  --font-serif: Reem Kufi, serif;
+  --font-primary: Plus Jakarta Sans, sans-serif;
+  --font-secondary: Satisfy, cursive;
 }
 
 @layer components {
@@ -149,4 +150,8 @@
     initial-value: 0deg;
     inherits: false;
   }
+}
+
+.cursor {
+  will-change: transform;
 }

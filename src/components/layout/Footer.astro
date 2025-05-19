@@ -1,5 +1,6 @@
 ---
 import FooterSection from '@/astro/FooterSection.astro'
+import Newsletter from '../common/Newsletter.astro'
 
 const legalLinks = [
   {
@@ -72,8 +73,11 @@ const servicesLinks = [
       <FooterSection links={servicesLinks}>
         <slot>Services</slot>
       </FooterSection>
+      <FooterSection links={servicesLinks}>
+        <slot>Services</slot>
+      </FooterSection>
     </div>
-    <div class="">newsletter</div>
+    <Newsletter />
   </div>
 
   <div

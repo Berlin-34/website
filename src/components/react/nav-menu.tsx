@@ -8,6 +8,9 @@ import { RiCloseLargeLine } from 'react-icons/ri'
 const navItems = [
   { label: 'Home', href: '#home' },
   { label: 'Services', href: '#services' },
+  { label: 'Solutions', href: '#solutions' },
+  { label: 'About', href: '#about' },
+  { label: 'Blog', href: '#blog' },
   { label: 'Contact', href: '#contact' },
 ]
 
