@@ -1,14 +1,13 @@
 ---
 import { Image } from 'astro:assets'
-
-import { NavMenu } from '@/react/nav-menu'
+import { MegaNavMenu } from '@/react/mega-menu'
 ---
 
 <header
-  class="fixed top-0 right-0 z-50 flex w-full items-center justify-between px-10 py-4"
+  class="fixed top-0 right-0 z-50 flex w-full items-center justify-between bg-black/40 px-10 py-4 backdrop-blur-sm"
 >
-  <a href="/">
+  <a href="/" class="z-50">
     <Image src="/logo.svg" width={50} height={50} alt="logo" loading="eager" />
   </a>
-  <NavMenu client:load />
+  <MegaNavMenu client:load />
 </header>

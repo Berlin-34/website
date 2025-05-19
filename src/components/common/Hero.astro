@@ -4,10 +4,13 @@ import hero from '@/assets/hero.jpg'
 import GradientBorderButton from './GradientBorderButton.astro'
 ---
 
-<section class="relative h-screen w-full overflow-hidden" aria-labelledby="hero-heading">
+<section
+  class="relative h-screen w-full overflow-hidden"
+  aria-labelledby="hero-heading"
+>
   <Image
     src={hero}
-    alt="KP Infotech office - modern workspace with digital technology" 
+    alt="KP Infotech office - modern workspace with digital technology"
     width={2560}
     height={1440}
     format="avif"
@@ -20,22 +23,22 @@ import GradientBorderButton from './GradientBorderButton.astro'
 
   <!-- Overlay content -->
   <div
-    class="relative z-10 container mx-auto flex h-full w-full max-w-screen-xl flex-col items-center justify-center gap-6 px-4 text-center text-pretty text-white"
+    class="relative z-10 container flex h-full w-full max-w-screen-xl flex-col items-center justify-center gap-4 px-4 text-left text-pretty text-white md:w-[50%]"
   >
     <h1
-      class="mb-6 text-center text-[clamp(1.75rem,10vw,6rem)] leading-[clamp(1.85rem,11vw,6.1rem)] font-extrabold drop-shadow-md"
+      class="border-muted-foreground w-full border-b-1 pb-4 text-2xl leading-6 font-extrabold drop-shadow-md md:text-4xl md:leading-8 lg:text-5xl lg:leading-12"
     >
       KP Infotech: Your <span class="font-secondary font-semibold">Digital</span
       > Transformation Partner
     </h1>
 
     <p
-      class="mb-6 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold text-gray-200 drop-shadow-md"
+      class="text-md mb-2 w-full font-semibold text-gray-200 drop-shadow-md md:text-lg lg:text-xl"
     >
       Enabling Business Growth with Modern Solutions
     </p>
     <p
-      class="mb-6 w-[90%] max-w-3xl text-[clamp(0.875rem,2vw,1rem)] leading-relaxed text-gray-200 lg:w-[50%]"
+      class="lg:text-md w-full text-xs leading-relaxed text-gray-200 md:text-sm"
     >
       At KP Infotech, we create your dream digital environment with innovative
       solutions. We offer a full range of solutions aimed at improving your
