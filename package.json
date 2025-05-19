@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/mdx": "^4.2.6",
     "@astrojs/react": "^4.2.7",
+    "@astrojs/sitemap": "^3.4.0",
     "@fontsource/plus-jakarta-sans": "^5.2.5",
     "@fontsource/reem-kufi": "^5.2.7",
     "@fontsource/satisfy": "^5.2.5",

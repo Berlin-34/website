@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow staging/test pages
+Disallow: /test/
+Disallow: /staging/
+Disallow: /dev/
+
+# Sitemap location
+Sitemap: https://kpinfo.tech/sitemap.xml

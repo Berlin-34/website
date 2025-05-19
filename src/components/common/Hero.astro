@@ -4,16 +4,18 @@ import hero from '@/assets/hero.jpg'
 import GradientBorderButton from './GradientBorderButton.astro'
 ---
 
-<section class="relative h-screen w-full overflow-hidden">
+<section class="relative h-screen w-full overflow-hidden" aria-labelledby="hero-heading">
   <Image
     src={hero}
-    alt="Hero"
-    layout="constrained"
+    alt="KP Infotech office - modern workspace with digital technology" 
     width={2560}
     height={1440}
+    format="avif"
+    quality={80}
     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 2560px"
     class="absolute inset-0 h-full w-full object-cover"
     loading="eager"
+    fetchpriority="high"
   />
 
   <!-- Overlay content -->
