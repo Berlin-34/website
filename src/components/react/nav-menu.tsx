@@ -90,7 +90,7 @@ export function NavMenu() {
       <AnimatePresence>
         {open && (
           <motion.ul
-            className="mr-2 flex cursor-pointer items-center gap-4 text-white"
+            className="mr-2 flex cursor-none items-center gap-4 text-white"
             initial="hidden"
             animate="visible"
             exit="hidden"
@@ -109,7 +109,7 @@ export function NavMenu() {
                   }}
                   role="menuitem"
                   tabIndex={0}
-                  className="rounded px-2 py-1 hover:underline focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                  className="cursor-none rounded px-2 py-1 hover:underline focus:ring-2 focus:ring-yellow-400 focus:outline-none"
                 >
                   {label}
                 </a>
@@ -121,7 +121,7 @@ export function NavMenu() {
 
       <motion.button
         onClick={() => setOpen((prev) => !prev)}
-        className="text-md cursor-pointer rounded px-3 py-2 font-semibold text-white"
+        className="text-md cursor-none rounded px-3 py-2 font-semibold text-white"
         aria-expanded={open}
         aria-controls="main-nav"
         aria-label={open ? 'Close menu' : 'Open menu'}

@@ -37,14 +37,14 @@ const roundedClasses = {
       href={href}
       target={target}
       rel={rel}
-      class={`animated-border-rainbow inline-flex items-center justify-center gap-2 bg-transparent font-medium text-white transition-colors duration-300 hover:bg-white hover:text-black ${sizeClasses} ${roundedClasses} ${className}`}
+      class={`animated-border-rainbow inline-flex cursor-none items-center justify-center gap-2 bg-transparent font-medium text-white transition-colors duration-300 hover:bg-white hover:text-black ${sizeClasses} ${roundedClasses} ${className}`}
     >
       <slot name="icon" />
       <slot />
     </a>
   ) : (
     <button
-      class={`animated-border-rainbow inline-flex items-center justify-center gap-2 bg-transparent font-medium text-white transition-colors duration-300 hover:bg-white hover:text-black ${sizeClasses} ${roundedClasses} ${className}`}
+      class={`animated-border-rainbow inline-flex cursor-none items-center justify-center gap-2 bg-transparent font-medium text-white transition-colors duration-300 hover:bg-white hover:text-black ${sizeClasses} ${roundedClasses} ${className}`}
     >
       <slot name="icon" />
       <slot />
