@@ -66,11 +66,12 @@ export default function CustomCursor() {
 
   return (
     <motion.div
-      className="cursor pointer-events-none fixed top-0 left-0 z-[9999] rounded-full mix-blend-difference"
+      className="cursor pointer-events-none fixed z-[9999] rounded-full mix-blend-difference"
       style={{
-        translateX: x,
-        translateY: y,
-        transform: 'translate(-50%, -50%)',
+        x,
+        y,
+        translateX: '-50%',
+        translateY: '-50%',
       }}
       variants={cursorVariants}
       animate={cursorVariant}
