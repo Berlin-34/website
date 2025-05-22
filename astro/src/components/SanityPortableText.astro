@@ -1,0 +1,99 @@
+---
+/**
+ * SanityPortableText component - Simple implementation for Sanity and Astro
+ */
+import { PortableText } from 'astro-portabletext';
+import { urlFor } from '../lib/sanity';
+
+// Define the props interface
+interface Props {
+  value: any;
+}
+
+// Get the Portable Text value from props
+const { value } = Astro.props;
+
+// Add debug information for development
+const hasValue = !!value;
+const valueType = typeof value;
+const isArray = Array.isArray(value);
+const blocksCount = isArray ? value.length : 0;
+
+// Let's check what kind of blocks we have (if any)
+let blocks = [];
+if (isArray && value.length > 0) {
+  blocks = value.map(block => block._type || 'unknown');
+}
+
+// Custom components for Portable Text rendering
+const components = {
+  // Define custom components for different block types
+  types: {
+    // Handle images from Sanity
+    image: ({ value }) => {
+      if (!value?.asset?._ref) return null;
+      const imgUrl = urlFor(value).width(800).url();
+      return `<figure class="my-8"><img src="${imgUrl}" alt="${value.alt || ''}" class="rounded-xl w-full" /></figure>`;
+    },
+    // Handle code blocks
+    code: ({ value }) => {
+      if (!value?.code) return null;
+      return `
+        <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto my-6">
+          ${value.filename ? `<div class="text-xs text-gray-400 mb-2">${value.filename}</div>` : ''}
+          <code class="text-sm text-gray-200 font-mono">${value.code}</code>
+        </pre>
+      `;
+    }
+  }
+};
+---
+
+<div>
+  <!-- Debug info -->
+  <div class="mb-6 p-4 bg-yellow-900/20 border border-yellow-700 rounded-md">
+    <h3 class="text-lg font-bold mb-2">Content Debug Info</h3>
+    <p>Has value: {hasValue ? 'Yes' : 'No'}</p>
+    <p>Type: {valueType}</p>
+    <p>Is array: {isArray ? 'Yes' : 'No'}</p>
+    <p>Blocks count: {blocksCount}</p>
+    {blocksCount > 0 && (
+      <p class="mt-2">Block types: {blocks.join(', ')}</p>
+    )}
+    
+    {value && (
+      <details class="mt-2">
+        <summary class="cursor-pointer text-sm">View raw content structure</summary>
+        <pre class="mt-2 p-2 bg-black/50 rounded overflow-auto text-xs max-h-40">
+          {JSON.stringify(value, null, 2)}
+        </pre>
+      </details>
+    )}
+  </div>
+
+  {value && (
+    <section class="text-white">
+      <!-- Standard Content Rendering -->
+      <PortableText value={value} components={components} />
+      
+      <!-- If standard rendering fails, try manual rendering of text blocks -->
+      {isArray && blocksCount > 0 && (
+        <div class="mt-8 p-4 border border-yellow-500 rounded">
+          <h3 class="text-lg font-bold mb-2">Manual Text Rendering Fallback</h3>
+          <div>
+            {value.map((block) => {
+              if (block._type === 'block' && block.children) {
+                return (
+                  <p class="mb-4">
+                    {block.children.map((child: { text: string }) => child.text).join('')}
+                  </p>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
+      )}
+    </section>
+  )}
+</div>
