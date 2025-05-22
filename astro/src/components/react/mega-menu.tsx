@@ -81,7 +81,7 @@ const navItems = [
   },
   {
     label: 'Blog',
-    href: '#blog',
+    href: '/blog',
     hasMegaMenu: false,
   },
   {
@@ -296,7 +296,9 @@ export function MegaNavMenu() {
                     }}
                     onFocus={() => item.hasMegaMenu && setFocusedMenuIndex(idx)}
                     onBlur={() => setFocusedMenuIndex(null)}
-                    onMouseEnter={() => item.hasMegaMenu && setHoveredMenuIndex(idx)}
+                    onMouseEnter={() =>
+                      item.hasMegaMenu && setHoveredMenuIndex(idx)
+                    }
                     onMouseLeave={() => setHoveredMenuIndex(null)}
                     role="menuitem"
                     aria-haspopup="true"
