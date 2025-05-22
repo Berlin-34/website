@@ -4,7 +4,7 @@
  * Uses a simplified Sanity template approach
  */
 import type { SanityDocument } from '@sanity/client'
-import type { Post, Category, Author } from '@/types/sanity'
+import { Image } from 'astro:assets'
 import { sanityClient } from 'sanity:client'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
@@ -93,12 +93,14 @@ const description = post?.excerpt || post?.title || 'Read our latest blog post'
             <span class="flex items-center">
               {post.author.image && urlFor(post.author.image) && (
                 <span class="w-6 h-6 rounded-full overflow-hidden mr-2">
-                  <img 
-                    src={urlFor(post.author.image)?.width(50)?.height(50)?.url()} 
+                  <Image 
+                    src={urlFor(post.author.image)?.width(50)?.height(50)?.url() || ''} 
                     alt={post.author.name}
                     class="w-full h-full object-cover"
+                    width={50}
+                    height={50}
                   />
-                </span>
+                </span> 
               )}
               <span>{post.author.name}</span>
             </span>
@@ -115,12 +117,14 @@ const description = post?.excerpt || post?.title || 'Read our latest blog post'
         {/* Featured image */}
         {post.mainImage && urlFor(post.mainImage) && (
           <div class="mt-8 rounded-xl overflow-hidden">
-            <img 
-              src={urlFor(post.mainImage)?.width(1200)?.height(630)?.url()} 
+            <Image 
+              src={urlFor(post.mainImage)?.width(1200)?.height(630)?.url() || ''} 
               alt={post.title || 'Blog post feature image'}
               class="w-full h-auto object-cover"
               width="1200"
               height="630"
+              transition:name={`blog-${post.slug.current}`}
+              transition:persist
             />
           </div>
         )}
