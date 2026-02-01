@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "mcp__plugin_serena_serena__list_dir",
-      "mcp__plugin_serena_serena__activate_project"
+      "mcp__plugin_serena_serena__activate_project",
+      "Bash(cd:*)",
+      "Bash(npm create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(npm uninstall:*)",
+      "Bash(timeout 10 npm run dev:*)"
     ]
   }
 }

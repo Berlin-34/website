@@ -1,30 +1,57 @@
 @import "tailwindcss";
 
+/* Design System Theme */
+@theme {
+  /* Fonts */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Outfit', sans-serif;
+
+  /* Colors - Backgrounds */
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #0f0f0f;
+  --color-bg-tertiary: #161616;
+
+  /* Colors - Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #6b6b6b;
+  --color-text-muted: #3a3a3a;
+
+  /* Colors - Accent (Warm Gold) */
+  --color-accent: #c9a87c;
+  --color-accent-light: #e4d4bc;
+  --color-accent-dim: #8b7355;
+
+  /* Colors - Border */
+  --color-border: #1a1a1a;
+  --color-border-light: #2a2a2a;
+
+  /* Colors - Utility */
+  --color-success: #4ade80;
+  --color-error: #f87171;
+
+  /* Spacing */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+}
+
+/* Also keep CSS variables for non-Tailwind usage */
 :root {
-  /* Backgrounds */
   --bg-primary: #0a0a0a;
   --bg-secondary: #0f0f0f;
   --bg-tertiary: #161616;
-
-  /* Text */
   --text-primary: #ffffff;
   --text-secondary: #6b6b6b;
   --text-muted: #3a3a3a;
-
-  /* Accent (Warm Gold) */
   --accent: #c9a87c;
   --accent-light: #e4d4bc;
   --accent-dim: #8b7355;
-
-  /* Borders */
   --border: #1a1a1a;
   --border-light: #2a2a2a;
-
-  /* Utility */
   --success: #4ade80;
   --error: #f87171;
 }
 
+/* Base Styles */
 * {
   box-sizing: border-box;
 }
@@ -37,7 +64,7 @@ body {
   margin: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-body);
   font-weight: 300;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -45,7 +72,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -65,7 +92,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 16px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 4px;
