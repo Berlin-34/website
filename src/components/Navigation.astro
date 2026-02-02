@@ -31,8 +31,8 @@ const navLinks: NavLink[] = [
 
 const currentPath = Astro.url.pathname;
 
-// Get logo URL if logo exists
-const logoUrl = logo ? urlFor(logo).height(40).format('webp').url() : null;
+// Get logo URL if logo exists (fetch 2x size for retina displays)
+const logoUrl = logo ? urlFor(logo).height(120).format('webp').url() : null;
 ---
 
 <header
@@ -57,8 +57,8 @@ const logoUrl = logo ? urlFor(logo).height(40).format('webp').url() : null;
         <img
           src={logoUrl}
           alt={siteName}
-          height="40"
-          class="h-10 w-auto"
+          style="height: 40px; width: auto;"
+          class="object-contain"
         />
       ) : (
         <span class="font-body text-xl font-normal tracking-wide text-text-primary">
