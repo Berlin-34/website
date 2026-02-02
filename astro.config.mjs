@@ -6,15 +6,16 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
-// Load environment variables - default to 'production' for Vercel builds
+// Load environment variables from .env files (for local dev)
 const env = loadEnv(
   process.env.NODE_ENV ?? 'production',
   process.cwd(),
   ''
 );
 
-const PUBLIC_SANITY_PROJECT_ID = env.PUBLIC_SANITY_PROJECT_ID;
-const PUBLIC_SANITY_DATASET = env.PUBLIC_SANITY_DATASET || 'production';
+// Check process.env first (Vercel injects vars here), then fall back to loadEnv (local .env files)
+const PUBLIC_SANITY_PROJECT_ID = process.env.PUBLIC_SANITY_PROJECT_ID || env.PUBLIC_SANITY_PROJECT_ID;
+const PUBLIC_SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || env.PUBLIC_SANITY_DATASET || 'production';
 
 // Validate required environment variables
 if (!PUBLIC_SANITY_PROJECT_ID) {
