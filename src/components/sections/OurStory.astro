@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 
 interface Props {
   label?: string;
@@ -26,7 +27,7 @@ const {
   <div class="our-story__container">
     <div class="our-story__content">
       <SectionLabel text={label} />
-      <h2 class="our-story__headline">{headline}</h2>
+      <h2 class="our-story__headline"><HighlightedText text={headline} /></h2>
       <div class="our-story__text">
         {paragraphs.map((paragraph) => (
           <p>{paragraph}</p>

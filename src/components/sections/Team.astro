@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
@@ -61,7 +62,7 @@ function getInitials(name: string): string {
   <div class="team__container">
     <header class="team__header">
       <SectionLabel text={label} />
-      <h2 class="team__headline">{headline}</h2>
+      <h2 class="team__headline"><HighlightedText text={headline} /></h2>
       <p class="team__description">{description}</p>
     </header>
 

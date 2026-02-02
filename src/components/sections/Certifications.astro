@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
@@ -44,7 +45,7 @@ function getLogoUrl(logo: SanityImageSource | undefined): string | null {
   <div class="certifications__container">
     <header class="certifications__header">
       <SectionLabel text={label} />
-      <h2 class="certifications__headline">{headline}</h2>
+      <h2 class="certifications__headline"><HighlightedText text={headline} /></h2>
     </header>
 
     <div class="certifications__list">

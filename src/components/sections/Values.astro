@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 
 interface Value {
   title: string;
@@ -40,7 +41,7 @@ const {
   <div class="values__container">
     <header class="values__header">
       <SectionLabel text={label} />
-      <h2 class="values__headline">{headline}</h2>
+      <h2 class="values__headline"><HighlightedText text={headline} /></h2>
     </header>
 
     <div class="values__grid">
