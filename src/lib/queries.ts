@@ -35,7 +35,7 @@ export const homepageDataQuery = `
     slug,
     shortDescription,
     iconName,
-    iconCustom
+    "iconCustom": coalesce(iconCustom, icon)
   },
   "industries": *[_type == "industry"] | order(order asc) {
     _id,
@@ -72,7 +72,7 @@ export const allServicesQuery = `
     slug,
     shortDescription,
     iconName,
-    iconCustom
+    "iconCustom": coalesce(iconCustom, icon)
   }
 `;
 
@@ -84,7 +84,7 @@ export const serviceBySlugQuery = `
     shortDescription,
     fullDescription,
     iconName,
-    iconCustom,
+    "iconCustom": coalesce(iconCustom, icon),
     heroImage,
     features,
     process,
@@ -108,7 +108,7 @@ export const featuredServicesQuery = `
     slug,
     shortDescription,
     iconName,
-    iconCustom
+    "iconCustom": coalesce(iconCustom, icon)
   }
 `;
 
@@ -122,7 +122,7 @@ export const allIndustriesQuery = `
     slug,
     shortDescription,
     iconName,
-    iconCustom
+    "iconCustom": coalesce(iconCustom, icon)
   }
 `;
 
@@ -134,7 +134,7 @@ export const industryBySlugQuery = `
     shortDescription,
     fullDescription,
     iconName,
-    iconCustom,
+    "iconCustom": coalesce(iconCustom, icon),
     heroImage,
     challenges,
     solutions,
