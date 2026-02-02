@@ -1,0 +1,150 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+
+interface Props {
+  industries: Array<{
+    title: string;
+    slug: { current: string };
+    icon?: string;
+  }>;
+}
+
+const { industries } = Astro.props;
+
+/**
+ * Gets the first letter of the industry title as a placeholder
+ * when no icon is provided
+ */
+function getInitial(title: string | null | undefined): string {
+  if (!title) return '?';
+  return title.charAt(0).toUpperCase();
+}
+---
+
+<section class="industries">
+  <div class="industries__container">
+    <header class="industries__header">
+      <SectionLabel text="Industries We Serve" />
+    </header>
+
+    <ul class="industries__list">
+      {industries?.map((industry) => (
+        <li class="industries__item">
+          <a
+            href={`/industries/${industry.slug?.current || '#'}/`}
+            class="industry-link"
+          >
+            <span class="industry-link__icon" aria-hidden="true">
+              {industry.icon || getInitial(industry.title)}
+            </span>
+            <span class="industry-link__name">
+              {industry.title || 'Industry'}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .industries {
+    padding: 5rem 0;
+  }
+
+  .industries__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .industries__header {
+    margin-bottom: 3rem;
+  }
+
+  .industries__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Industry Link Item */
+  .industry-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    transition: color 0.3s ease;
+  }
+
+  .industry-link:hover {
+    color: var(--accent);
+  }
+
+  .industry-link:hover .industry-link__icon {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+  }
+
+  .industry-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .industry-link__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-secondary);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .industry-link__name {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+  }
+
+  .industry-link:hover .industry-link__name {
+    color: var(--accent);
+  }
+
+  /* Tablet: 2 columns */
+  @media (min-width: 640px) {
+    .industries__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Desktop: 3 columns */
+  @media (min-width: 1024px) {
+    .industries__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .industry-link,
+    .industry-link__icon,
+    .industry-link__name {
+      transition: none;
+    }
+  }
+</style>

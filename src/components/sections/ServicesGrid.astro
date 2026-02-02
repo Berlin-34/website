@@ -1,0 +1,138 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+
+interface Props {
+  services: Array<{
+    title: string;
+    slug: { current: string };
+    shortDescription: string;
+  }>;
+}
+
+const { services } = Astro.props;
+
+/**
+ * Formats a number as a two-digit string with leading zero
+ * e.g., 1 -> "01", 10 -> "10"
+ */
+function formatNumber(num: number): string {
+  return num.toString().padStart(2, '0');
+}
+---
+
+<section class="services-grid">
+  <div class="services-grid__container">
+    <header class="services-grid__header">
+      <SectionLabel text="What We Do" />
+    </header>
+
+    <div class="services-grid__cards">
+      {services.map((service, index) => (
+        <a
+          href={`/services/${service.slug.current}/`}
+          class="service-card"
+        >
+          <span class="service-card__number">
+            {formatNumber(index + 1)}
+          </span>
+          <h3 class="service-card__title">
+            {service.title}
+          </h3>
+          <p class="service-card__description">
+            {service.shortDescription}
+          </p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-grid {
+    padding: 6rem 0;
+  }
+
+  .services-grid__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .services-grid__header {
+    margin-bottom: 3rem;
+  }
+
+  .services-grid__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* Service Card */
+  .service-card {
+    display: block;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .service-card:hover {
+    border-left-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .service-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .service-card__number {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .service-card__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+  }
+
+  .service-card__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Tablet: 2 columns */
+  @media (min-width: 640px) {
+    .services-grid__cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Desktop: 3 columns */
+  @media (min-width: 1024px) {
+    .services-grid__cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .service-card {
+      transition: none;
+    }
+  }
+</style>

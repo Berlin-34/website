@@ -1,0 +1,223 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import Button from '../ui/Button.astro';
+import { getPlaceholderImage } from '../../lib/utils';
+
+interface Props {
+  tagline: string;
+  headline: string;
+  description: string;
+  imageUrl?: string;
+}
+
+const { tagline, headline, description, imageUrl } = Astro.props;
+
+const heroImage = imageUrl || getPlaceholderImage(800, 600, 'Hero');
+---
+
+<section class="hero">
+  <div class="hero__container">
+    <div class="hero__content">
+      <SectionLabel text={tagline} class="hero__label" />
+
+      <h1 class="hero__headline">{headline}</h1>
+
+      <p class="hero__description">{description}</p>
+
+      <div class="hero__actions">
+        <Button href="/contact/" variant="primary">Start a Project</Button>
+        <Button href="/work/" variant="text">View Our Work</Button>
+      </div>
+    </div>
+
+    <div class="hero__image-wrapper">
+      <div class="hero__image-container">
+        <img
+          src={heroImage}
+          alt="KP Infotech - Premium UI/UX Design"
+          class="hero__image"
+          loading="eager"
+          decoding="async"
+        />
+        <div class="hero__image-overlay"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    overflow: hidden;
+  }
+
+  .hero__container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  /* Content Section */
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    order: 2;
+  }
+
+  .hero__label {
+    margin-bottom: 0.5rem;
+  }
+
+  .hero__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .hero__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  /* Image Section */
+  .hero__image-wrapper {
+    position: relative;
+    order: 1;
+  }
+
+  .hero__image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .hero__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero__image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 168, 124, 0.1) 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+  }
+
+  /* Tablet: 768px - 1023px */
+  @media (min-width: 768px) {
+    .hero__container {
+      padding: 3rem 2.5rem;
+      gap: 4rem;
+    }
+
+    .hero__headline {
+      font-size: clamp(3rem, 7vw, 4rem);
+    }
+
+    .hero__description {
+      font-size: 1.0625rem;
+    }
+
+    .hero__image {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* Desktop: 1024px+ */
+  @media (min-width: 1024px) {
+    .hero {
+      min-height: 100vh;
+    }
+
+    .hero__container {
+      grid-template-columns: 60% 40%;
+      gap: 4rem;
+      padding: 4rem 3rem;
+    }
+
+    .hero__content {
+      order: 1;
+      gap: 2rem;
+      padding-right: 2rem;
+    }
+
+    .hero__headline {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+    }
+
+    .hero__description {
+      font-size: 1.125rem;
+    }
+
+    .hero__actions {
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .hero__image-wrapper {
+      order: 2;
+      position: relative;
+    }
+
+    .hero__image-container {
+      position: relative;
+    }
+
+    .hero__image {
+      aspect-ratio: 4 / 5;
+      max-height: 80vh;
+    }
+  }
+
+  /* Large Desktop: 1280px+ */
+  @media (min-width: 1280px) {
+    .hero__container {
+      padding: 4rem 5rem;
+      gap: 5rem;
+    }
+
+    .hero__content {
+      padding-right: 3rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__image-overlay {
+      background: none;
+    }
+  }
+</style>

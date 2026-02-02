@@ -1,0 +1,98 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  headline?: string;
+  description?: string;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const {
+  headline = "Ready to elevate your digital presence?",
+  description = "Let's discuss how we can help transform your ideas into reality.",
+  buttonText = "Start a Project",
+  buttonHref = "/contact/"
+} = Astro.props;
+---
+
+<section class="cta-section">
+  <div class="cta-section__container">
+    <div class="cta-section__card">
+      <h2 class="cta-section__headline">{headline}</h2>
+      <p class="cta-section__description">{description}</p>
+      <Button variant="primary" href={buttonHref}>
+        {buttonText}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .cta-section__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .cta-section__card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 5rem 4rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-section__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 0 0 1.5rem;
+  }
+
+  .cta-section__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 0 2.5rem;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cta-section {
+      padding: 4rem 0;
+    }
+
+    .cta-section__card {
+      padding: 3rem 2rem;
+    }
+
+    .cta-section__headline {
+      font-size: clamp(1.75rem, 5vw, 2.25rem);
+    }
+
+    .cta-section__description {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cta-section__card {
+      padding: 2.5rem 1.5rem;
+    }
+  }
+</style>

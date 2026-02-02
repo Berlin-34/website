@@ -1,0 +1,617 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import { getPlaceholderImage } from '../../lib/utils';
+
+interface Props {
+  testimonials: Array<{
+    quote: string;
+    clientName: string;
+    clientRole?: string;
+    clientCompany?: string;
+    clientPhoto?: string;
+  }>;
+  autoPlay?: boolean;
+  autoPlayInterval?: number;
+}
+
+const {
+  testimonials,
+  autoPlay = false,
+  autoPlayInterval = 5000
+} = Astro.props;
+
+const hasTestimonials = testimonials && testimonials.length > 0;
+
+/**
+ * Gets the first letter of the client name as a placeholder
+ * when no photo is provided
+ */
+function getInitial(name: string | null | undefined): string {
+  if (!name) return '?';
+  return name.charAt(0).toUpperCase();
+}
+---
+
+<section class="testimonials" aria-label="Client testimonials">
+  <div class="testimonials__container">
+    <header class="testimonials__header">
+      <SectionLabel text="What Clients Say" />
+      <h2 class="testimonials__title">Client Testimonials</h2>
+    </header>
+
+    {hasTestimonials ? (
+      <div
+        class="testimonials__carousel"
+        data-carousel
+        data-autoplay={autoPlay ? 'true' : 'false'}
+        data-interval={autoPlayInterval}
+      >
+        <!-- Carousel Track -->
+        <div class="carousel__track-container">
+          <div class="carousel__track" data-carousel-track>
+            {testimonials.map((testimonial, index) => {
+              const avatarUrl = testimonial.clientPhoto || getPlaceholderImage(80, 80, getInitial(testimonial.clientName));
+              return (
+                <div
+                  class="carousel__slide"
+                  data-carousel-slide
+                  aria-hidden={index !== 0 ? 'true' : 'false'}
+                >
+                  <article class="testimonial-card">
+                    <div class="testimonial-card__avatar">
+                      <img
+                        src={avatarUrl}
+                        alt={`Photo of ${testimonial.clientName || 'Client'}`}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        width="80"
+                        height="80"
+                      />
+                    </div>
+                    <div class="testimonial-card__content">
+                      <blockquote class="testimonial-card__quote">
+                        <span class="quote-mark">"</span>
+                        {testimonial.quote}
+                      </blockquote>
+                      <footer class="testimonial-card__attribution">
+                        <cite class="testimonial-card__name">{testimonial.clientName || 'Anonymous Client'}</cite>
+                        {(testimonial.clientRole || testimonial.clientCompany) && (
+                          <span class="testimonial-card__role">
+                            {testimonial.clientRole}
+                            {testimonial.clientRole && testimonial.clientCompany && ' at '}
+                            {testimonial.clientCompany}
+                          </span>
+                        )}
+                      </footer>
+                    </div>
+                  </article>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- Navigation Arrows (desktop only) -->
+        {testimonials.length > 1 && (
+          <div class="carousel__arrows">
+            <button
+              class="carousel__arrow carousel__arrow--prev"
+              data-carousel-prev
+              aria-label="Previous testimonial"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <button
+              class="carousel__arrow carousel__arrow--next"
+              data-carousel-next
+              aria-label="Next testimonial"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        )}
+
+        <!-- Dots Navigation -->
+        {testimonials.length > 1 && (
+          <div class="carousel__dots" role="tablist" aria-label="Testimonial navigation">
+            {testimonials.map((_, index) => (
+              <button
+                class:list={['carousel__dot', { 'carousel__dot--active': index === 0 }]}
+                data-carousel-dot={index}
+                role="tab"
+                aria-selected={index === 0 ? 'true' : 'false'}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    ) : (
+      <!-- Empty State -->
+      <div class="testimonials__empty">
+        <p class="testimonials__empty-text">Client testimonials coming soon.</p>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .testimonials__container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .testimonials__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .testimonials__header :global(.section-label) {
+    justify-content: center;
+  }
+
+  .testimonials__title {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  /* ===== Carousel ===== */
+  .testimonials__carousel {
+    position: relative;
+  }
+
+  .carousel__track-container {
+    overflow: hidden;
+  }
+
+  .carousel__track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .carousel__slide {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  /* ===== Testimonial Card ===== */
+  .testimonial-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .testimonial-card__avatar {
+    flex-shrink: 0;
+  }
+
+  .testimonial-card__avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-light, #2a2a2a);
+  }
+
+  .testimonial-card__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .testimonial-card__quote {
+    margin: 0 0 1.5rem 0;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 1.125rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  .quote-mark {
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: 2.5rem;
+    font-style: normal;
+    color: var(--accent);
+    line-height: 1;
+    margin-right: 0.25rem;
+    vertical-align: -0.25em;
+  }
+
+  .testimonial-card__attribution {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .testimonial-card__name {
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 1rem;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--text-primary);
+  }
+
+  .testimonial-card__role {
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* ===== Navigation Arrows ===== */
+  .carousel__arrows {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    left: -60px;
+    right: -60px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .carousel__arrow {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .carousel__arrow:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  .carousel__arrow:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .carousel__arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ===== Dots Navigation ===== */
+  .carousel__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .carousel__dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    background: var(--border-light, #2a2a2a);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .carousel__dot:hover {
+    background: var(--text-secondary);
+  }
+
+  .carousel__dot--active {
+    background: var(--accent);
+    transform: scale(1.2);
+  }
+
+  .carousel__dot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ===== Empty State ===== */
+  .testimonials__empty {
+    text-align: center;
+    padding: 3rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .testimonials__empty-text {
+    margin: 0;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .carousel__arrows {
+      left: -20px;
+      right: -20px;
+    }
+
+    .carousel__arrow {
+      width: 40px;
+      height: 40px;
+    }
+
+    .carousel__arrow svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .testimonials {
+      padding: 4rem 0;
+    }
+
+    .testimonials__header {
+      margin-bottom: 3rem;
+    }
+
+    /* Hide arrows on mobile, keep dots */
+    .carousel__arrows {
+      display: none;
+    }
+
+    .testimonial-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+
+    .testimonial-card__avatar img {
+      width: 70px;
+      height: 70px;
+    }
+
+    .testimonial-card__quote {
+      font-size: 1rem;
+    }
+
+    .testimonial-card__attribution {
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .testimonials {
+      padding: 3rem 0;
+    }
+
+    .testimonials__container {
+      padding: 0 1rem;
+    }
+
+    .testimonial-card {
+      padding: 1.5rem;
+    }
+
+    .testimonial-card__avatar img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .quote-mark {
+      font-size: 2rem;
+    }
+
+    .carousel__dots {
+      margin-top: 1.5rem;
+    }
+  }
+
+  /* ===== Reduced Motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .carousel__track {
+      transition: none;
+    }
+
+    .carousel__dot {
+      transition: none;
+    }
+
+    .carousel__arrow {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  class TestimonialsCarousel {
+    private carousel: HTMLElement;
+    private track: HTMLElement;
+    private slides: HTMLElement[];
+    private dots: HTMLElement[];
+    private prevBtn: HTMLButtonElement | null;
+    private nextBtn: HTMLButtonElement | null;
+    private currentIndex: number = 0;
+    private autoPlay: boolean;
+    private autoPlayInterval: number;
+    private autoPlayTimer: number | null = null;
+    private isTransitioning: boolean = false;
+
+    constructor(carousel: HTMLElement) {
+      this.carousel = carousel;
+      this.track = carousel.querySelector('[data-carousel-track]') as HTMLElement;
+      this.slides = Array.from(carousel.querySelectorAll('[data-carousel-slide]'));
+      this.dots = Array.from(carousel.querySelectorAll('[data-carousel-dot]'));
+      this.prevBtn = carousel.querySelector('[data-carousel-prev]');
+      this.nextBtn = carousel.querySelector('[data-carousel-next]');
+
+      this.autoPlay = carousel.dataset.autoplay === 'true';
+      this.autoPlayInterval = parseInt(carousel.dataset.interval || '5000', 10);
+
+      if (this.slides.length <= 1) return;
+
+      this.init();
+    }
+
+    private init(): void {
+      // Add event listeners
+      this.prevBtn?.addEventListener('click', () => this.prev());
+      this.nextBtn?.addEventListener('click', () => this.next());
+
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goToSlide(index));
+      });
+
+      // Keyboard navigation
+      this.carousel.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+      // Touch/swipe support
+      this.setupTouchEvents();
+
+      // Track transition end
+      this.track.addEventListener('transitionend', () => {
+        this.isTransitioning = false;
+      });
+
+      // Pause autoplay on hover/focus
+      if (this.autoPlay) {
+        this.carousel.addEventListener('mouseenter', () => this.pauseAutoPlay());
+        this.carousel.addEventListener('mouseleave', () => this.startAutoPlay());
+        this.carousel.addEventListener('focusin', () => this.pauseAutoPlay());
+        this.carousel.addEventListener('focusout', () => this.startAutoPlay());
+        this.startAutoPlay();
+      }
+
+      // Handle visibility change
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.pauseAutoPlay();
+        } else if (this.autoPlay) {
+          this.startAutoPlay();
+        }
+      });
+    }
+
+    private goToSlide(index: number): void {
+      if (this.isTransitioning || index === this.currentIndex) return;
+      if (index < 0 || index >= this.slides.length) return;
+
+      this.isTransitioning = true;
+      this.currentIndex = index;
+
+      // Update track position
+      const offset = -index * 100;
+      this.track.style.transform = `translateX(${offset}%)`;
+
+      // Update aria-hidden on slides
+      this.slides.forEach((slide, i) => {
+        slide.setAttribute('aria-hidden', i !== index ? 'true' : 'false');
+      });
+
+      // Update dots
+      this.dots.forEach((dot, i) => {
+        dot.classList.toggle('carousel__dot--active', i === index);
+        dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
+    }
+
+    private next(): void {
+      const nextIndex = (this.currentIndex + 1) % this.slides.length;
+      this.goToSlide(nextIndex);
+    }
+
+    private prev(): void {
+      const prevIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+      this.goToSlide(prevIndex);
+    }
+
+    private handleKeyboard(e: KeyboardEvent): void {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.prev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.next();
+      }
+    }
+
+    private setupTouchEvents(): void {
+      let startX: number = 0;
+      let endX: number = 0;
+      const threshold = 50;
+
+      this.track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.track.addEventListener('touchmove', (e) => {
+        endX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.track.addEventListener('touchend', () => {
+        const diff = startX - endX;
+        if (Math.abs(diff) > threshold) {
+          if (diff > 0) {
+            this.next();
+          } else {
+            this.prev();
+          }
+        }
+      });
+    }
+
+    private startAutoPlay(): void {
+      if (!this.autoPlay || this.autoPlayTimer) return;
+      this.autoPlayTimer = window.setInterval(() => {
+        this.next();
+      }, this.autoPlayInterval);
+    }
+
+    private pauseAutoPlay(): void {
+      if (this.autoPlayTimer) {
+        clearInterval(this.autoPlayTimer);
+        this.autoPlayTimer = null;
+      }
+    }
+  }
+
+  // Initialize all carousels on the page
+  function initCarousels(): void {
+    const carousels = document.querySelectorAll('[data-carousel]');
+    carousels.forEach((carousel) => {
+      new TestimonialsCarousel(carousel as HTMLElement);
+    });
+  }
+
+  // Initialize on DOM ready and after Astro page transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCarousels);
+  } else {
+    initCarousels();
+  }
+
+  // Re-initialize after Astro view transitions
+  document.addEventListener('astro:after-swap', initCarousels);
+</script>

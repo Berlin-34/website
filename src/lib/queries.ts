@@ -5,16 +5,59 @@
 // ============================================
 export const siteSettingsQuery = `
   *[_type == "siteSettings"][0] {
-    siteTitle,
-    tagline,
-    description,
+    siteName,
+    siteTagline,
+    heroHeadline,
     logo,
-    email,
-    phone,
+    contactEmail,
+    contactPhone,
     address,
     socialLinks,
-    stats
+    stats,
+    footerText,
+    defaultSeoTitle,
+    defaultSeoDescription
   }
+`;
+
+// Homepage data - fetches all data needed for the homepage
+export const homepageDataQuery = `
+{
+  "siteSettings": *[_type == "siteSettings"][0] {
+    siteName,
+    siteTagline,
+    heroHeadline,
+    stats
+  },
+  "services": *[_type == "service"] | order(order asc) {
+    _id,
+    title,
+    slug,
+    shortDescription,
+    icon
+  },
+  "industries": *[_type == "industry"] | order(order asc) {
+    _id,
+    title,
+    slug,
+    icon
+  },
+  "featuredWork": *[_type == "caseStudy" && featured == true] | order(_createdAt desc)[0...4] {
+    _id,
+    title,
+    slug,
+    client,
+    thumbnailImage
+  },
+  "testimonials": *[_type == "testimonial" && featured == true] | order(_createdAt desc)[0...5] {
+    _id,
+    quote,
+    clientName,
+    clientRole,
+    clientCompany,
+    clientPhoto
+  }
+}
 `;
 
 // ============================================

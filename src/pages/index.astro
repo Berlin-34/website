@@ -1,16 +1,79 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { client } from '../lib/sanity';
+import { homepageDataQuery } from '../lib/queries';
+
+// Section components
+import Hero from '../components/sections/Hero.astro';
+import ServicesMarquee from '../components/sections/ServicesMarquee.astro';
+import FeaturedWork from '../components/sections/FeaturedWork.astro';
+import ServicesGrid from '../components/sections/ServicesGrid.astro';
+import StatsSection from '../components/sections/StatsSection.astro';
+import Industries from '../components/sections/Industries.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import CTASection from '../components/sections/CTASection.astro';
+
+// Fetch all homepage data from Sanity
+const data = await client.fetch(homepageDataQuery);
+
+const { siteSettings, services, industries, featuredWork, testimonials } = data;
+
+// Prepare service names for marquee
+const serviceNames = services?.map((s: any) => s.title) || [
+  'UI/UX Design',
+  'Web Development',
+  'Mobile Apps',
+  'ERP Solutions',
+  'Digital Marketing'
+];
+
+// Prepare stats data
+const stats = siteSettings?.stats?.map((stat: any) => ({
+  value: stat.value,
+  label: stat.label
+})) || [];
+
+// Default description for hero
+const heroDescription = "We craft premium digital experiences for startups and businesses. UI/UX design, web development, mobile apps, and ERP solutions from Ahmedabad to the world.";
 ---
 
-<BaseLayout title="KP Infotech" description="Premium UI/UX design consultancy crafting digital experiences that elevate brands and drive measurable business growth.">
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="text-center">
-      <span class="section-label">UI/UX Design Consultancy</span>
-      <h1 class="font-display text-5xl mt-6 text-text-primary">KP Infotech</h1>
-      <p class="text-text-secondary mt-4">Foundation setup in progress...</p>
-      <div class="mt-8 inline-block px-8 py-4 border border-accent text-accent">
-        Design System Working
-      </div>
-    </div>
-  </div>
+<BaseLayout
+  title="KP Infotech"
+  description={heroDescription}
+>
+  <!-- Hero Section -->
+  <Hero
+    tagline={siteSettings?.siteTagline || "Digital Product Studio"}
+    headline={siteSettings?.heroHeadline || "We craft digital experiences that drive growth"}
+    description={heroDescription}
+  />
+
+  <!-- Services Marquee -->
+  <ServicesMarquee services={serviceNames} />
+
+  <!-- Featured Work (empty state if no case studies) -->
+  <FeaturedWork caseStudies={featuredWork} />
+
+  <!-- Services Grid -->
+  {services && services.length > 0 && (
+    <ServicesGrid services={services} />
+  )}
+
+  <!-- Stats Section -->
+  {stats && stats.length > 0 && (
+    <StatsSection stats={stats} />
+  )}
+
+  <!-- Industries Section -->
+  {industries && industries.length > 0 && (
+    <Industries industries={industries} />
+  )}
+
+  <!-- Testimonials Carousel -->
+  {testimonials && testimonials.length > 0 && (
+    <Testimonials testimonials={testimonials} />
+  )}
+
+  <!-- CTA Section -->
+  <CTASection />
 </BaseLayout>

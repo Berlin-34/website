@@ -1,0 +1,296 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import Button from '../ui/Button.astro';
+
+interface Props {
+  caseStudies?: Array<{
+    title: string;
+    slug: { current: string };
+    client: string;
+    thumbnailImage?: any;
+  }>;
+}
+
+const { caseStudies = [] } = Astro.props;
+
+const hasCaseStudies = caseStudies.length > 0;
+---
+
+<section class="featured-work">
+  <div class="featured-work__container">
+    <header class="featured-work__header">
+      <SectionLabel text="Selected Work" />
+      <h2 class="featured-work__title">Featured Projects</h2>
+    </header>
+
+    {hasCaseStudies ? (
+      <!-- Case Studies Grid (when projects exist) -->
+      <div class="featured-work__grid">
+        {caseStudies.slice(0, 4).map((caseStudy) => (
+          <a href={`/work/${caseStudy.slug.current}/`} class="work-card">
+            <div class="work-card__image-wrapper">
+              {caseStudy.thumbnailImage ? (
+                <img
+                  src={caseStudy.thumbnailImage}
+                  alt={caseStudy.title}
+                  class="work-card__image"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="work-card__placeholder"></div>
+              )}
+            </div>
+            <div class="work-card__content">
+              <span class="work-card__client">{caseStudy.client}</span>
+              <h3 class="work-card__title">{caseStudy.title}</h3>
+            </div>
+            <span class="work-card__arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <!-- Empty State (no projects yet) -->
+      <div class="featured-work__empty">
+        <div class="empty-card">
+          <span class="empty-card__badge">Coming Soon</span>
+          <h3 class="empty-card__headline">Our Work Showcase</h3>
+          <p class="empty-card__description">
+            We're preparing case studies of our best projects. Stay tuned.
+          </p>
+          <Button variant="primary" href="/contact/">
+            Contact Us
+          </Button>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .featured-work {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .featured-work__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .featured-work__header {
+    margin-bottom: 4rem;
+  }
+
+  .featured-work__title {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  /* ===== Case Studies Grid ===== */
+  .featured-work__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .work-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    text-decoration: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .work-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s ease;
+  }
+
+  .work-card:hover {
+    border-color: var(--border-light, #2a2a2a);
+  }
+
+  .work-card:hover::before {
+    transform: scaleY(1);
+  }
+
+  .work-card__image-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .work-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .work-card:hover .work-card__image {
+    transform: scale(1.05);
+  }
+
+  .work-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary, #161616);
+  }
+
+  .work-card__content {
+    padding: 1.5rem;
+  }
+
+  .work-card__client {
+    display: block;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .work-card__title {
+    margin: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .work-card__arrow {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  }
+
+  .work-card:hover .work-card__arrow {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .work-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* ===== Empty State ===== */
+  .featured-work__empty {
+    display: flex;
+    justify-content: center;
+  }
+
+  .empty-card {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+    padding: 3rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .empty-card__badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .empty-card__headline {
+    margin: 0 0 1rem 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .empty-card__description {
+    margin: 0 0 2rem 0;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .featured-work {
+      padding: 4rem 0;
+    }
+
+    .featured-work__header {
+      margin-bottom: 3rem;
+    }
+
+    .featured-work__grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .empty-card {
+      padding: 2.5rem 1.5rem;
+    }
+
+    .empty-card__badge {
+      top: 1rem;
+      right: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .featured-work {
+      padding: 3rem 0;
+    }
+
+    .featured-work__container {
+      padding: 0 1rem;
+    }
+
+    .empty-card {
+      padding: 2rem 1.25rem;
+    }
+  }
+</style>
