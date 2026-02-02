@@ -42,7 +42,7 @@ export const homepageDataQuery = `
     title,
     slug,
     iconName,
-    iconCustom
+    "iconCustom": coalesce(iconCustom, icon)
   },
   "featuredWork": *[_type == "caseStudy" && featured == true] | order(_createdAt desc)[0...4] {
     _id,
