@@ -6,11 +6,23 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
-const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(
-  process.env.NODE_ENV || 'development',
+// Load environment variables - default to 'production' for Vercel builds
+const env = loadEnv(
+  process.env.NODE_ENV ?? 'production',
   process.cwd(),
   ''
 );
+
+const PUBLIC_SANITY_PROJECT_ID = env.PUBLIC_SANITY_PROJECT_ID;
+const PUBLIC_SANITY_DATASET = env.PUBLIC_SANITY_DATASET || 'production';
+
+// Validate required environment variables
+if (!PUBLIC_SANITY_PROJECT_ID) {
+  throw new Error(
+    'PUBLIC_SANITY_PROJECT_ID is not defined. ' +
+    'Ensure it is set in your .env file locally or in Vercel project settings for the Production environment.'
+  );
+}
 
 export default defineConfig({
   site: 'https://kpinfo.tech',

@@ -2,9 +2,19 @@ import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
+const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID;
+const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production';
+
+if (!projectId) {
+  throw new Error(
+    'PUBLIC_SANITY_PROJECT_ID is not defined. ' +
+    'Ensure environment variables are set in Vercel for the Production environment.'
+  );
+}
+
 export const client = createClient({
-  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
-  dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
+  projectId,
+  dataset,
   useCdn: import.meta.env.PROD,
   apiVersion: '2024-01-01',
 });
