@@ -2,20 +2,62 @@
 import SectionLabel from '../ui/SectionLabel.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import {
+  Heart,
+  ShoppingCart,
+  Factory,
+  Truck,
+  Landmark,
+  Rocket,
+  Building2,
+  Briefcase,
+  GraduationCap,
+  Utensils,
+  Plane,
+  Home,
+  Stethoscope,
+  Package,
+  BarChart3,
+  Cpu,
+  Leaf,
+  Car,
+} from '@lucide/astro';
 
 interface Props {
   industries: Array<{
     title: string;
     slug: { current: string };
-    icon?: SanityImageSource;
+    iconName?: string;
+    iconCustom?: SanityImageSource;
   }>;
 }
 
 const { industries } = Astro.props;
 
+// Map of Lucide icon names to components
+const lucideIcons: Record<string, typeof Heart> = {
+  'heart': Heart,
+  'stethoscope': Stethoscope,
+  'shopping-cart': ShoppingCart,
+  'factory': Factory,
+  'truck': Truck,
+  'package': Package,
+  'landmark': Landmark,
+  'bar-chart-3': BarChart3,
+  'rocket': Rocket,
+  'building-2': Building2,
+  'briefcase': Briefcase,
+  'graduation-cap': GraduationCap,
+  'utensils': Utensils,
+  'plane': Plane,
+  'home': Home,
+  'cpu': Cpu,
+  'leaf': Leaf,
+  'car': Car,
+};
+
 /**
  * Gets the first letter of the industry title as a placeholder
- * when no icon is provided
  */
 function getInitial(title: string | null | undefined): string {
   if (!title) return '?';
@@ -23,15 +65,24 @@ function getInitial(title: string | null | undefined): string {
 }
 
 /**
- * Get the icon URL from Sanity image
+ * Get custom icon URL from Sanity image
  */
-function getIconUrl(icon: SanityImageSource | undefined): string | null {
+function getCustomIconUrl(icon: SanityImageSource | undefined): string | null {
   if (!icon) return null;
   try {
     return urlFor(icon).width(80).height(80).format('webp').url();
   } catch {
     return null;
   }
+}
+
+/**
+ * Get Lucide icon component by name
+ */
+function getLucideIcon(name: string | undefined): typeof Heart | null {
+  if (!name) return null;
+  const normalized = name.toLowerCase().trim();
+  return lucideIcons[normalized] || null;
 }
 ---
 
@@ -44,7 +95,8 @@ function getIconUrl(icon: SanityImageSource | undefined): string | null {
 
     <ul class="industries__list">
       {industries?.map((industry) => {
-        const iconUrl = getIconUrl(industry.icon);
+        const customIconUrl = getCustomIconUrl(industry.iconCustom);
+        const LucideIcon = getLucideIcon(industry.iconName);
         return (
           <li class="industries__item">
             <a
@@ -52,14 +104,16 @@ function getIconUrl(icon: SanityImageSource | undefined): string | null {
               class="industry-link"
             >
               <span class="industry-link__icon" aria-hidden="true">
-                {iconUrl ? (
+                {customIconUrl ? (
                   <img
-                    src={iconUrl}
+                    src={customIconUrl}
                     alt=""
                     width="24"
                     height="24"
                     loading="lazy"
                   />
+                ) : LucideIcon ? (
+                  <LucideIcon size={20} />
                 ) : (
                   getInitial(industry.title)
                 )}

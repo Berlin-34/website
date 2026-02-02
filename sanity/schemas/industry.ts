@@ -10,10 +10,16 @@ export const industry = defineType({
     defineField({ name: 'tagline', type: 'string', title: 'Tagline' }),
     defineField({ name: 'excerpt', type: 'text', title: 'Excerpt', rows: 3 }),
     defineField({
-      name: 'icon',
+      name: 'iconName',
+      type: 'string',
+      title: 'Icon Name (Lucide)',
+      description: 'Lucide icon name, e.g., "heart", "shopping-cart", "factory". See lucide.dev/icons',
+    }),
+    defineField({
+      name: 'iconCustom',
       type: 'image',
-      title: 'Icon',
-      description: 'Upload an SVG or PNG icon (recommended: 64x64px or larger)',
+      title: 'Custom Icon (SVG)',
+      description: 'Upload a custom SVG icon (overrides Lucide icon if both are set)',
       options: {
         accept: 'image/svg+xml,image/png,image/webp',
       },
@@ -28,11 +34,11 @@ export const industry = defineType({
     defineField({ name: 'order', type: 'number', title: 'Display Order' }),
   ],
   preview: {
-    select: { title: 'title', icon: 'icon', heroImage: 'heroImage' },
-    prepare({ title, icon, heroImage }) {
+    select: { title: 'title', iconCustom: 'iconCustom', heroImage: 'heroImage' },
+    prepare({ title, iconCustom, heroImage }) {
       return {
         title,
-        media: icon || heroImage,
+        media: iconCustom || heroImage,
       };
     },
   },

@@ -34,13 +34,15 @@ export const homepageDataQuery = `
     title,
     slug,
     shortDescription,
-    icon
+    iconName,
+    iconCustom
   },
   "industries": *[_type == "industry"] | order(order asc) {
     _id,
     title,
     slug,
-    icon
+    iconName,
+    iconCustom
   },
   "featuredWork": *[_type == "caseStudy" && featured == true] | order(_createdAt desc)[0...4] {
     _id,
@@ -69,7 +71,8 @@ export const allServicesQuery = `
     title,
     slug,
     shortDescription,
-    icon
+    iconName,
+    iconCustom
   }
 `;
 
@@ -80,7 +83,8 @@ export const serviceBySlugQuery = `
     slug,
     shortDescription,
     fullDescription,
-    icon,
+    iconName,
+    iconCustom,
     heroImage,
     features,
     process,
@@ -103,7 +107,8 @@ export const featuredServicesQuery = `
     title,
     slug,
     shortDescription,
-    icon
+    iconName,
+    iconCustom
   }
 `;
 
@@ -116,7 +121,8 @@ export const allIndustriesQuery = `
     title,
     slug,
     shortDescription,
-    icon
+    iconName,
+    iconCustom
   }
 `;
 
@@ -127,7 +133,8 @@ export const industryBySlugQuery = `
     slug,
     shortDescription,
     fullDescription,
-    icon,
+    iconName,
+    iconCustom,
     heroImage,
     challenges,
     solutions,
