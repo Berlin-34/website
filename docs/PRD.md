@@ -747,6 +747,7 @@ export default {
   fields: [
     { name: 'siteName', type: 'string', title: 'Site Name' },
     { name: 'siteTagline', type: 'string', title: 'Site Tagline' },
+    { name: 'heroHeadline', type: 'string', title: 'Hero Headline' },
     { name: 'logo', type: 'image', title: 'Logo' },
     { name: 'logoLight', type: 'image', title: 'Logo (Light Version)' },
     { name: 'contactEmail', type: 'string', title: 'Contact Email' },

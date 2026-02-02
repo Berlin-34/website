@@ -7,6 +7,7 @@ export const siteSettings = defineType({
   fields: [
     defineField({ name: 'siteName', type: 'string', title: 'Site Name', initialValue: 'KP Infotech' }),
     defineField({ name: 'siteTagline', type: 'string', title: 'Site Tagline' }),
+    defineField({ name: 'heroHeadline', type: 'string', title: 'Hero Headline', description: 'Main headline for the homepage hero section' }),
     defineField({ name: 'logo', type: 'image', title: 'Logo' }),
     defineField({ name: 'logoLight', type: 'image', title: 'Logo (Light Version)' }),
     defineField({ name: 'contactEmail', type: 'string', title: 'Contact Email' }),
