@@ -21,6 +21,8 @@ import {
   Cpu,
   Leaf,
   Car,
+  ArrowRight,
+  MoveRight,
 } from '@lucide/astro';
 
 interface Props {
@@ -70,7 +72,7 @@ function getInitial(title: string | null | undefined): string {
 function getCustomIconUrl(icon: SanityImageSource | undefined): string | null {
   if (!icon) return null;
   try {
-    return urlFor(icon).width(80).height(80).format('webp').url();
+    return urlFor(icon).width(150).height(150).format('webp').url();
   } catch {
     return null;
   }
@@ -108,18 +110,23 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
                   <img
                     src={customIconUrl}
                     alt=""
-                    width="24"
-                    height="24"
+                    width="44"
+                    height="44"
                     loading="lazy"
                   />
                 ) : LucideIcon ? (
-                  <LucideIcon size={20} />
+                  <LucideIcon size={40} />
                 ) : (
                   getInitial(industry.title)
                 )}
               </span>
-              <span class="industry-link__name">
-                {industry.title || 'Industry'}
+              <span class="industry-link__text">
+                <span class="industry-link__name">
+                  {industry.title || 'Industry'}
+                </span>
+                <span class="industry-link__arrow" aria-hidden="true">
+                  <MoveRight size={18} />
+                </span>
               </span>
             </a>
           </li>
@@ -176,9 +183,8 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
   }
 
   .industry-link:hover .industry-link__icon {
-    background-color: var(--accent);
-    color: var(--bg-primary);
     border-color: var(--accent);
+    transform: scale(1.1);
   }
 
   .industry-link:focus-visible {
@@ -191,36 +197,57 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
     flex-shrink: 0;
     border-radius: 50%;
     border: 1px solid var(--border-light);
     background-color: var(--bg-secondary);
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 500;
     color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease;
     overflow: hidden;
   }
 
   .industry-link__icon img {
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
+  }
+
+  .industry-link__text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .industry-link__name {
     font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 400;
+    line-height: 1;
     color: var(--text-primary);
     transition: color 0.3s ease;
   }
 
+  .industry-link__arrow {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-8px);
+    color: var(--accent);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
   .industry-link:hover .industry-link__name {
     color: var(--accent);
+  }
+
+  .industry-link:hover .industry-link__arrow {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   /* Tablet: 2 columns */
@@ -241,7 +268,8 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
   @media (prefers-reduced-motion: reduce) {
     .industry-link,
     .industry-link__icon,
-    .industry-link__name {
+    .industry-link__name,
+    .industry-link__arrow {
       transition: none;
     }
   }
