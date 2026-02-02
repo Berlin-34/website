@@ -52,10 +52,10 @@ export const homepageDataQuery = `
   "testimonials": *[_type == "testimonial" && featured == true] | order(_createdAt desc)[0...5] {
     _id,
     quote,
-    clientName,
-    clientRole,
-    clientCompany,
-    clientPhoto
+    "clientName": authorName,
+    "clientRole": authorRole,
+    "clientCompany": company,
+    "clientPhoto": authorPhoto
   }
 }
 `;
@@ -339,31 +339,24 @@ export const allBlogCategoriesQuery = `
 // Testimonials
 // ============================================
 export const allTestimonialsQuery = `
-  *[_type == "testimonial" && approved == true] | order(_createdAt desc) {
+  *[_type == "testimonial"] | order(_createdAt desc) {
     _id,
     quote,
-    clientName,
-    clientRole,
-    clientCompany,
-    clientPhoto,
-    rating,
-    caseStudy->{
-      _id,
-      title,
-      slug
-    }
+    "clientName": authorName,
+    "clientRole": authorRole,
+    "clientCompany": company,
+    "clientPhoto": authorPhoto
   }
 `;
 
 export const featuredTestimonialsQuery = `
-  *[_type == "testimonial" && approved == true && featured == true] | order(_createdAt desc)[0...4] {
+  *[_type == "testimonial" && featured == true] | order(_createdAt desc)[0...4] {
     _id,
     quote,
-    clientName,
-    clientRole,
-    clientCompany,
-    clientPhoto,
-    rating
+    "clientName": authorName,
+    "clientRole": authorRole,
+    "clientCompany": company,
+    "clientPhoto": authorPhoto
   }
 `;
 

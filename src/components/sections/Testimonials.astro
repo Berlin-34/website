@@ -1,6 +1,8 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
 import { getPlaceholderImage } from '../../lib/utils';
+import { urlFor } from '../../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface Props {
   testimonials: Array<{
@@ -8,7 +10,7 @@ interface Props {
     clientName: string;
     clientRole?: string;
     clientCompany?: string;
-    clientPhoto?: string;
+    clientPhoto?: SanityImageSource;
   }>;
   autoPlay?: boolean;
   autoPlayInterval?: number;
@@ -30,6 +32,20 @@ function getInitial(name: string | null | undefined): string {
   if (!name) return '?';
   return name.charAt(0).toUpperCase();
 }
+
+/**
+ * Gets the avatar URL from Sanity image or placeholder
+ */
+function getAvatarUrl(photo: SanityImageSource | undefined, name: string | null | undefined): string {
+  if (photo) {
+    try {
+      return urlFor(photo).width(160).height(160).format('webp').url();
+    } catch {
+      // Fall through to placeholder
+    }
+  }
+  return getPlaceholderImage(80, 80, getInitial(name));
+}
 ---
 
 <section class="testimonials" aria-label="Client testimonials">
@@ -50,7 +66,7 @@ function getInitial(name: string | null | undefined): string {
         <div class="carousel__track-container">
           <div class="carousel__track" data-carousel-track>
             {testimonials.map((testimonial, index) => {
-              const avatarUrl = testimonial.clientPhoto || getPlaceholderImage(80, 80, getInitial(testimonial.clientName));
+              const avatarUrl = getAvatarUrl(testimonial.clientPhoto, testimonial.clientName);
               return (
                 <div
                   class="carousel__slide"

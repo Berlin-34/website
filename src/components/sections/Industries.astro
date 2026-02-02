@@ -1,5 +1,19 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import {
+  Heart,
+  ShoppingCart,
+  Factory,
+  Truck,
+  Landmark,
+  Rocket,
+  Building2,
+  Briefcase,
+  GraduationCap,
+  Utensils,
+  Plane,
+  Home
+} from '@lucide/astro';
 
 interface Props {
   industries: Array<{
@@ -11,6 +25,22 @@ interface Props {
 
 const { industries } = Astro.props;
 
+// Map of icon names to Lucide components
+const iconMap: Record<string, typeof Heart> = {
+  'heart': Heart,
+  'shopping-cart': ShoppingCart,
+  'factory': Factory,
+  'truck': Truck,
+  'landmark': Landmark,
+  'rocket': Rocket,
+  'building-2': Building2,
+  'briefcase': Briefcase,
+  'graduation-cap': GraduationCap,
+  'utensils': Utensils,
+  'plane': Plane,
+  'home': Home,
+};
+
 /**
  * Gets the first letter of the industry title as a placeholder
  * when no icon is provided
@@ -18,6 +48,15 @@ const { industries } = Astro.props;
 function getInitial(title: string | null | undefined): string {
   if (!title) return '?';
   return title.charAt(0).toUpperCase();
+}
+
+/**
+ * Get the icon component for a given icon name
+ */
+function getIconComponent(iconName: string | undefined): typeof Heart | null {
+  if (!iconName) return null;
+  const normalizedName = iconName.toLowerCase().trim();
+  return iconMap[normalizedName] || null;
 }
 ---
 
@@ -28,21 +67,28 @@ function getInitial(title: string | null | undefined): string {
     </header>
 
     <ul class="industries__list">
-      {industries?.map((industry) => (
-        <li class="industries__item">
-          <a
-            href={`/industries/${industry.slug?.current || '#'}/`}
-            class="industry-link"
-          >
-            <span class="industry-link__icon" aria-hidden="true">
-              {industry.icon || getInitial(industry.title)}
-            </span>
-            <span class="industry-link__name">
-              {industry.title || 'Industry'}
-            </span>
-          </a>
-        </li>
-      ))}
+      {industries?.map((industry) => {
+        const IconComponent = getIconComponent(industry.icon);
+        return (
+          <li class="industries__item">
+            <a
+              href={`/industries/${industry.slug?.current || '#'}/`}
+              class="industry-link"
+            >
+              <span class="industry-link__icon" aria-hidden="true">
+                {IconComponent ? (
+                  <IconComponent size={20} />
+                ) : (
+                  getInitial(industry.title)
+                )}
+              </span>
+              <span class="industry-link__name">
+                {industry.title || 'Industry'}
+              </span>
+            </a>
+          </li>
+        );
+      })}
     </ul>
   </div>
 </section>
