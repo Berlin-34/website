@@ -1,0 +1,165 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+
+interface Value {
+  title: string;
+  description: string;
+}
+
+interface Props {
+  label?: string;
+  headline?: string;
+  values?: Value[];
+}
+
+const {
+  label = "Our Values",
+  headline = "What Guides Us",
+  values = [
+    {
+      title: "Craft",
+      description: "We obsess over the details. Every pixel, every interaction, every line of code is crafted with intention and care."
+    },
+    {
+      title: "Partnership",
+      description: "We don't just build for clients—we build with them. True collaboration creates the best outcomes."
+    },
+    {
+      title: "Innovation",
+      description: "We stay curious and embrace new technologies, always seeking better ways to solve problems."
+    },
+    {
+      title: "Integrity",
+      description: "We're honest about what we can deliver, transparent in our process, and committed to doing what's right."
+    }
+  ]
+} = Astro.props;
+---
+
+<section class="values">
+  <div class="values__container">
+    <header class="values__header">
+      <SectionLabel text={label} />
+      <h2 class="values__headline">{headline}</h2>
+    </header>
+
+    <div class="values__grid">
+      {values.map((value, index) => (
+        <div class="value-card">
+          <span class="value-card__number">{String(index + 1).padStart(2, '0')}</span>
+          <h3 class="value-card__title">{value.title}</h3>
+          <p class="value-card__description">{value.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .values {
+    padding: 6rem 0;
+    background: var(--bg-secondary);
+  }
+
+  .values__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .values__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .values__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 1.5rem 0 0;
+  }
+
+  .values__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .value-card {
+    padding: 2.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    transition: border-color 0.3s ease;
+  }
+
+  .value-card:hover {
+    border-color: var(--accent);
+  }
+
+  .value-card__number {
+    display: block;
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .value-card__title {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+
+  .value-card__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Tablet: 2 columns */
+  @media (min-width: 640px) {
+    .values__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 1024px) {
+    .values__grid {
+      gap: 2rem;
+    }
+
+    .value-card {
+      padding: 3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .values {
+      padding: 4rem 0;
+    }
+
+    .values__header {
+      margin-bottom: 3rem;
+    }
+
+    .value-card {
+      padding: 2rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .value-card {
+      transition: none;
+    }
+  }
+</style>

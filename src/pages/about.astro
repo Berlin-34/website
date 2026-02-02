@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutHero from '../components/sections/AboutHero.astro';
+import OurStory from '../components/sections/OurStory.astro';
+import Values from '../components/sections/Values.astro';
+import Team from '../components/sections/Team.astro';
+import Certifications from '../components/sections/Certifications.astro';
+import CTASection from '../components/sections/CTASection.astro';
+import { client } from '../lib/sanity';
+
+// Fetch about page data from Sanity (if available)
+const aboutQuery = `{
+  "siteSettings": *[_type == "siteSettings"][0] {
+    siteName
+  },
+  "teamMembers": *[_type == "teamMember" && visible == true] | order(order asc) {
+    _id,
+    name,
+    role,
+    photo,
+    linkedin
+  }
+}`;
+
+const data = await client.fetch<{
+  siteSettings: { siteName?: string } | null;
+  teamMembers: Array<{
+    _id: string;
+    name: string;
+    role?: string;
+    photo?: any;
+    linkedin?: string;
+  }>;
+}>(aboutQuery);
+
+const teamMembers = data?.teamMembers || [];
+const showTeam = teamMembers.length > 0;
+---
+
+<BaseLayout
+  title="About"
+  description="Learn about KP Infotech - a premium digital product studio based in Ahmedabad, India. Crafting exceptional digital experiences since our founding."
+>
+  <AboutHero
+    label="About Us"
+    headline="We *Craft* Digital Excellence"
+    description="A premium digital product studio helping ambitious brands transform their ideas into exceptional digital experiences."
+  />
+
+  <OurStory
+    label="Our Story"
+    headline="Built on Passion, Driven by *Purpose*"
+    paragraphs={[
+      "KP Infotech was founded in Ahmedabad with a simple belief: great digital products come from understanding both business goals and human needs.",
+      "What started as a small team with big ambitions has grown into a trusted partner for businesses across industries. We've helped startups launch their first products and enterprises transform their digital presence.",
+      "Our approach combines strategic thinking with meticulous craftsmanship. Every project we take on receives our full attention, because we believe in quality over quantity."
+    ]}
+    founderNames="Poojan & Krupa"
+  />
+
+  <Values
+    label="Our Values"
+    headline="What *Guides* Us"
+    values={[
+      {
+        title: "Craft",
+        description: "We obsess over the details. Every pixel, every interaction, every line of code is crafted with intention and care."
+      },
+      {
+        title: "Partnership",
+        description: "We don't just build for clients—we build with them. True collaboration creates the best outcomes."
+      },
+      {
+        title: "Innovation",
+        description: "We stay curious and embrace new technologies, always seeking better ways to solve problems."
+      },
+      {
+        title: "Integrity",
+        description: "We're honest about what we can deliver, transparent in our process, and committed to doing what's right."
+      }
+    ]}
+  />
+
+  <Team
+    visible={showTeam}
+    members={teamMembers}
+    label="Our Team"
+    headline="The People Behind the *Work*"
+    description="A dedicated team of designers, developers, and strategists passionate about creating exceptional digital experiences."
+  />
+
+  <Certifications
+    label="Partners & Certifications"
+    headline="Trusted *Partnerships*"
+    certifications={[
+      {
+        name: "Odoo Partner",
+        description: "Official Odoo implementation and development partner, delivering enterprise ERP solutions with certified expertise."
+      }
+    ]}
+  />
+
+  <CTASection
+    headline="Ready to work together?"
+    description="Let's discuss how we can help bring your vision to life."
+    buttonText="Start a Project"
+    buttonHref="/contact/"
+  />
+</BaseLayout>

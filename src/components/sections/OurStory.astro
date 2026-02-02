@@ -1,0 +1,160 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+
+interface Props {
+  label?: string;
+  headline?: string;
+  paragraphs?: string[];
+  founderNames?: string;
+  imagePlaceholder?: boolean;
+}
+
+const {
+  label = "Our Story",
+  headline = "Built on Passion, Driven by Purpose",
+  paragraphs = [
+    "KP Infotech was founded in Ahmedabad with a simple belief: great digital products come from understanding both business goals and human needs.",
+    "What started as a small team with big ambitions has grown into a trusted partner for businesses across industries. We've helped startups launch their first products and enterprises transform their digital presence.",
+    "Our approach combines strategic thinking with meticulous craftsmanship. Every project we take on receives our full attention, because we believe in quality over quantity."
+  ],
+  founderNames = "Poojan & Krupa",
+  imagePlaceholder = true
+} = Astro.props;
+---
+
+<section class="our-story">
+  <div class="our-story__container">
+    <div class="our-story__content">
+      <SectionLabel text={label} />
+      <h2 class="our-story__headline">{headline}</h2>
+      <div class="our-story__text">
+        {paragraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+      <p class="our-story__founders">
+        <span class="our-story__founders-label">Founded by</span>
+        <span class="our-story__founders-names">{founderNames}</span>
+      </p>
+    </div>
+
+    <div class="our-story__visual">
+      {imagePlaceholder ? (
+        <div class="our-story__image-placeholder">
+          <span>Image</span>
+        </div>
+      ) : (
+        <slot name="image" />
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .our-story {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .our-story__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .our-story__content {
+    max-width: 540px;
+  }
+
+  .our-story__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 1.5rem 0 2rem;
+  }
+
+  .our-story__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .our-story__text p {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .our-story__founders {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .our-story__founders-label {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .our-story__founders-names {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .our-story__visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  .our-story__image-placeholder {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+  }
+
+  /* Desktop: Two columns */
+  @media (min-width: 1024px) {
+    .our-story__container {
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+    }
+
+    .our-story__content {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .our-story {
+      padding: 4rem 0;
+    }
+
+    .our-story__container {
+      gap: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,248 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import { urlFor } from '../../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+
+interface TeamMember {
+  _id: string;
+  name: string;
+  role?: string;
+  photo?: SanityImageSource;
+  linkedin?: string;
+}
+
+interface Props {
+  label?: string;
+  headline?: string;
+  description?: string;
+  members?: TeamMember[];
+  visible?: boolean;
+}
+
+const {
+  label = "Our Team",
+  headline = "The People Behind the Work",
+  description = "A dedicated team of designers, developers, and strategists passionate about creating exceptional digital experiences.",
+  members = [],
+  visible = false
+} = Astro.props;
+
+// Don't render if not visible or no members
+if (!visible || members.length === 0) {
+  return null;
+}
+
+/**
+ * Get team member photo URL or return null
+ */
+function getPhotoUrl(photo: SanityImageSource | undefined): string | null {
+  if (!photo) return null;
+  try {
+    return urlFor(photo).width(400).height(400).format('webp').url();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get initials from name
+ */
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(part => part.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+---
+
+<section class="team">
+  <div class="team__container">
+    <header class="team__header">
+      <SectionLabel text={label} />
+      <h2 class="team__headline">{headline}</h2>
+      <p class="team__description">{description}</p>
+    </header>
+
+    <div class="team__grid">
+      {members.map((member) => {
+        const photoUrl = getPhotoUrl(member.photo);
+        return (
+          <div class="team-card">
+            <div class="team-card__photo">
+              {photoUrl ? (
+                <img
+                  src={photoUrl}
+                  alt={member.name}
+                  width="200"
+                  height="200"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="team-card__initials">{getInitials(member.name)}</span>
+              )}
+            </div>
+            <h3 class="team-card__name">{member.name}</h3>
+            {member.role && (
+              <p class="team-card__role">{member.role}</p>
+            )}
+            {member.linkedin && (
+              <a
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="team-card__linkedin"
+                aria-label={`${member.name} on LinkedIn`}
+              >
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .team {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .team__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .team__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .team__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 1.5rem 0 1rem;
+  }
+
+  .team__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .team__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .team-card {
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .team-card__photo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .team-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .team-card__initials {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .team-card__name {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+  }
+
+  .team-card__role {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  .team-card__linkedin {
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+  }
+
+  .team-card__linkedin:hover {
+    color: var(--accent);
+  }
+
+  /* Tablet: 3 columns */
+  @media (min-width: 640px) {
+    .team__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Desktop: 4 columns */
+  @media (min-width: 1024px) {
+    .team__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .team {
+      padding: 4rem 0;
+    }
+
+    .team__header {
+      margin-bottom: 3rem;
+    }
+
+    .team-card {
+      padding: 1.5rem;
+    }
+
+    .team-card__photo {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .team-card__linkedin {
+      transition: none;
+    }
+  }
+</style>

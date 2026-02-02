@@ -1,0 +1,213 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import { urlFor } from '../../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+
+interface Certification {
+  name: string;
+  description?: string;
+  logo?: SanityImageSource;
+  url?: string;
+}
+
+interface Props {
+  label?: string;
+  headline?: string;
+  certifications?: Certification[];
+}
+
+const {
+  label = "Partners & Certifications",
+  headline = "Trusted Partnerships",
+  certifications = [
+    {
+      name: "Odoo Partner",
+      description: "Official Odoo implementation and development partner, delivering enterprise ERP solutions."
+    }
+  ]
+} = Astro.props;
+
+/**
+ * Get certification logo URL
+ */
+function getLogoUrl(logo: SanityImageSource | undefined): string | null {
+  if (!logo) return null;
+  try {
+    return urlFor(logo).width(200).height(100).format('webp').url();
+  } catch {
+    return null;
+  }
+}
+---
+
+<section class="certifications">
+  <div class="certifications__container">
+    <header class="certifications__header">
+      <SectionLabel text={label} />
+      <h2 class="certifications__headline">{headline}</h2>
+    </header>
+
+    <div class="certifications__list">
+      {certifications.map((cert) => {
+        const logoUrl = getLogoUrl(cert.logo);
+        const Tag = cert.url ? 'a' : 'div';
+        const linkProps = cert.url ? { href: cert.url, target: '_blank', rel: 'noopener noreferrer' } : {};
+
+        return (
+          <div class="certification-badge">
+            <div class="certification-badge__logo">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={cert.name}
+                  loading="lazy"
+                />
+              ) : (
+                <span class="certification-badge__placeholder">{cert.name.charAt(0)}</span>
+              )}
+            </div>
+            <div class="certification-badge__content">
+              <h3 class="certification-badge__name">{cert.name}</h3>
+              {cert.description && (
+                <p class="certification-badge__description">{cert.description}</p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .certifications {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .certifications__container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .certifications__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .certifications__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 1.5rem 0 0;
+  }
+
+  .certifications__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .certification-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+  }
+
+  .certification-badge__logo {
+    width: 120px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .certification-badge__logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%) brightness(2);
+    opacity: 0.8;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+
+  .certification-badge:hover .certification-badge__logo img {
+    filter: grayscale(0%) brightness(1);
+    opacity: 1;
+  }
+
+  .certification-badge__placeholder {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .certification-badge__content {
+    max-width: 500px;
+  }
+
+  .certification-badge__name {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+  }
+
+  .certification-badge__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Desktop: Horizontal layout */
+  @media (min-width: 768px) {
+    .certification-badge {
+      flex-direction: row;
+      text-align: left;
+      gap: 2.5rem;
+      padding: 2.5rem 3rem;
+    }
+
+    .certification-badge__logo {
+      width: 140px;
+      height: 70px;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .certifications {
+      padding: 4rem 0;
+    }
+
+    .certifications__header {
+      margin-bottom: 3rem;
+    }
+
+    .certification-badge {
+      padding: 2rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .certification-badge__logo img {
+      transition: none;
+    }
+  }
+</style>
