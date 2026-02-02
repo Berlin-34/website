@@ -1,6 +1,7 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
 import Button from '../ui/Button.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { getPlaceholderImage } from '../../lib/utils';
 
 interface Props {
@@ -20,7 +21,9 @@ const heroImage = imageUrl || getPlaceholderImage(800, 600, 'Hero');
     <div class="hero__content">
       <SectionLabel text={tagline} class="hero__label" />
 
-      <h1 class="hero__headline">{headline}</h1>
+      <h1 class="hero__headline">
+        <HighlightedText text={headline} />
+      </h1>
 
       <p class="hero__description">{description}</p>
 

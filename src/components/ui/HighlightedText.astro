@@ -1,0 +1,31 @@
+---
+/**
+ * HighlightedText Component
+ * Renders text with *highlighted* portions in accent color
+ *
+ * Usage in Sanity: "We craft *digital experiences* that drive growth"
+ * Renders: We craft <span class="text-accent">digital experiences</span> that drive growth
+ */
+import { parseHighlightedText } from '../../lib/utils';
+
+interface Props {
+  text: string | null | undefined;
+  class?: string;
+  as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+}
+
+const { text, class: className = '', as: Tag = 'span' } = Astro.props;
+
+const segments = parseHighlightedText(text);
+---
+
+<Tag class={className}>
+  {segments.map((segment) => (
+    segment.highlighted ? (
+      <span class="text-[var(--accent)]">{segment.text}</span>
+    ) : (
+      segment.text
+    )
+  ))}
+</Tag>
+

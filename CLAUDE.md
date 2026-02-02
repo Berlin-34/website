@@ -13,9 +13,10 @@ KP Infotech website rebuild: WordPress + Elementor → Astro + Sanity CMS. Premi
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Astro 4.x with partial hydration |
-| CMS | Sanity v3 (headless) |
-| Styling | Tailwind CSS 3.x with CSS custom properties |
+| Frontend | Astro 5.x with static output |
+| CMS | Sanity v5 (embedded studio at /studio) |
+| Styling | Tailwind CSS 4.x with @tailwindcss/vite plugin |
+| Icons | @lucide/astro |
 | Animations | GSAP + ScrollTrigger |
 | Forms | HubSpot Forms API |
 | Hosting | Vercel |
@@ -119,12 +120,26 @@ Primary content types: `service`, `industry`, `caseStudy`, `blogPost`, `testimon
 
 ### Image Handling
 
-Use `@sanity/image-url` for responsive images:
+Use `@sanity/image-url` with `createImageUrlBuilder` (not deprecated `imageUrlBuilder`):
 ```typescript
-import imageUrlBuilder from '@sanity/image-url';
-const builder = imageUrlBuilder(client);
-const imageUrl = builder.image(source).width(800).format('webp').url();
+import { createImageUrlBuilder } from '@sanity/image-url';
+const builder = createImageUrlBuilder(client);
+// For retina: fetch 2-3x size, display smaller via CSS
+const imageUrl = builder.image(source).height(120).format('webp').url();
 ```
+
+### Highlighted Text
+
+Use `*asterisks*` in Sanity string fields to highlight words in accent color:
+- Sanity: `We craft *digital experiences* that drive growth`
+- Rendered: `We craft <span class="text-accent">digital experiences</span>...`
+- Utility: `parseHighlightedText()` in `src/lib/utils.ts`
+- Component: `<HighlightedText text={title} />` in `src/components/ui/`
+
+### Schema Field Names
+
+Testimonial: `authorName`, `authorRole`, `company`, `authorPhoto` (not `client*`)
+Industry: `icon` is image field (SVG upload), not string
 
 ## Content Architecture
 
@@ -195,6 +210,12 @@ Always use consistent section label pattern:
 All cards use `--bg-secondary` background with `1px solid var(--border)`. Hover states add left accent line (3px, `--accent`).
 
 ## Environment Variables
+
+**Loading pattern** (for Vercel + local dev compatibility):
+```typescript
+// Check process.env first (Vercel), then loadEnv (local .env.local)
+const value = process.env.VAR_NAME || env.VAR_NAME;
+```
 
 ```bash
 PUBLIC_SANITY_PROJECT_ID=     # Sanity project ID
