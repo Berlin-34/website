@@ -93,7 +93,7 @@ img {
   height: auto;
 }
 
-/* Section Label Pattern */
+/* Section Label Pattern - lines handled by SectionLabel.astro component */
 .section-label {
   display: inline-flex;
   align-items: center;
@@ -106,8 +106,8 @@ img {
   color: var(--accent);
 }
 
-.section-label::before {
-  content: '';
+.section-label__line {
+  display: block;
   width: 40px;
   height: 1px;
   background: var(--accent);
