@@ -9,8 +9,7 @@ const { text, class: className = '', variant = 'default' } = Astro.props;
 ---
 
 <span class:list={['section-label', `section-label--${variant}`, className]}>
-  {variant === 'default' && <span class="section-label__line"></span>}
-  {variant === 'centered' && <span class="section-label__line"></span>}
+  <span class="section-label__line"></span>
   {text}
   {variant === 'centered' && <span class="section-label__line"></span>}
 </span>
