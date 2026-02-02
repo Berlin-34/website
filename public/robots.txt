@@ -1,0 +1,7 @@
+# robots.txt for https://kpinfo.tech
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://kpinfo.tech/sitemap-index.xml

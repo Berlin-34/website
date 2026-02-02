@@ -1,0 +1,148 @@
+---
+import { Linkedin, Twitter, Instagram } from '@lucide/astro';
+
+const currentYear = new Date().getFullYear();
+
+const services = [
+  { name: 'UI/UX Design', href: '/services/ui-ux-design/' },
+  { name: 'Web Development', href: '/services/web-development/' },
+  { name: 'Mobile Apps', href: '/services/mobile-apps/' },
+  { name: 'ERP Solutions', href: '/services/erp-solutions/' },
+  { name: 'Digital Marketing', href: '/services/digital-marketing/' },
+];
+
+const company = [
+  { name: 'About', href: '/about/' },
+  { name: 'Careers', href: '/careers/' },
+  { name: 'Insights', href: '/insights/' },
+  { name: 'Contact', href: '/contact/' },
+];
+
+const socials = [
+  { name: 'LinkedIn', href: 'https://linkedin.com/company/kpinfotech', Icon: Linkedin },
+  { name: 'Twitter', href: 'https://twitter.com/kpinfotech', Icon: Twitter },
+  { name: 'Instagram', href: 'https://instagram.com/kpinfotech', Icon: Instagram },
+];
+---
+
+<footer class="bg-[var(--bg-secondary)] border-t border-[var(--border)]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
+    <!-- Main Footer Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+      <!-- Column 1: Logo + Tagline + Social -->
+      <div class="lg:col-span-1">
+        <a href="/" class="inline-block mb-6">
+          <span class="font-playfair text-2xl font-medium text-[var(--text-primary)]">
+            KP Infotech
+          </span>
+        </a>
+        <p class="text-[var(--text-secondary)] text-sm leading-relaxed mb-8 max-w-xs">
+          Crafting digital experiences that elevate brands and drive measurable business growth.
+        </p>
+        <div class="flex items-center gap-4">
+          {socials.map((social) => (
+            <a
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-300"
+              aria-label={social.name}
+            >
+              <social.Icon size={20} />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Column 2: Services -->
+      <nav aria-label="Services">
+        <h3 class="footer-label">Services</h3>
+        <ul class="space-y-3">
+          {services.map((service) => (
+            <li>
+              <a
+                href={service.href}
+                class="text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+              >
+                {service.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Column 3: Company -->
+      <nav aria-label="Company">
+        <h3 class="footer-label">Company</h3>
+        <ul class="space-y-3">
+          {company.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+              >
+                {link.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Column 4: Contact -->
+      <div>
+        <h3 class="footer-label">Contact</h3>
+        <address class="not-italic space-y-3">
+          <a
+            href="mailto:hello@kpinfo.tech"
+            class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+          >
+            hello@kpinfo.tech
+          </a>
+          <a
+            href="tel:+919876543210"
+            class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+          >
+            +91 98765 43210
+          </a>
+          <p class="text-[var(--text-secondary)] text-sm">
+            Ahmedabad, India
+          </p>
+        </address>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-16 pt-8 border-t border-[var(--border)]">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <p class="text-[var(--text-secondary)] text-xs">
+          &copy; {currentYear} KP Infotech. All rights reserved.
+        </p>
+        <nav class="flex items-center gap-6" aria-label="Legal">
+          <a
+            href="/privacy-policy/"
+            class="text-[var(--text-secondary)] hover:text-[var(--accent)] text-xs transition-colors duration-300"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/terms-of-service/"
+            class="text-[var(--text-secondary)] hover:text-[var(--accent)] text-xs transition-colors duration-300"
+          >
+            Terms of Service
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+</style>

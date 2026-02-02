@@ -1,0 +1,344 @@
+---
+/**
+ * Navigation Component
+ * Fixed header with transparent-to-solid background on scroll
+ * Includes desktop nav links and mobile hamburger menu with full-screen overlay
+ */
+import { Menu, X } from '@lucide/astro';
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: 'Services', href: '/services/' },
+  { label: 'Industries', href: '/industries/' },
+  { label: 'Work', href: '/work/' },
+  { label: 'Insights', href: '/insights/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Careers', href: '/careers/' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header
+  id="main-header"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  role="banner"
+>
+  <div class="nav-backdrop absolute inset-0 opacity-0 transition-opacity duration-300"></div>
+
+  <nav
+    class="relative mx-auto flex max-w-[1440px] items-center justify-between px-6 py-5 lg:px-12"
+    role="navigation"
+    aria-label="Main navigation"
+  >
+    <!-- Logo -->
+    <a
+      href="/"
+      class="logo relative z-10 font-body text-xl font-normal tracking-wide text-text-primary transition-colors duration-300 hover:text-accent"
+      aria-label="KP Infotech - Home"
+    >
+      KP Infotech
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden items-center gap-10 lg:flex">
+      <ul class="flex items-center gap-8" role="menubar">
+        {navLinks.map((link) => (
+          <li role="none">
+            <a
+              href={link.href}
+              class:list={[
+                'nav-link relative py-2 font-body text-sm font-normal tracking-wide transition-colors duration-300',
+                currentPath.startsWith(link.href)
+                  ? 'text-text-primary'
+                  : 'text-text-secondary hover:text-text-primary',
+              ]}
+              role="menuitem"
+              aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+              <span class="nav-underline absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-300"></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Contact Button (Ghost Style) -->
+      <a
+        href="/contact/"
+        class="contact-btn relative overflow-hidden border border-accent px-6 py-2.5 font-body text-sm font-normal tracking-wide text-accent transition-all duration-300 hover:text-bg-primary"
+        role="menuitem"
+      >
+        <span class="relative z-10">Contact</span>
+        <span class="btn-fill absolute inset-0 origin-left scale-x-0 bg-accent transition-transform duration-300"></span>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      id="mobile-menu-toggle"
+      class="relative z-10 flex h-10 w-10 items-center justify-center lg:hidden text-text-primary"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <Menu id="menu-icon" size={24} class="transition-opacity duration-300" />
+      <X id="close-icon" size={24} class="absolute opacity-0 transition-opacity duration-300" />
+    </button>
+  </nav>
+</header>
+
+<!-- Mobile Menu Overlay -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-40 flex flex-col bg-bg-primary opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Mobile navigation menu"
+>
+  <div class="flex flex-1 flex-col justify-center px-6 py-24">
+    <nav aria-label="Mobile navigation">
+      <ul class="flex flex-col gap-6" role="menu">
+        {navLinks.map((link, index) => (
+          <li role="none" style={`--delay: ${index * 0.05}s`}>
+            <a
+              href={link.href}
+              class:list={[
+                'mobile-nav-link block font-body text-3xl font-normal tracking-wide transition-all duration-300 translate-y-8 opacity-0',
+                currentPath.startsWith(link.href)
+                  ? 'text-text-primary'
+                  : 'text-text-secondary hover:text-text-primary',
+              ]}
+              role="menuitem"
+              aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+              tabindex="-1"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li role="none" style={`--delay: ${navLinks.length * 0.05}s`}>
+          <a
+            href="/contact/"
+            class="mobile-nav-link mt-4 inline-block border border-accent px-8 py-3 font-body text-xl font-normal tracking-wide text-accent transition-all duration-300 translate-y-8 opacity-0 hover:bg-accent hover:text-bg-primary"
+            role="menuitem"
+            tabindex="-1"
+          >
+            Contact
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<style>
+  /* Navigation backdrop when scrolled */
+  .nav-backdrop {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid transparent;
+  }
+
+  .header-scrolled .nav-backdrop {
+    opacity: 1;
+    border-bottom-color: var(--border);
+  }
+
+  /* Desktop nav link underline animation */
+  .nav-link:hover .nav-underline,
+  .nav-link[aria-current='page'] .nav-underline {
+    width: 100%;
+  }
+
+  /* Contact button fill animation */
+  .contact-btn:hover .btn-fill {
+    transform: scaleX(1);
+  }
+
+  /* Mobile menu open state */
+  .mobile-menu-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu-open .mobile-nav-link {
+    transform: translateY(0);
+    opacity: 1;
+    transition-delay: var(--delay);
+  }
+
+  /* Menu icon toggle */
+  .menu-open #menu-icon {
+    opacity: 0;
+  }
+
+  .menu-open #close-icon {
+    opacity: 1;
+  }
+
+  /* Focus states for accessibility */
+  .nav-link:focus-visible,
+  .contact-btn:focus-visible,
+  .mobile-nav-link:focus-visible,
+  #mobile-menu-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-backdrop,
+    .nav-link,
+    .nav-underline,
+    .contact-btn,
+    .btn-fill,
+    .hamburger-line,
+    .mobile-nav-link,
+    #mobile-menu {
+      transition: none !important;
+    }
+
+    .mobile-menu-open .mobile-nav-link {
+      transition-delay: 0s;
+    }
+  }
+</style>
+
+<script>
+  // Header scroll behavior
+  const header = document.getElementById('main-header');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  function updateHeader() {
+    const scrollY = window.scrollY;
+
+    if (scrollY > 50) {
+      header?.classList.add('header-scrolled');
+    } else {
+      header?.classList.remove('header-scrolled');
+    }
+
+    lastScrollY = scrollY;
+    ticking = false;
+  }
+
+  // Throttle scroll events with requestAnimationFrame
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeader);
+      ticking = true;
+    }
+  }
+
+  // Check reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Initial check
+  updateHeader();
+
+  // Listen for scroll
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile menu toggle
+  let isMenuOpen = false;
+
+  function toggleMenu() {
+    isMenuOpen = !isMenuOpen;
+
+    if (isMenuOpen) {
+      mobileMenu?.classList.add('mobile-menu-open');
+      menuToggle?.classList.add('menu-open');
+      menuToggle?.setAttribute('aria-expanded', 'true');
+      menuToggle?.setAttribute('aria-label', 'Close menu');
+      document.body.style.overflow = 'hidden';
+
+      // Enable tab navigation for mobile menu links
+      const mobileLinks = mobileMenu?.querySelectorAll('a');
+      mobileLinks?.forEach(link => link.setAttribute('tabindex', '0'));
+
+      // Focus first menu item
+      if (!prefersReducedMotion) {
+        setTimeout(() => {
+          const firstLink = mobileMenu?.querySelector('a');
+          firstLink?.focus();
+        }, 300);
+      } else {
+        const firstLink = mobileMenu?.querySelector('a');
+        firstLink?.focus();
+      }
+    } else {
+      mobileMenu?.classList.remove('mobile-menu-open');
+      menuToggle?.classList.remove('menu-open');
+      menuToggle?.setAttribute('aria-expanded', 'false');
+      menuToggle?.setAttribute('aria-label', 'Open menu');
+      document.body.style.overflow = '';
+
+      // Disable tab navigation for mobile menu links
+      const mobileLinks = mobileMenu?.querySelectorAll('a');
+      mobileLinks?.forEach(link => link.setAttribute('tabindex', '-1'));
+
+      // Return focus to toggle button
+      menuToggle?.focus();
+    }
+  }
+
+  menuToggle?.addEventListener('click', toggleMenu);
+
+  // Close menu on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isMenuOpen) {
+      toggleMenu();
+    }
+  });
+
+  // Close menu when clicking a link
+  const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
+  mobileMenuLinks?.forEach(link => {
+    link.addEventListener('click', () => {
+      if (isMenuOpen) {
+        toggleMenu();
+      }
+    });
+  });
+
+  // Trap focus within mobile menu when open
+  mobileMenu?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab' || !isMenuOpen) return;
+
+    const focusableElements = mobileMenu.querySelectorAll('a[tabindex="0"]');
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+    if (e.shiftKey && document.activeElement === firstElement) {
+      e.preventDefault();
+      menuToggle?.focus();
+    } else if (!e.shiftKey && document.activeElement === lastElement) {
+      e.preventDefault();
+      menuToggle?.focus();
+    }
+  });
+
+  // Handle tab from menu toggle into mobile menu
+  menuToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab' && !e.shiftKey && isMenuOpen) {
+      e.preventDefault();
+      const firstLink = mobileMenu?.querySelector('a[tabindex="0"]') as HTMLElement;
+      firstLink?.focus();
+    }
+  });
+
+  // Close menu on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && isMenuOpen) {
+      toggleMenu();
+    }
+  });
+</script>

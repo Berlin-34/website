@@ -1,23 +1,16 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KP Infotech</title>
-  </head>
-  <body>
-    <div class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <span class="section-label">UI/UX Design Consultancy</span>
-        <h1 class="font-display text-5xl mt-6 text-text-primary">KP Infotech</h1>
-        <p class="text-text-secondary mt-4">Foundation setup in progress...</p>
-        <div class="mt-8 inline-block px-8 py-4 border border-accent text-accent">
-          Design System Working
-        </div>
+<BaseLayout title="KP Infotech" description="Premium UI/UX design consultancy crafting digital experiences that elevate brands and drive measurable business growth.">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+      <span class="section-label">UI/UX Design Consultancy</span>
+      <h1 class="font-display text-5xl mt-6 text-text-primary">KP Infotech</h1>
+      <p class="text-text-secondary mt-4">Foundation setup in progress...</p>
+      <div class="mt-8 inline-block px-8 py-4 border border-accent text-accent">
+        Design System Working
       </div>
     </div>
-  </body>
-</html>
+  </div>
+</BaseLayout>
