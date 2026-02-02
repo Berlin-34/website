@@ -2,14 +2,16 @@
 interface Props {
   text: string;
   class?: string;
+  variant?: 'default' | 'centered';
 }
 
-const { text, class: className = '' } = Astro.props;
+const { text, class: className = '', variant = 'default' } = Astro.props;
 ---
 
-<span class:list={['section-label', className]}>
+<span class:list={['section-label', `section-label--${variant}`, className]}>
   <span class="section-label__line"></span>
   {text}
+  {variant === 'centered' && <span class="section-label__line"></span>}
 </span>
 
 <style>
