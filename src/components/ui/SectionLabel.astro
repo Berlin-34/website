@@ -13,3 +13,12 @@ const { text, class: className = '', variant = 'default' } = Astro.props;
   {text}
   {variant === 'centered' && <span class="section-label__line"></span>}
 </span>
+
+<style is:global>
+  .section-label__line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background-color: var(--accent);
+  }
+</style>
