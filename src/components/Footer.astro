@@ -1,5 +1,30 @@
 ---
-import { Linkedin, Twitter, Instagram } from '@lucide/astro';
+import { Linkedin, Twitter, Instagram, Dribbble } from '@lucide/astro';
+
+interface SocialLinks {
+  linkedin?: string;
+  twitter?: string;
+  instagram?: string;
+  dribbble?: string;
+}
+
+interface Props {
+  siteName?: string;
+  footerText?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  socialLinks?: SocialLinks;
+}
+
+const {
+  siteName = 'KP Infotech',
+  footerText = 'Crafting digital experiences that elevate brands and drive measurable business growth.',
+  contactEmail = 'hello@kpinfo.tech',
+  contactPhone,
+  address = 'Ahmedabad, India',
+  socialLinks = {},
+} = Astro.props;
 
 const currentYear = new Date().getFullYear();
 
@@ -18,11 +43,13 @@ const company = [
   { name: 'Contact', href: '/contact/' },
 ];
 
+// Build socials array from siteSettings
 const socials = [
-  { name: 'LinkedIn', href: 'https://linkedin.com/company/kpinfotech', Icon: Linkedin },
-  { name: 'Twitter', href: 'https://twitter.com/kpinfotech', Icon: Twitter },
-  { name: 'Instagram', href: 'https://instagram.com/kpinfotech', Icon: Instagram },
-];
+  socialLinks?.linkedin && { name: 'LinkedIn', href: socialLinks.linkedin, Icon: Linkedin },
+  socialLinks?.twitter && { name: 'Twitter', href: socialLinks.twitter, Icon: Twitter },
+  socialLinks?.instagram && { name: 'Instagram', href: socialLinks.instagram, Icon: Instagram },
+  socialLinks?.dribbble && { name: 'Dribbble', href: socialLinks.dribbble, Icon: Dribbble },
+].filter(Boolean) as Array<{ name: string; href: string; Icon: typeof Linkedin }>;
 ---
 
 <footer class="bg-[var(--bg-secondary)] border-t border-[var(--border)]">
@@ -33,25 +60,27 @@ const socials = [
       <div class="lg:col-span-1">
         <a href="/" class="inline-block mb-6">
           <span class="font-playfair text-2xl font-medium text-[var(--text-primary)]">
-            KP Infotech
+            {siteName}
           </span>
         </a>
         <p class="text-[var(--text-secondary)] text-sm leading-relaxed mb-8 max-w-xs">
-          Crafting digital experiences that elevate brands and drive measurable business growth.
+          {footerText}
         </p>
-        <div class="flex items-center gap-4">
-          {socials.map((social) => (
-            <a
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-300"
-              aria-label={social.name}
-            >
-              <social.Icon size={20} />
-            </a>
-          ))}
-        </div>
+        {socials.length > 0 && (
+          <div class="flex items-center gap-4">
+            {socials.map((social) => (
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-300"
+                aria-label={social.name}
+              >
+                <social.Icon size={20} />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       <!-- Column 2: Services -->
@@ -92,21 +121,27 @@ const socials = [
       <div>
         <h3 class="footer-label">Contact</h3>
         <address class="not-italic space-y-3">
-          <a
-            href="mailto:hello@kpinfo.tech"
-            class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
-          >
-            hello@kpinfo.tech
-          </a>
-          <a
-            href="tel:+919876543210"
-            class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
-          >
-            +91 98765 43210
-          </a>
-          <p class="text-[var(--text-secondary)] text-sm">
-            Ahmedabad, India
-          </p>
+          {contactEmail && (
+            <a
+              href={`mailto:${contactEmail}`}
+              class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+            >
+              {contactEmail}
+            </a>
+          )}
+          {contactPhone && (
+            <a
+              href={`tel:${contactPhone.replace(/\s/g, '')}`}
+              class="block text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm transition-colors duration-300"
+            >
+              {contactPhone}
+            </a>
+          )}
+          {address && (
+            <p class="text-[var(--text-secondary)] text-sm whitespace-pre-line">
+              {address}
+            </p>
+          )}
         </address>
       </div>
     </div>
@@ -115,7 +150,7 @@ const socials = [
     <div class="mt-16 pt-8 border-t border-[var(--border)]">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <p class="text-[var(--text-secondary)] text-xs">
-          &copy; {currentYear} KP Infotech. All rights reserved.
+          &copy; {currentYear} {siteName}. All rights reserved.
         </p>
         <nav class="flex items-center gap-6" aria-label="Legal">
           <a

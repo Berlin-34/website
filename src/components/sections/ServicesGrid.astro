@@ -24,6 +24,7 @@ function formatNumber(num: number): string {
   <div class="services-grid__container">
     <header class="services-grid__header">
       <SectionLabel text="What We Do" />
+      <h2 class="services-grid__title">Our Services</h2>
     </header>
 
     <div class="services-grid__cards">
@@ -60,6 +61,15 @@ function formatNumber(num: number): string {
 
   .services-grid__header {
     margin-bottom: 3rem;
+  }
+
+  .services-grid__title {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   .services-grid__cards {

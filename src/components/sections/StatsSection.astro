@@ -15,6 +15,7 @@ const { stats } = Astro.props;
   <div class="stats-section__container">
     <header class="stats-section__header">
       <SectionLabel text="By The Numbers" />
+      <h2 class="stats-section__title">Our Impact</h2>
     </header>
 
     <div class="stats-section__grid">
@@ -41,6 +42,15 @@ const { stats } = Astro.props;
 
   .stats-section__header {
     margin-bottom: 3rem;
+  }
+
+  .stats-section__title {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   .stats-section__grid {

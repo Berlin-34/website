@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import { client } from '../lib/sanity';
+import { siteSettingsQuery } from '../lib/queries';
 
 interface Props {
   title?: string;
@@ -10,14 +12,18 @@ interface Props {
   canonicalURL?: string;
 }
 
+// Fetch site settings from Sanity
+const siteSettings = await client.fetch(siteSettingsQuery);
+
 const {
-  title = 'KP Infotech',
-  description = 'Premium UI/UX design consultancy crafting digital experiences that elevate brands and drive measurable business growth.',
+  title = siteSettings?.siteName || 'KP Infotech',
+  description = siteSettings?.defaultSeoDescription || 'Premium UI/UX design consultancy crafting digital experiences that elevate brands and drive measurable business growth.',
   ogImage = '/og-image.jpg',
   canonicalURL = Astro.url.href,
 } = Astro.props;
 
-const fullTitle = title === 'KP Infotech' ? title : `${title} — KP Infotech`;
+const siteName = siteSettings?.siteName || 'KP Infotech';
+const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
 ---
 
 <!doctype html>
@@ -65,10 +71,20 @@ const fullTitle = title === 'KP Infotech' ? title : `${title} — KP Infotech`;
     <slot name="head" />
   </head>
   <body class="bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased">
-    <Navigation />
+    <Navigation
+      siteName={siteName}
+      logo={siteSettings?.logo}
+    />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer
+      siteName={siteName}
+      footerText={siteSettings?.footerText}
+      contactEmail={siteSettings?.contactEmail}
+      contactPhone={siteSettings?.contactPhone}
+      address={siteSettings?.address}
+      socialLinks={siteSettings?.socialLinks}
+    />
   </body>
 </html>

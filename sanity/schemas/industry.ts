@@ -9,7 +9,15 @@ export const industry = defineType({
     defineField({ name: 'slug', type: 'slug', title: 'Slug', options: { source: 'title' }, validation: (Rule) => Rule.required() }),
     defineField({ name: 'tagline', type: 'string', title: 'Tagline' }),
     defineField({ name: 'excerpt', type: 'text', title: 'Excerpt', rows: 3 }),
-    defineField({ name: 'icon', type: 'string', title: 'Icon Name' }),
+    defineField({
+      name: 'icon',
+      type: 'image',
+      title: 'Icon',
+      description: 'Upload an SVG or PNG icon (recommended: 64x64px or larger)',
+      options: {
+        accept: 'image/svg+xml,image/png,image/webp',
+      },
+    }),
     defineField({ name: 'heroImage', type: 'image', title: 'Hero Image', options: { hotspot: true } }),
     defineField({ name: 'challenges', type: 'array', title: 'Industry Challenges', of: [{ type: 'block' }] }),
     defineField({ name: 'solutions', type: 'array', title: 'Our Solutions', of: [{ type: 'block' }] }),
@@ -20,6 +28,12 @@ export const industry = defineType({
     defineField({ name: 'order', type: 'number', title: 'Display Order' }),
   ],
   preview: {
-    select: { title: 'title', media: 'heroImage' },
+    select: { title: 'title', icon: 'icon', heroImage: 'heroImage' },
+    prepare({ title, icon, heroImage }) {
+      return {
+        title,
+        media: icon || heroImage,
+      };
+    },
   },
 });

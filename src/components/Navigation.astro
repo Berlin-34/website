@@ -5,11 +5,20 @@
  * Includes desktop nav links and mobile hamburger menu with full-screen overlay
  */
 import { Menu, X } from '@lucide/astro';
+import { urlFor } from '../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+
+interface Props {
+  siteName?: string;
+  logo?: SanityImageSource;
+}
 
 interface NavLink {
   label: string;
   href: string;
 }
+
+const { siteName = 'KP Infotech', logo } = Astro.props;
 
 const navLinks: NavLink[] = [
   { label: 'Services', href: '/services/' },
@@ -21,6 +30,9 @@ const navLinks: NavLink[] = [
 ];
 
 const currentPath = Astro.url.pathname;
+
+// Get logo URL if logo exists
+const logoUrl = logo ? urlFor(logo).height(40).format('webp').url() : null;
 ---
 
 <header
@@ -38,10 +50,21 @@ const currentPath = Astro.url.pathname;
     <!-- Logo -->
     <a
       href="/"
-      class="logo relative z-10 font-body text-xl font-normal tracking-wide text-text-primary transition-colors duration-300 hover:text-accent"
-      aria-label="KP Infotech - Home"
+      class="logo relative z-10 transition-opacity duration-300 hover:opacity-80"
+      aria-label={`${siteName} - Home`}
     >
-      KP Infotech
+      {logoUrl ? (
+        <img
+          src={logoUrl}
+          alt={siteName}
+          height="40"
+          class="h-10 w-auto"
+        />
+      ) : (
+        <span class="font-body text-xl font-normal tracking-wide text-text-primary">
+          {siteName}
+        </span>
+      )}
     </a>
 
     <!-- Desktop Navigation -->

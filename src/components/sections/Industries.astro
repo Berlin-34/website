@@ -1,45 +1,17 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
-import {
-  Heart,
-  ShoppingCart,
-  Factory,
-  Truck,
-  Landmark,
-  Rocket,
-  Building2,
-  Briefcase,
-  GraduationCap,
-  Utensils,
-  Plane,
-  Home
-} from '@lucide/astro';
+import { urlFor } from '../../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface Props {
   industries: Array<{
     title: string;
     slug: { current: string };
-    icon?: string;
+    icon?: SanityImageSource;
   }>;
 }
 
 const { industries } = Astro.props;
-
-// Map of icon names to Lucide components
-const iconMap: Record<string, typeof Heart> = {
-  'heart': Heart,
-  'shopping-cart': ShoppingCart,
-  'factory': Factory,
-  'truck': Truck,
-  'landmark': Landmark,
-  'rocket': Rocket,
-  'building-2': Building2,
-  'briefcase': Briefcase,
-  'graduation-cap': GraduationCap,
-  'utensils': Utensils,
-  'plane': Plane,
-  'home': Home,
-};
 
 /**
  * Gets the first letter of the industry title as a placeholder
@@ -51,24 +23,28 @@ function getInitial(title: string | null | undefined): string {
 }
 
 /**
- * Get the icon component for a given icon name
+ * Get the icon URL from Sanity image
  */
-function getIconComponent(iconName: string | undefined): typeof Heart | null {
-  if (!iconName) return null;
-  const normalizedName = iconName.toLowerCase().trim();
-  return iconMap[normalizedName] || null;
+function getIconUrl(icon: SanityImageSource | undefined): string | null {
+  if (!icon) return null;
+  try {
+    return urlFor(icon).width(80).height(80).format('webp').url();
+  } catch {
+    return null;
+  }
 }
 ---
 
 <section class="industries">
   <div class="industries__container">
     <header class="industries__header">
-      <SectionLabel text="Industries We Serve" />
+      <SectionLabel text="Our Expertise" />
+      <h2 class="industries__title">Industries We Serve</h2>
     </header>
 
     <ul class="industries__list">
       {industries?.map((industry) => {
-        const IconComponent = getIconComponent(industry.icon);
+        const iconUrl = getIconUrl(industry.icon);
         return (
           <li class="industries__item">
             <a
@@ -76,8 +52,14 @@ function getIconComponent(iconName: string | undefined): typeof Heart | null {
               class="industry-link"
             >
               <span class="industry-link__icon" aria-hidden="true">
-                {IconComponent ? (
-                  <IconComponent size={20} />
+                {iconUrl ? (
+                  <img
+                    src={iconUrl}
+                    alt=""
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                  />
                 ) : (
                   getInitial(industry.title)
                 )}
@@ -106,6 +88,15 @@ function getIconComponent(iconName: string | undefined): typeof Heart | null {
 
   .industries__header {
     margin-bottom: 3rem;
+  }
+
+  .industries__title {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   .industries__list {
@@ -157,6 +148,13 @@ function getIconComponent(iconName: string | undefined): typeof Heart | null {
     font-weight: 500;
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+  }
+
+  .industry-link__icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
 
   .industry-link__name {
