@@ -1,0 +1,71 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+
+interface Props {
+  label?: string;
+  headline?: string;
+  description?: string;
+}
+
+const {
+  label = "Get In Touch",
+  headline = "Let's Build Something *Great*",
+  description = "We're ready to bring your vision to life. Tell us about your project and let's create something extraordinary together."
+} = Astro.props;
+---
+
+<section class="contact-hero">
+  <div class="contact-hero__container">
+    <SectionLabel text={label} variant="centered" />
+    <h1 class="contact-hero__headline">
+      <HighlightedText text={headline} />
+    </h1>
+    <p class="contact-hero__description">{description}</p>
+  </div>
+</section>
+
+<style>
+  .contact-hero {
+    padding: 10rem 0 4rem;
+    background: var(--bg-primary);
+  }
+
+  .contact-hero__container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+
+  .contact-hero__headline {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 1.5rem 0;
+  }
+
+  .contact-hero__description {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .contact-hero {
+      padding: 8rem 0 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-hero {
+      padding: 6rem 0 2rem;
+    }
+  }
+</style>

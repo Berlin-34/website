@@ -1,0 +1,265 @@
+---
+import { Linkedin, Twitter, Instagram, ExternalLink } from '@lucide/astro';
+
+interface SocialLinks {
+  linkedin?: string;
+  twitter?: string;
+  instagram?: string;
+}
+
+interface Props {
+  title?: string;
+  companyName?: string;
+  address?: string;
+  addressLine2?: string;
+  country?: string;
+  socialLinks?: SocialLinks;
+  mapEmbedUrl?: string;
+}
+
+const {
+  title = "Visit Our Office",
+  companyName = "KP Infotech",
+  address = "Ahmedabad, Gujarat",
+  addressLine2,
+  country = "India",
+  socialLinks = {},
+  // Default map embed for Ahmedabad - replace with actual coordinates/embed
+  mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235014.26177924953!2d72.41493074437965!3d23.020157782934894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1707000000000!5m2!1sen!2sin"
+} = Astro.props;
+
+// Build social links array
+const socials = [
+  socialLinks?.linkedin && { name: 'LinkedIn', href: socialLinks.linkedin, Icon: Linkedin },
+  socialLinks?.twitter && { name: 'Twitter', href: socialLinks.twitter, Icon: Twitter },
+  socialLinks?.instagram && { name: 'Instagram', href: socialLinks.instagram, Icon: Instagram },
+].filter(Boolean) as Array<{ name: string; href: string; Icon: typeof Linkedin }>;
+
+// Google Maps directions URL
+const fullAddress = [companyName, address, country].filter(Boolean).join(' ');
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+---
+
+<section class="contact-map">
+  <div class="contact-map__map-wrapper">
+    <iframe
+      src={mapEmbedUrl}
+      class="contact-map__iframe"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="KP Infotech Office Location"
+      allowfullscreen
+    ></iframe>
+
+    <!-- Floating Info Overlay -->
+    <div class="contact-map__overlay">
+      <h2 class="contact-map__title">{title}</h2>
+
+      <address class="contact-map__address">
+        <strong>{companyName}</strong><br />
+        {address}{country && <><br />{country}</>}
+      </address>
+
+      <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="contact-map__directions">
+        <span>Get Directions</span>
+        <ExternalLink size={14} />
+      </a>
+
+      {socials.length > 0 && (
+        <div class="contact-map__social">
+          {socials.map((social) => (
+            <a
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-map__social-link"
+              aria-label={social.name}
+            >
+              <social.Icon size={18} />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-map {
+    background: var(--bg-primary);
+  }
+
+  .contact-map__map-wrapper {
+    position: relative;
+    height: 450px;
+    background: var(--bg-secondary);
+  }
+
+  .contact-map__iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(100%) invert(92%) contrast(90%);
+    opacity: 0.7;
+  }
+
+  /* Dark themed map styling */
+  @media (prefers-color-scheme: dark) {
+    .contact-map__iframe {
+      filter: grayscale(100%) invert(92%) contrast(90%);
+    }
+  }
+
+  /* Floating Overlay */
+  .contact-map__overlay {
+    position: absolute;
+    top: 50%;
+    left: 3rem;
+    transform: translateY(-50%);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    max-width: 360px;
+    z-index: 10;
+  }
+
+  .contact-map__title {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 1.5rem;
+    line-height: 1.2;
+  }
+
+  .contact-map__address {
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-style: normal;
+    font-size: 0.9375rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin: 0 0 1.5rem;
+  }
+
+  .contact-map__address strong {
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .contact-map__directions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+  }
+
+  .contact-map__directions:hover {
+    color: var(--accent-light);
+  }
+
+  .contact-map__directions:hover svg {
+    transform: translate(2px, -2px);
+  }
+
+  .contact-map__directions svg {
+    transition: transform 0.3s ease;
+  }
+
+  .contact-map__social {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-map__social-link {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .contact-map__social-link:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  .contact-map__social-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .contact-map__overlay {
+      left: 2rem;
+      padding: 2rem;
+      max-width: 320px;
+    }
+
+    .contact-map__title {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-map__map-wrapper {
+      height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-map__iframe {
+      height: 300px;
+    }
+
+    .contact-map__overlay {
+      position: relative;
+      top: 0;
+      left: 0;
+      transform: none;
+      max-width: none;
+      margin: -3rem 1.5rem 0;
+      z-index: 10;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-map__iframe {
+      height: 250px;
+    }
+
+    .contact-map__overlay {
+      margin: -2rem 1rem 0;
+      padding: 1.5rem;
+    }
+
+    .contact-map__title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-map__directions {
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-map__social {
+      padding-top: 1rem;
+    }
+  }
+</style>

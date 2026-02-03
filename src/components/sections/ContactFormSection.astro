@@ -1,0 +1,593 @@
+---
+import { Mail, Phone, MapPin, Clock, ArrowRight, Linkedin, Twitter, Instagram } from '@lucide/astro';
+import Button from '../ui/Button.astro';
+
+interface SocialLinks {
+  linkedin?: string;
+  twitter?: string;
+  instagram?: string;
+}
+
+interface Props {
+  email?: string;
+  phone?: string;
+  address?: string;
+  addressLine2?: string;
+  officeHours?: string;
+  officeHoursSaturday?: string;
+  socialLinks?: SocialLinks;
+}
+
+const {
+  email = "info@kpinfo.tech",
+  phone = "+91 86182 79004",
+  address = "Ahmedabad, Gujarat",
+  addressLine2 = "India",
+  officeHours = "Mon – Fri: 9AM – 6PM IST",
+  officeHoursSaturday = "Sat: 10AM – 2PM IST",
+  socialLinks = {}
+} = Astro.props;
+
+// Build social links array
+const socials = [
+  socialLinks?.linkedin && { name: 'LinkedIn', href: socialLinks.linkedin, Icon: Linkedin },
+  socialLinks?.twitter && { name: 'Twitter', href: socialLinks.twitter, Icon: Twitter },
+  socialLinks?.instagram && { name: 'Instagram', href: socialLinks.instagram, Icon: Instagram },
+].filter(Boolean) as Array<{ name: string; href: string; Icon: typeof Linkedin }>;
+
+// Project types for the dropdown
+const projectTypes = [
+  { value: "", label: "Select project type..." },
+  { value: "ui-ux-design", label: "UI/UX Design" },
+  { value: "web-development", label: "Web Development" },
+  { value: "mobile-app", label: "Mobile App" },
+  { value: "erp-solution", label: "ERP Solution" },
+  { value: "digital-marketing", label: "Digital Marketing" },
+  { value: "other", label: "Other" }
+];
+
+// Budget ranges for the dropdown
+const budgetRanges = [
+  { value: "", label: "Select budget range..." },
+  { value: "under-5k", label: "Under $5,000" },
+  { value: "5k-15k", label: "$5,000 - $15,000" },
+  { value: "15k-50k", label: "$15,000 - $50,000" },
+  { value: "50k-plus", label: "$50,000+" },
+  { value: "not-sure", label: "Not sure yet" }
+];
+---
+
+<section class="contact-form-section">
+  <div class="contact-form-section__container">
+    <!-- Contact Info Sidebar -->
+    <aside class="contact-info">
+      <h2 class="contact-info__title">Contact Details</h2>
+
+      <div class="contact-info__items">
+        <div class="contact-info__item">
+          <div class="contact-info__icon">
+            <Mail size={18} />
+          </div>
+          <div class="contact-info__content">
+            <span class="contact-info__label">Email</span>
+            <a href={`mailto:${email}`} class="contact-info__value contact-info__link">
+              {email}
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-info__item">
+          <div class="contact-info__icon">
+            <Phone size={18} />
+          </div>
+          <div class="contact-info__content">
+            <span class="contact-info__label">Phone</span>
+            <a href={`tel:${phone.replace(/\s/g, '')}`} class="contact-info__value contact-info__link">
+              {phone}
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-info__item">
+          <div class="contact-info__icon">
+            <MapPin size={18} />
+          </div>
+          <div class="contact-info__content">
+            <span class="contact-info__label">Address</span>
+            <span class="contact-info__value">
+              {address}{addressLine2 && <><br />{addressLine2}</>}
+            </span>
+          </div>
+        </div>
+
+        <div class="contact-info__item">
+          <div class="contact-info__icon">
+            <Clock size={18} />
+          </div>
+          <div class="contact-info__content">
+            <span class="contact-info__label">Office Hours</span>
+            <span class="contact-info__value">
+              {officeHours}<br />{officeHoursSaturday}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {socials.length > 0 && (
+        <div class="contact-info__social">
+          <span class="contact-info__social-label">Follow Us</span>
+          <div class="contact-info__social-links">
+            {socials.map((social) => (
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contact-info__social-link"
+                aria-label={social.name}
+              >
+                <social.Icon size={18} />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </aside>
+
+    <!-- Contact Form -->
+    <div class="contact-form-wrapper">
+      <h2 class="contact-form__title">Send Us a Message</h2>
+
+      <form class="contact-form" id="contact-form" method="POST">
+        <div class="contact-form__grid">
+          <!-- Name -->
+          <div class="form-group">
+            <label for="name" class="form-label">Your Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-input"
+              placeholder="John Smith"
+              required
+              autocomplete="name"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="john@company.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <!-- Company -->
+          <div class="form-group">
+            <label for="company" class="form-label">Company <span class="optional">(Optional)</span></label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="form-input"
+              placeholder="Company Name"
+              autocomplete="organization"
+            />
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label for="phone" class="form-label">Phone <span class="optional">(Optional)</span></label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="form-input"
+              placeholder="+91 00000 00000"
+              autocomplete="tel"
+            />
+          </div>
+
+          <!-- Project Type -->
+          <div class="form-group">
+            <label for="project-type" class="form-label">Project Type</label>
+            <div class="select-wrapper">
+              <select id="project-type" name="project_type" class="form-select">
+                {projectTypes.map(option => (
+                  <option value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <!-- Budget -->
+          <div class="form-group">
+            <label for="budget" class="form-label">Budget Range</label>
+            <div class="select-wrapper">
+              <select id="budget" name="budget" class="form-select">
+                {budgetRanges.map(option => (
+                  <option value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div class="form-group form-group--full">
+            <label for="message" class="form-label">Message <span class="required">*</span></label>
+            <textarea
+              id="message"
+              name="message"
+              class="form-textarea"
+              placeholder="Tell us about your project..."
+              rows="5"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-group form-group--full">
+            <button type="submit" class="form-submit">
+              <span class="form-submit__text">Send Message</span>
+              <span class="form-submit__icon">
+                <ArrowRight size={16} />
+              </span>
+              <span class="form-submit__fill"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-form-section {
+    padding: 4rem 0 6rem;
+    background: var(--bg-primary);
+  }
+
+  .contact-form-section__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* Contact Info Sidebar */
+  .contact-info {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .contact-info__title {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 2rem;
+    line-height: 1.2;
+  }
+
+  .contact-info__items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .contact-info__item {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .contact-info__icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .contact-info__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .contact-info__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .contact-info__value {
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .contact-info__link {
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .contact-info__link:hover {
+    color: var(--accent);
+  }
+
+  /* Social Links */
+  .contact-info__social {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-info__social-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .contact-info__social-links {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .contact-info__social-link {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .contact-info__social-link:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  .contact-info__social-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Contact Form */
+  .contact-form-wrapper {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .contact-form__title {
+    font-family: var(--font-display), 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 2rem;
+    line-height: 1.2;
+  }
+
+  .contact-form__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-group--full {
+    grid-column: 1 / -1;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .required {
+    color: var(--accent);
+  }
+
+  .optional {
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 300;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .select-wrapper {
+    position: relative;
+  }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--text-secondary);
+    pointer-events: none;
+  }
+
+  .form-select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 3rem;
+  }
+
+  .form-select option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  /* Submit Button */
+  .form-submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.125rem 2.5rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-body), 'Outfit', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.3s ease;
+  }
+
+  .form-submit__text,
+  .form-submit__icon {
+    position: relative;
+    z-index: 1;
+  }
+
+  .form-submit__icon {
+    transition: transform 0.3s ease;
+  }
+
+  .form-submit__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .form-submit:hover {
+    color: var(--bg-primary);
+  }
+
+  .form-submit:hover .form-submit__fill {
+    transform: scaleX(1);
+  }
+
+  .form-submit:hover .form-submit__icon {
+    transform: translateX(4px);
+  }
+
+  .form-submit:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .contact-form-section__container {
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+    }
+
+    .contact-info,
+    .contact-form-wrapper {
+      padding: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-form-section {
+      padding: 3rem 0 4rem;
+    }
+
+    .contact-form-section__container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .contact-info {
+      order: 2;
+    }
+
+    .contact-form-wrapper {
+      order: 1;
+    }
+
+    .contact-form__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-form-section {
+      padding: 2rem 0 3rem;
+    }
+
+    .contact-form-section__container {
+      padding: 0 1rem;
+    }
+
+    .contact-info,
+    .contact-form-wrapper {
+      padding: 1.5rem;
+    }
+
+    .contact-info__title,
+    .contact-form__title {
+      font-size: 1.25rem;
+    }
+  }
+</style>
