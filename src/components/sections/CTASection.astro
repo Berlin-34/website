@@ -1,5 +1,6 @@
 ---
 import Button from '../ui/Button.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 
 interface Props {
   headline?: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const {
-  headline = "Ready to elevate your digital presence?",
+  headline = "Ready to *elevate* your digital presence?",
   description = "Let's discuss how we can help transform your ideas into reality.",
   buttonText = "Start a Project",
   buttonHref = "/contact/"
@@ -19,7 +20,7 @@ const {
 <section class="cta-section">
   <div class="cta-section__container">
     <div class="cta-section__card">
-      <h2 class="cta-section__headline">{headline}</h2>
+      <h2 class="cta-section__headline"><HighlightedText text={headline} /></h2>
       <p class="cta-section__description">{description}</p>
       <Button variant="primary" href={buttonHref}>
         {buttonText}

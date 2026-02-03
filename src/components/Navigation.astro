@@ -5,7 +5,7 @@
  * Includes desktop nav links and mobile hamburger menu with full-screen overlay
  */
 import { Menu, X } from '@lucide/astro';
-import { urlFor } from '../lib/sanity';
+import { urlFor, isSvgAsset, getOriginalAssetUrl } from '../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface Props {
@@ -31,8 +31,12 @@ const navLinks: NavLink[] = [
 
 const currentPath = Astro.url.pathname;
 
-// Get logo URL if logo exists (fetch 2x size for retina displays)
-const logoUrl = logo ? urlFor(logo).height(120).format('webp').url() : null;
+// Get logo URL - preserve SVG format, otherwise convert to webp
+const logoUrl = logo
+  ? isSvgAsset(logo)
+    ? urlFor(logo).url()  // SVG: no transformations, keep original vector
+    : urlFor(logo).height(120).format('webp').url()  // Raster: optimize as webp
+  : null;
 ---
 
 <header

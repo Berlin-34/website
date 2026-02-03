@@ -8,29 +8,12 @@ interface Props {
 const { text, class: className = '', variant = 'default' } = Astro.props;
 ---
 
-<span class:list={['section-label', `section-label--${variant}`, className]}>
-  <span class="section-label__line-start"></span>
+<span
+  class:list={['section-label', className]}
+  style="display:inline-flex;align-items:center;gap:16px;font-family:var(--font-body);font-size:11px;font-weight:400;letter-spacing:4px;text-transform:uppercase;color:var(--accent);"
+>
+  <span style="display:inline-block;width:40px;height:1px;background-color:var(--accent);flex-shrink:0;"></span>
+  {variant === 'default' && <span style="display:inline-block;width:40px;height:1px;background-color:var(--accent);flex-shrink:0;"></span>}
   {text}
-  <span class="section-label__line-end"></span>
+  {variant === 'centered' && <span style="display:inline-block;width:40px;height:1px;background-color:var(--accent);flex-shrink:0;"></span>}
 </span>
-
-<style is:global>
-  .section-label__line-start,
-  .section-label__line-end {
-    display: block;
-    width: 40px;
-    height: 1px;
-    background-color: var(--accent);
-  }
-
-  /* Default: only show start line */
-  .section-label--default .section-label__line-end {
-    display: none;
-  }
-
-  /* Centered: show both lines */
-  .section-label--centered .section-label__line-start,
-  .section-label--centered .section-label__line-end {
-    display: block;
-  }
-</style>

@@ -1,15 +1,14 @@
-# KP INFOTECH Design System
-## Dark Editorial â€” Refined Variation
+# KP Infotech Design System
 
-**Version:** 1.0  
-**Last Updated:** February 2025  
+**Version:** 2.0
+**Last Updated:** February 2025
 **Direction:** Bold, confident, premium, exclusive
 
 ---
 
 ## Brand Positioning
 
-KP Infotech is a **UI/UX design consultancy** (not SaaS) serving startups and businesses seeking premium digital products. The design language should convey mastery, exclusivity, and meticulous craftsmanship â€” like a high-end architecture firm or luxury brand agency.
+KP Infotech is a **Design and Technology studio** serving startups and businesses seeking premium digital products. The design language conveys mastery, exclusivity, and meticulous craftsmanship — like a high-end architecture firm or luxury brand agency.
 
 **Voice:** Confident but not arrogant. Minimal but not cold. Premium but accessible.
 
@@ -66,87 +65,123 @@ KP Infotech is a **UI/UX design consultancy** (not SaaS) serving startups and bu
 --font-body: 'Outfit', sans-serif;
 ```
 
-**Playfair Display** â€” Used for headlines, large display text, numbers in stats. Conveys editorial elegance and premium quality.
+**Playfair Display** — Used for headlines, large display text, numbers in stats. Conveys editorial elegance and premium quality.
 
-**Outfit** â€” Used for body text, navigation, labels, buttons. Clean geometric sans-serif that balances the serif's personality.
+**Outfit** — Used for body text, navigation, labels, buttons. Clean geometric sans-serif that balances the serif's personality.
 
-### Type Scale
+### Type Scale (Standardized)
 
-| Element | Font | Size | Weight | Letter Spacing | Line Height |
-|---------|------|------|--------|----------------|-------------|
-| Hero H1 | Playfair | `clamp(3rem, 8vw, 5.5rem)` | 500 | `-0.02em` | `0.95` |
-| Section H2 | Playfair | `clamp(2.5rem, 5vw, 4rem)` | 500 | `normal` | `1.1` |
-| Card H3 | Playfair | `1.5rem - 2rem` | 400 | `normal` | `1.2` |
-| Body Large | Outfit | `1.125rem - 1.25rem` | 300 | `normal` | `1.6` |
-| Body | Outfit | `1rem` | 300 | `normal` | `1.6` |
-| Label | Outfit | `0.6875rem` | 400 | `0.25em` | `1` |
-| Nav Link | Outfit | `0.75rem` | 400 | `0.125em` | `1` |
-| Button | Outfit | `0.75rem` | 400 | `0.1875em` | `1` |
+| Element | Font | Size | Weight | Line Height |
+|---------|------|------|--------|-------------|
+| Hero H1 | Playfair | `clamp(3rem, 8vw, 5.5rem)` | 500 | `1.1` |
+| Section H2 | Playfair | `clamp(2rem, 5vw, 3rem)` | 500 | `1.1` |
+| Card H3 | Playfair | `1.25rem - 1.5rem` | 500 | `1.2` |
+| Body Large | Outfit | `1.125rem` | 300 | `1.7` |
+| Body | Outfit | `1rem` | 300 | `1.6` |
+| Section Label | Outfit | `0.6875rem (11px)` | 400 | `1` |
+| Nav Link | Outfit | `0.75rem` | 400 | `1` |
+| Button | Outfit | `0.75rem` | 400 | `1` |
 
-### Text Treatments
+### Highlighted Text Pattern
 
-**Section Labels** â€” All caps, letter-spacing `4px`, accent color, preceded by 40px horizontal line
-```css
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 11px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.section-label::before {
-  content: '';
-  width: 40px;
-  height: 1px;
-  background: var(--accent);
-}
+Use `*asterisks*` in content to highlight words in accent color. This creates visual emphasis on key terms.
+
+**In Sanity/Content:**
+```
+We craft *digital experiences* that drive growth
 ```
 
-**Muted Headlines** â€” Secondary headline text uses `--text-secondary` for hierarchy
+**Rendered Output:**
 ```html
-<h2 class="font-display">
-  Services<br>
-  <span class="text-secondary">& Expertise</span>
-</h2>
+We craft <span class="text-accent">digital experiences</span> that drive growth
 ```
+
+**Component:** Use `<HighlightedText text={title} />` from `src/components/ui/HighlightedText.astro`
+
+**Usage Guidelines:**
+- Highlight 1-2 key words per headline (not entire phrases)
+- Use consistently across all section titles
+- Words to highlight: action verbs, key nouns, differentiators
 
 ---
 
-## Spacing System
+## Section Labels
 
-Based on 8px grid with key increments:
+Section labels introduce content sections with uppercase text and decorative lines.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `xs` | `8px` | Tight gaps, inline spacing |
-| `sm` | `12px` | Button gaps, tag padding |
-| `md` | `16px` | Form padding, small margins |
-| `lg` | `24px` | Section label margins, card gaps |
-| `xl` | `32px` | Stat padding, medium sections |
-| `2xl` | `48px` | Section padding (horizontal), nav gaps |
-| `3xl` | `64px` | Large vertical rhythm |
-| `4xl` | `128px` | Section padding (vertical: `py-32`) |
+### Default Variant (Left Line)
+```
+——— SECTION NAME
+```
+Use for: Standard content sections
 
-### Page Margins
+### Centered Variant (Lines on Both Sides)
+```
+——— SECTION NAME ———
+```
+Use for: Hero sections, centered layouts
+
+**Standard Implementation:**
+```astro
+<!-- Default (left line) -->
+<SectionLabel text="What We Do" />
+
+<!-- Centered (lines on both sides) -->
+<SectionLabel text="About Us" variant="centered" />
+```
+
+**Consistency Rule:** Pick ONE variant per page and use it for all sections on that page.
+- Homepage: Default variant
+- About page: Centered variant (for its centered hero layout)
+
+---
+
+## Layout Standards
+
+### Container Max-Widths
+
+| Context | Max-Width | Usage |
+|---------|-----------|-------|
+| Standard sections | `1200px` | Services, Industries, Work grids |
+| Hero sections | `1440px` | Full hero layouts |
+| Centered content | `900px` | CTAs, Testimonials, About hero text |
+| Narrow content | `700px` | Blog post body, focused reading |
+
+### Section Vertical Padding (Standardized)
+
+| Breakpoint | Padding | CSS |
+|------------|---------|-----|
+| Mobile (<480px) | `3rem 0` | `padding: 3rem 0;` |
+| Tablet (480-768px) | `4rem 0` | `padding: 4rem 0;` |
+| Desktop (>768px) | `6rem 0` | `padding: 6rem 0;` |
+
+**Exception:** Hero sections use `min-height: 100vh` instead of fixed padding.
+
+### Section Header Spacing
+
+```css
+.section__header {
+  margin-bottom: 3rem;  /* Mobile/Tablet */
+}
+
+@media (min-width: 768px) {
+  .section__header {
+    margin-bottom: 4rem;  /* Desktop */
+  }
+}
+```
+
+### Horizontal Padding (Container)
 
 ```css
 /* Mobile */
-padding: 0 24px;
+padding: 0 1rem;      /* 16px */
 
 /* Tablet */
-padding: 0 64px; /* md:px-16 */
+padding: 0 1.5rem;    /* 24px */
 
 /* Desktop */
-padding: 0 96px; /* lg:px-24 */
-```
-
-### Max Content Width
-
-```css
-max-width: 1280px; /* max-w-7xl */
-margin: 0 auto;
+padding: 0 1.5rem;    /* Within max-width container */
 ```
 
 ---
@@ -155,7 +190,7 @@ margin: 0 auto;
 
 ### Buttons
 
-**Primary Button** â€” Ghost style with accent border, fills on hover
+**Primary Button** — Ghost style with accent border, fills on hover
 ```css
 .btn-primary {
   display: inline-flex;
@@ -171,58 +206,69 @@ margin: 0 auto;
   text-transform: uppercase;
 }
 
-/* Hover: accent background slides in from left */
 .btn-primary:hover {
   background: var(--accent);
   color: var(--bg-primary);
 }
 ```
 
-**Secondary Button** â€” Solid accent fill
+**Secondary Button** — Solid accent fill
 ```css
 .btn-secondary {
-  /* Same structure, but: */
   background: var(--accent);
   color: var(--bg-primary);
 }
+
+.btn-secondary:hover {
+  background: var(--accent-light);
+}
 ```
 
-**Text Link** â€” Minimal, arrow follows on hover
+**Text Link** — Minimal with arrow, accent on hover
 ```css
 .text-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 13px;
-  letter-spacing: 1px;
 }
+
 .text-link:hover {
   color: var(--accent);
 }
+
 .text-link:hover svg {
   transform: translateX(4px);
 }
 ```
 
-### Cards
+### Cards (Standardized Hover Pattern)
 
-**Service Card**
-- Background: `--bg-secondary`
-- Border: `1px solid var(--border)`
-- Padding: `56px 48px` (desktop), `40px 32px` (mobile)
-- Left accent line appears on hover (3px wide, `--accent`)
-- Large muted number (`01`, `02`) in Playfair, `64px`, `--border-light`
+**All cards use the LEFT BORDER ACCENT pattern:**
 
-**Work/Project Card**
-- Image with reveal animation
-- Gradient overlay on hover (bottom to top)
-- Title in Playfair, year in accent color
-- Tags below in uppercase, bordered pills
+```css
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  border-left-color: var(--accent);
+  transform: translateY(-2px);
+}
+```
+
+**Card Types:**
+- Service cards: Icon + title + description + arrow
+- Work cards: Image + client + title + arrow badge
+- Industry links: Icon + name + arrow
+- Value cards: Number + title + description
 
 ### Form Elements
 
-**Text Input** â€” Underline style
+**Text Input** — Underline style
 ```css
 .form-input {
   width: 100%;
@@ -233,18 +279,24 @@ margin: 0 auto;
   color: var(--text-primary);
   font-size: 16px;
 }
+
 .form-input:focus {
   border-color: var(--accent);
+  outline: none;
 }
 ```
 
-**Textarea** â€” Boxed style
+**Textarea** — Boxed style
 ```css
 .form-textarea {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   padding: 16px;
   min-height: 150px;
+}
+
+.form-textarea:focus {
+  border-color: var(--accent);
 }
 ```
 
@@ -260,6 +312,7 @@ margin: 0 auto;
   border: 1px solid var(--border);
   color: var(--text-secondary);
 }
+
 .tag:hover {
   border-color: var(--accent-dim);
   color: var(--accent);
@@ -269,27 +322,54 @@ margin: 0 auto;
 ### Stats
 
 ```css
-.stat-number {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(48px, 5vw, 64px);
-  font-weight: 400;
+.stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 500;
   color: var(--accent);
   line-height: 1;
 }
+
 .stat-label {
-  font-size: 13px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 300;
   color: var(--text-secondary);
-  margin-top: 12px;
 }
 ```
 
 ---
 
+## CTA Sections
+
+### Standard CTA Pattern
+
+```
+┌─────────────────────────────────────────────┐
+│                                             │
+│     Ready to *elevate* your digital         │
+│            presence?                        │
+│                                             │
+│     Let's discuss how we can help...        │
+│                                             │
+│          [ Start a Project ]                │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+**Specifications:**
+- Container: `max-width: 900px`, centered
+- Card: `--bg-secondary` background, `1px solid var(--accent)` border
+- Padding: `5rem 4rem` desktop, `3rem 2rem` tablet, `2.5rem 1.5rem` mobile
+- Text: Centered
+- Headline: Uses `<HighlightedText>` with one highlighted word
+- Single primary button
+
+---
+
 ## Navigation
 
-**Fixed header** â€” Transparent initially, gains backdrop blur on scroll
+**Fixed header** — Transparent initially, gains backdrop blur on scroll
 
 ```css
 nav {
@@ -306,16 +386,29 @@ nav.scrolled {
 }
 ```
 
-**Nav Links** â€” Underline grows from left on hover
+**Nav Links** — Underline grows from left on hover
 ```css
 .nav-link {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
+  position: relative;
 }
+
 .nav-link::after {
-  /* 1px line, grows width 0 â†’ 100% on hover */
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }
 ```
 
@@ -326,137 +419,64 @@ nav.scrolled {
 ### Core Easing
 
 ```javascript
-// Primary easing â€” smooth, premium feel
+// Primary easing — smooth, premium feel
 'power3.out'      // Most animations
-'power3.inOut'    // Image reveals
 
-// Elastic â€” magnetic button return
+// For image reveals
+'power3.inOut'
+
+// Elastic — magnetic button return
 'elastic.out(1, 0.5)'
-
-// Linear â€” scroll-linked animations
-'none'
 ```
 
 ### Animation Patterns
 
-**Text Reveal** â€” Characters/words slide up from below
+**Fade Up** — Standard entrance for sections
 ```javascript
-// Initial: translateY(100%), rotate(3deg)
-// Final: translateY(0), rotate(0)
-// Stagger: 0.08s between elements
-// Duration: 1s
-```
-
-**Fade Up** â€” Standard entrance for sections
-```javascript
-// Initial: opacity(0), y(60px)
-// Final: opacity(1), y(0)
-// Duration: 0.8s
-// Trigger: element enters 80% of viewport
-```
-
-**Image Reveal** â€” Overlay slides away
-```javascript
-// Overlay scaleX: 1 â†’ 0
-// Transform-origin: right (reveals left to right)
-// Duration: 1.2s
-```
-
-**Counter Animation** â€” Stats count up
-```javascript
-// Duration: 2s
-// Easing: power2.out
-// Snap to integers
-```
-
-**Magnetic Buttons** â€” Follow cursor slightly
-```javascript
-// On mousemove: translate toward cursor by 15%
-// On mouseleave: elastic return to origin
-```
-
-### Scroll Progress
-
-Thin horizontal line at top of viewport, accent gradient, grows with scroll.
-
-### Custom Cursor
-
-- Outer ring: 40px, 1px border, `rgba(201, 168, 124, 0.4)`
-- Inner dot: 6px solid accent, mix-blend-mode difference
-- Ring expands to 60px on interactive element hover
-
----
-
-## Decorative Elements
-
-**Grain Overlay** â€” Subtle texture across entire viewport
-```css
-.grain {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.025;
-  /* SVG noise pattern */
+{
+  initial: { opacity: 0, y: 60 },
+  final: { opacity: 1, y: 0 },
+  duration: 0.8,
+  trigger: '80% viewport'
 }
 ```
 
-**Decorative Circle** â€” Large border-only circle, positioned off-canvas
-```css
-.deco-circle {
-  width: 200px;
-  height: 200px;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  position: absolute;
+**Text Reveal** — Characters/words slide up
+```javascript
+{
+  initial: { translateY: '100%', rotate: 3 },
+  final: { translateY: 0, rotate: 0 },
+  stagger: 0.08,
+  duration: 1
 }
 ```
 
-**Decorative Line** â€” Vertical gradient line
-```css
-.deco-line {
-  width: 1px;
-  height: 120px;
-  background: linear-gradient(to bottom, var(--accent), transparent);
+**Image Reveal** — Overlay slides away
+```javascript
+{
+  overlay: { scaleX: 1 → 0 },
+  transformOrigin: 'right',
+  duration: 1.2
 }
 ```
 
----
-
-## Layout Patterns
-
-### Hero Section
-
-```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚  [Logo]                    Work  Services  About    â”‚
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚                                                     â”‚
-â”‚  â”€â”€ UI/UX Design Consultancy                        â”‚
-â”‚                                                     â”‚
-â”‚  We craft                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
-â”‚  digital                           â”‚             â”‚  â”‚
-â”‚  experiences                       â”‚   [Image]   â”‚  â”‚
-â”‚                                    â”‚             â”‚  â”‚
-â”‚  Transforming ambitious...         â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”‚
-â”‚                                    â””â”€â”€â”‚ 150+  â”‚â”€â”€â”˜  â”‚
-â”‚  [ Start a Project â†’ ]                â””â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚
-â”‚  View our work â†’                                    â”‚
-â”‚                                                     â”‚
-â”‚                    Scroll                           â”‚
-â”‚                      |                              â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+**Counter Animation** — Stats count up
+```javascript
+{
+  duration: 2,
+  easing: 'power2.out',
+  snap: 1  // integers only
+}
 ```
 
-Grid: 12 columns, content spans 7, image spans 5
+### Reduced Motion
 
-### Services Grid
-
-2-column grid, equal width cards, 6px gap
-
-### Work/Portfolio Grid
-
-2-column grid, staggered heights acceptable, larger gaps (8px horizontal, 16px vertical)
+Always respect user preferences:
+```javascript
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // Skip animations, show content immediately
+}
+```
 
 ---
 
@@ -464,90 +484,90 @@ Grid: 12 columns, content spans 7, image spans 5
 
 | Breakpoint | Width | Key Changes |
 |------------|-------|-------------|
-| Mobile | `< 768px` | Stack all grids, reduce padding to 24px, hide hero image, hamburger nav |
-| Tablet | `768px - 1024px` | 2-column grids, 64px padding |
-| Desktop | `> 1024px` | Full layouts, 96px padding, all animations |
+| Mobile | `< 640px` | Single column, 1rem padding, stacked layouts |
+| Tablet | `640px - 1024px` | 2-column grids, 1.5rem padding |
+| Desktop | `> 1024px` | Full layouts, all animations, 3+ column grids |
+
+### Grid Columns by Breakpoint
+
+| Component | Mobile | Tablet | Desktop |
+|-----------|--------|--------|---------|
+| Services Grid | 1 | 2 | 3 |
+| Industries | 1 | 2 | 3 |
+| Work Grid | 1 | 2 | 2 |
+| Stats | 1 | 2 | 4 |
+| Team | 1 | 2 | 3-4 |
 
 ---
 
-## Accessibility Notes
+## Accessibility
 
-- Maintain minimum 4.5:1 contrast for body text
-- `--text-secondary` (#6b6b6b) on `--bg-primary` (#0a0a0a) = ~4.7:1 âœ“
-- `--accent` (#c9a87c) should only be used for non-essential decorative text
-- All interactive elements need visible focus states
-- Reduced motion: disable GSAP animations when `prefers-reduced-motion: reduce`
+### Contrast Requirements
+- Minimum 4.5:1 contrast for body text
+- `--text-secondary` (#6b6b6b) on `--bg-primary` (#0a0a0a) = ~4.7:1 ✓
+- `--accent` (#c9a87c) should only be used for decorative text, not essential information
 
----
-
-## File Naming Conventions
-
-```
-/components
-  /ui
-    Button.astro
-    Card.astro
-    Tag.astro
-    Input.astro
-  /sections
-    Hero.astro
-    Services.astro
-    Work.astro
-    Stats.astro
-    Testimonial.astro
-    Contact.astro
-    Footer.astro
-  /layout
-    Navigation.astro
-    Layout.astro
-
-/styles
-  /base
-    reset.css
-    typography.css
-    variables.css
-  /utilities
-    animations.css
-```
-
----
-
-## Implementation Notes
-
-### For Astro + Headless WordPress
-
-1. **CSS Variables** â€” Define in `global.css`, use throughout components
-2. **Fonts** â€” Self-host via `@fontsource/playfair-display` and `@fontsource/outfit` for performance
-3. **GSAP** â€” Import in client-side scripts, use `client:load` directive on interactive components
-4. **Tailwind** â€” Extend theme with CSS variable references
-5. **WordPress** â€” Restrict Gutenberg to brand colors only via `theme.json`
-
-### Tailwind Config Extension
-
-```javascript
-theme: {
-  extend: {
-    colors: {
-      bg: {
-        primary: 'var(--bg-primary)',
-        secondary: 'var(--bg-secondary)',
-        tertiary: 'var(--bg-tertiary)',
-      },
-      accent: {
-        DEFAULT: 'var(--accent)',
-        light: 'var(--accent-light)',
-        dim: 'var(--accent-dim)',
-      },
-      // ... etc
-    },
-    fontFamily: {
-      display: ['Playfair Display', 'serif'],
-      body: ['Outfit', 'sans-serif'],
-    },
-  },
+### Focus States
+All interactive elements need visible focus states:
+```css
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 ```
 
+### Reduced Motion
+Disable GSAP animations when `prefers-reduced-motion: reduce`
+
 ---
 
-*This document serves as the single source of truth for the KP Infotech redesign. All components and pages should reference these specifications.*
+## File Structure
+
+```
+src/
+├── components/
+│   ├── ui/                    # Reusable UI primitives
+│   │   ├── Button.astro
+│   │   ├── SectionLabel.astro
+│   │   ├── HighlightedText.astro
+│   │   ├── Tag.astro
+│   │   └── Input.astro
+│   ├── cards/                 # Card components
+│   │   ├── ServiceCard.astro
+│   │   ├── WorkCard.astro
+│   │   └── BlogCard.astro
+│   ├── sections/              # Page sections
+│   │   ├── Hero.astro
+│   │   ├── ServicesGrid.astro
+│   │   ├── FeaturedWork.astro
+│   │   ├── Industries.astro
+│   │   ├── StatsSection.astro
+│   │   ├── Testimonials.astro
+│   │   └── CTASection.astro
+│   └── effects/               # GSAP animation wrappers
+│       ├── FadeUp.astro
+│       └── TextReveal.astro
+├── styles/
+│   └── global.css             # CSS variables, base styles
+└── lib/
+    └── utils.ts               # parseHighlightedText(), etc.
+```
+
+---
+
+## Quick Reference Checklist
+
+When creating/editing components, verify:
+
+- [ ] Section padding: `6rem 0` desktop, `4rem 0` tablet, `3rem 0` mobile
+- [ ] Container max-width: `1200px` (standard) or `900px` (centered)
+- [ ] Section title: Uses `<HighlightedText>` with `clamp(2rem, 5vw, 3rem)`
+- [ ] Cards: Left border accent hover pattern (3px)
+- [ ] Fonts: Playfair for headlines, Outfit for body
+- [ ] Colors: Using CSS variables, not hardcoded hex
+- [ ] Focus states: Visible outline on `:focus-visible`
+- [ ] Reduced motion: Animations respect `prefers-reduced-motion`
+
+---
+
+*This document is the single source of truth for the KP Infotech design system. Reference it when creating or modifying any component.*

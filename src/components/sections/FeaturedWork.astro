@@ -1,6 +1,9 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import Button from '../ui/Button.astro';
+import SanityPicture from '../ui/SanityPicture.astro';
+import { urlFor } from '../../lib/sanity';
 
 interface Props {
   caseStudies?: Array<{
@@ -14,25 +17,42 @@ interface Props {
 const { caseStudies = [] } = Astro.props;
 
 const hasCaseStudies = caseStudies.length > 0;
+
+/**
+ * Get image URL from Sanity image source
+ */
+function getImageUrl(image: any): string | null {
+  if (!image) return null;
+  try {
+    return urlFor(image).url();
+  } catch {
+    return null;
+  }
+}
 ---
 
 <section class="featured-work">
   <div class="featured-work__container">
     <header class="featured-work__header">
       <SectionLabel text="Selected Work" />
-      <h2 class="featured-work__title">Featured Projects</h2>
+      <h2 class="featured-work__title"><HighlightedText text="Featured *Projects*" /></h2>
     </header>
 
     {hasCaseStudies ? (
       <!-- Case Studies Grid (when projects exist) -->
       <div class="featured-work__grid">
-        {caseStudies.slice(0, 4).map((caseStudy) => (
+        {caseStudies.slice(0, 4).map((caseStudy) => {
+          const imageUrl = getImageUrl(caseStudy.thumbnailImage);
+          return (
           <a href={`/work/${caseStudy.slug.current}/`} class="work-card">
             <div class="work-card__image-wrapper">
-              {caseStudy.thumbnailImage ? (
-                <img
-                  src={caseStudy.thumbnailImage}
+              {imageUrl ? (
+                <SanityPicture
+                  src={imageUrl}
                   alt={caseStudy.title}
+                  width={600}
+                  height={375}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   class="work-card__image"
                   loading="lazy"
                 />
@@ -50,7 +70,8 @@ const hasCaseStudies = caseStudies.length > 0;
               </svg>
             </span>
           </a>
-        ))}
+        );
+      })}
       </div>
     ) : (
       <!-- Empty State (no projects yet) -->
@@ -141,13 +162,19 @@ const hasCaseStudies = caseStudies.length > 0;
   }
 
   .work-card__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .work-card__image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
   }
 
-  .work-card:hover .work-card__image {
+  .work-card:hover .work-card__image img {
     transform: scale(1.05);
   }
 

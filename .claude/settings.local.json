@@ -13,7 +13,21 @@
       "mcp__plugin_context7_context7__query-docs",
       "Bash(npm uninstall:*)",
       "Bash(timeout 10 npm run dev:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.astro.build)",
+      "Bash(git push)",
+      "Bash(npx vercel env:*)",
+      "Bash(npm search:*)",
+      "WebFetch(domain:www.sanity.io)",
+      "Bash(grep:*)",
+      "Bash(tr:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"\\(Get-Content dist\\\\client\\\\index.html -Raw\\) -match ''section-label.*?</span></span>'' | Out-Null; $matches[0].Substring\\(0, 500\\)\")",
+      "Bash(npm run preview:*)",
+      "Bash(npm run dev:*)",
+      "mcp__plugin_serena_serena__find_symbol"
     ]
-  }
+  },
+  "prefersReducedMotion": true
 }

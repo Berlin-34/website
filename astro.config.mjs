@@ -29,6 +29,15 @@ export default defineConfig({
   site: 'https://kpinfo.tech',
   output: 'static',
   adapter: vercel(),
+  image: {
+    // Allow remote images from Sanity CDN for build-time optimization
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
+    ],
+  },
   integrations: [
     sitemap(),
     react(),

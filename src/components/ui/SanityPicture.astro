@@ -1,0 +1,74 @@
+---
+/**
+ * SanityPicture Component
+ *
+ * Optimizes Sanity images at build time using Astro's built-in image optimization.
+ * Generates AVIF → WebP → JPG fallback chain for maximum browser compatibility.
+ *
+ * Usage:
+ * ```astro
+ * <SanityPicture
+ *   src={urlFor(image).url()}
+ *   alt="Description"
+ *   width={1200}
+ *   height={800}
+ *   sizes="(max-width: 768px) 100vw, 50vw"
+ * />
+ * ```
+ */
+import { Picture } from 'astro:assets';
+
+interface Props {
+  /** Sanity image URL (use urlFor(image).url()) */
+  src: string;
+  /** Alt text for accessibility */
+  alt: string;
+  /** Display width in pixels */
+  width: number;
+  /** Display height in pixels */
+  height: number;
+  /** Responsive sizes attribute */
+  sizes?: string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Loading strategy */
+  loading?: 'lazy' | 'eager';
+  /** Image quality (1-100) */
+  quality?: number;
+  /** Responsive widths for srcset generation */
+  widths?: number[];
+  /** Object fit style */
+  fit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  sizes = '100vw',
+  class: className,
+  loading = 'lazy',
+  quality = 80,
+  widths = [400, 800, 1200, 1600],
+  fit = 'cover',
+} = Astro.props;
+
+// Filter widths to not exceed the base width
+const responsiveWidths = widths.filter(w => w <= width * 2);
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  widths={responsiveWidths}
+  sizes={sizes}
+  formats={['avif', 'webp']}
+  fallbackFormat="jpg"
+  quality={quality}
+  loading={loading}
+  class={className}
+  style={`object-fit: ${fit};`}
+/>

@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import {
@@ -92,7 +93,7 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
   <div class="industries__container">
     <header class="industries__header">
       <SectionLabel text="Our Expertise" />
-      <h2 class="industries__title">Industries We Serve</h2>
+      <h2 class="industries__title"><HighlightedText text="*Industries* We Serve" /></h2>
     </header>
 
     <ul class="industries__list">
@@ -138,7 +139,19 @@ function getLucideIcon(name: string | undefined): typeof Heart | null {
 
 <style>
   .industries {
-    padding: 5rem 0;
+    padding: 6rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .industries {
+      padding: 4rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .industries {
+      padding: 3rem 0;
+    }
   }
 
   .industries__container {

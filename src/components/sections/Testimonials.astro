@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { getPlaceholderImage } from '../../lib/utils';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
@@ -52,7 +53,7 @@ function getAvatarUrl(photo: SanityImageSource | undefined, name: string | null 
   <div class="testimonials__container">
     <header class="testimonials__header">
       <SectionLabel text="What Clients Say" />
-      <h2 class="testimonials__title">Client Testimonials</h2>
+      <h2 class="testimonials__title"><HighlightedText text="Client *Testimonials*" /></h2>
     </header>
 
     {hasTestimonials ? (

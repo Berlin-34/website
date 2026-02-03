@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import {
@@ -88,7 +89,7 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
   <div class="services-grid__container">
     <header class="services-grid__header">
       <SectionLabel text="What We Do" />
-      <h2 class="services-grid__title">Our Services</h2>
+      <h2 class="services-grid__title"><HighlightedText text="Our *Services*" /></h2>
     </header>
 
     <div class="services-grid__cards">

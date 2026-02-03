@@ -1866,8 +1866,8 @@ In Sanity Studio:
    - Contact Phone: "+91 86182 79004"
    - Address: "Ahmedabad, Gujarat, India"
    - Footer Text: "We craft digital experiences that transform ambitious ideas into exceptional products."
-   - Default SEO Title: "KP Infotech — UI/UX Design Consultancy"
-   - Default SEO Description: "Premium UI/UX design consultancy helping startups and businesses create exceptional digital products."
+   - Default SEO Title: "KP Infotech — Design and Technology Studio"
+   - Default SEO Description: "Premium Design and Technology studio helping startups and businesses create exceptional digital products."
 3. Publish
 
 **Step 2: Verify footer updates**

@@ -1,5 +1,6 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
 
 interface Props {
   stats: Array<{
@@ -15,7 +16,7 @@ const { stats } = Astro.props;
   <div class="stats-section__container">
     <header class="stats-section__header">
       <SectionLabel text="By The Numbers" />
-      <h2 class="stats-section__title">Our Impact</h2>
+      <h2 class="stats-section__title"><HighlightedText text="Our *Impact*" /></h2>
     </header>
 
     <div class="stats-section__grid">
@@ -31,7 +32,19 @@ const { stats } = Astro.props;
 
 <style>
   .stats-section {
-    padding: 5rem 0;
+    padding: 6rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .stats-section {
+      padding: 4rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-section {
+      padding: 3rem 0;
+    }
   }
 
   .stats-section__container {

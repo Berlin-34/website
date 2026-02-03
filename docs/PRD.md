@@ -27,7 +27,7 @@
 
 ### Project Overview
 
-Rebuild kpinfo.tech from WordPress + Elementor to Astro + Sanity CMS. Transform brand positioning from "IT solutions provider" to "premium UI/UX design consultancy."
+Rebuild kpinfo.tech from WordPress + Elementor to Astro + Sanity CMS. Transform brand positioning from "IT solutions provider" to "premium Design and Technology studio."
 
 ### Goals
 
@@ -108,7 +108,7 @@ Rebuild kpinfo.tech from WordPress + Elementor to Astro + Sanity CMS. Transform 
 
 **Style:** Dark Editorial (Refined)  
 **Tone:** Bold, confident, premium, exclusive  
-**Position:** UI/UX design consultancy serving startups and businesses
+**Position:** Design and Technology studio serving startups and businesses
 
 ### Color Palette
 

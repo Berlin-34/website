@@ -2,9 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Required Reading Rules
+
+**Before modifying these files, ALWAYS read `docs/context/design-system.md` first:**
+- `src/components/**/*.astro` — All components
+- `src/styles/**/*.css` — All stylesheets
+- `src/pages/**/*.astro` — Page layouts and sections
+
+The design system document contains standardized values for spacing, typography, colors, and component patterns that MUST be followed for consistency.
+
 ## Project Overview
 
-KP Infotech website rebuild: WordPress + Elementor → Astro + Sanity CMS. Premium UI/UX design consultancy positioning with dark editorial design language.
+KP Infotech website rebuild: WordPress + Elementor → Astro + Sanity CMS. Premium Design and Technology studio positioning with dark editorial design language.
 
 **Domain:** kpinfo.tech
 **Target Performance:** 90+ Lighthouse scores, <2.5s LCP
@@ -126,6 +135,39 @@ import { createImageUrlBuilder } from '@sanity/image-url';
 const builder = createImageUrlBuilder(client);
 // For retina: fetch 2-3x size, display smaller via CSS
 const imageUrl = builder.image(source).height(120).format('webp').url();
+```
+
+## Image Optimization
+
+**Strategy:** Build-time optimization via Astro (free) instead of Vercel Image Optimization (paid per request)
+
+### SanityPicture Component
+Always use `<SanityPicture>` for Sanity images (not raw `<img>`):
+```astro
+import SanityPicture from '@/components/ui/SanityPicture.astro';
+import { urlFor } from '@/lib/sanity';
+
+<SanityPicture
+  src={urlFor(image).url()}
+  alt="Description"
+  width={1200}
+  height={800}
+  sizes="(max-width: 768px) 100vw, 50vw"
+/>
+```
+
+**Output:** AVIF → WebP → JPG fallback chain, responsive srcset, build-time optimized
+
+### SVG Handling
+- **SVGs:** Use `urlFor(image).url()` without `.format()` to preserve vector
+- **Raster:** Use `urlFor(image).format('webp').url()` or `<SanityPicture>`
+- Helper: `isSvgAsset(image)` checks if asset is SVG
+
+### CSS for Picture Elements
+When using `<SanityPicture>`, target the `img` inside:
+```css
+.my-image { display: block; width: 100%; }
+.my-image img { object-fit: cover; }
 ```
 
 ### Highlighted Text

@@ -17,7 +17,7 @@ const siteSettings = await client.fetch(siteSettingsQuery);
 
 const {
   title = siteSettings?.siteName || 'KP Infotech',
-  description = siteSettings?.defaultSeoDescription || 'Premium UI/UX design consultancy crafting digital experiences that elevate brands and drive measurable business growth.',
+  description = siteSettings?.defaultSeoDescription || 'Premium Design and Technology studio crafting digital experiences that elevate brands and drive measurable business growth.',
   ogImage = '/og-image.jpg',
   canonicalURL = Astro.url.href,
 } = Astro.props;
