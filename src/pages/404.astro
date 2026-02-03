@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+>
+  <section class="error-page">
+    <!-- Decorative Lines -->
+    <div class="decorative-line line-left" aria-hidden="true"></div>
+    <div class="decorative-line line-right" aria-hidden="true"></div>
+
+    <div class="error-page__content">
+      <!-- Large Background 404 -->
+      <span class="error-page__404" aria-hidden="true">404</span>
+
+      <!-- Main Content -->
+      <h1 class="error-page__headline">Lost in the digital void</h1>
+      <p class="error-page__description">
+        <em>Looks like this page took a different path. Let's get you back on track.</em>
+      </p>
+
+      <a href="/" class="error-page__cta">
+        <span class="cta__text">Return Home</span>
+        <svg class="cta__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+        <span class="cta__fill"></span>
+      </a>
+
+      <!-- Navigation Hints -->
+      <nav class="error-page__nav" aria-label="Quick navigation">
+        <a href="/" class="nav-hint">Home</a>
+        <a href="/work/" class="nav-hint">Work</a>
+        <a href="/services/" class="nav-hint">Services</a>
+        <a href="/contact/" class="nav-hint">Contact</a>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .error-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 6rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative vertical lines */
+  .decorative-line {
+    position: absolute;
+    width: 1px;
+    height: 120px;
+    background: var(--border-light);
+  }
+
+  .line-left {
+    left: 15%;
+    top: 20%;
+  }
+
+  .line-right {
+    right: 15%;
+    bottom: 20%;
+  }
+
+  .error-page__content {
+    position: relative;
+    max-width: 600px;
+  }
+
+  /* Large background 404 */
+  .error-page__404 {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(6rem, 20vw, 12rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-muted);
+    opacity: 0.25;
+    margin-bottom: -1.5rem;
+    user-select: none;
+  }
+
+  /* Headline */
+  .error-page__headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+    line-height: 1.2;
+  }
+
+  /* Description with italic styling */
+  .error-page__description {
+    font-family: var(--font-body);
+    font-size: clamp(0.9375rem, 2vw, 1.0625rem);
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .error-page__description em {
+    font-style: italic;
+  }
+
+  /* CTA Button with arrow - primary ghost style matching Button component */
+  .error-page__cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.1875em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.3s ease;
+  }
+
+  .cta__text,
+  .cta__arrow {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta__arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .cta__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: 0;
+  }
+
+  .error-page__cta:hover {
+    color: var(--bg-primary);
+  }
+
+  .error-page__cta:hover .cta__fill {
+    transform: scaleX(1);
+  }
+
+  .error-page__cta:hover .cta__arrow {
+    transform: translateX(4px);
+  }
+
+  .error-page__cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Navigation hints */
+  .error-page__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .nav-hint {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .nav-hint::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .nav-hint:hover {
+    color: var(--accent);
+  }
+
+  .nav-hint:hover::after {
+    width: 100%;
+  }
+
+  .nav-hint:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .error-page {
+      padding: 4rem 1rem;
+    }
+
+    .decorative-line {
+      display: none;
+    }
+
+    .error-page__nav {
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .error-page__404 {
+      margin-bottom: -1rem;
+    }
+
+    .error-page__nav {
+      gap: 0.75rem 1.25rem;
+    }
+  }
+</style>
