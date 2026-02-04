@@ -31,6 +31,7 @@ KP Infotech is a **Design and Technology studio** serving startups and businesse
 | `--text-primary` | `#ffffff` | Headlines, primary content |
 | `--text-secondary` | `#6b6b6b` | Body text, descriptions |
 | `--text-muted` | `#3a3a3a` | Subtle labels, decorative numbers |
+| `--text-on-image` | `rgba(255,255,255,0.7)` | Body text on image backgrounds (hero, overlays) |
 
 ### Accent Colors (Warm Gold)
 

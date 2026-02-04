@@ -21,6 +21,7 @@
   --color-text-primary: #ffffff;
   --color-text-secondary: #6b6b6b;
   --color-text-muted: #3a3a3a;
+  --color-text-on-image: rgba(255, 255, 255, 0.7);
 
   /* Colors - Accent (Warm Gold) */
   --color-accent: #c9a87c;
@@ -48,6 +49,7 @@
   --text-primary: #ffffff;
   --text-secondary: #6b6b6b;
   --text-muted: #3a3a3a;
+  --text-on-image: rgba(255, 255, 255, 0.7);
   --accent: #c9a87c;
   --accent-light: #e4d4bc;
   --accent-dim: #8b7355;
