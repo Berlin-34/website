@@ -33,7 +33,7 @@ export const homepageDataQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   },
@@ -70,7 +70,7 @@ export const allServicesQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   }
@@ -81,7 +81,7 @@ export const serviceBySlugQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     fullDescription,
     iconName,
     "iconCustom": coalesce(iconCustom, icon),
@@ -106,7 +106,7 @@ export const featuredServicesQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   }
@@ -120,7 +120,7 @@ export const allIndustriesQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   }
@@ -131,7 +131,7 @@ export const industryBySlugQuery = `
     _id,
     title,
     slug,
-    shortDescription,
+    tagline,
     fullDescription,
     iconName,
     "iconCustom": coalesce(iconCustom, icon),
@@ -151,7 +151,7 @@ export const industryBySlugQuery = `
       _id,
       title,
       slug,
-      shortDescription
+      tagline
     }
   }
 `;
@@ -404,7 +404,7 @@ export const activeJobListingsQuery = `
     location,
     employmentType,
     experienceLevel,
-    shortDescription
+    tagline
   }
 `;
 
@@ -417,7 +417,7 @@ export const jobListingBySlugQuery = `
     location,
     employmentType,
     experienceLevel,
-    shortDescription,
+    tagline,
     fullDescription,
     responsibilities,
     requirements,

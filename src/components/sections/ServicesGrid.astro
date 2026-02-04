@@ -3,85 +3,30 @@ import SectionLabel from '../ui/SectionLabel.astro';
 import HighlightedText from '../ui/HighlightedText.astro';
 import { urlFor } from '../../lib/sanity';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import {
-  PenTool,
-  Code,
-  Smartphone,
-  Layers,
-  BarChart3,
-  Globe,
-  Megaphone,
-  Database,
-  Server,
-  Palette,
-  Layout,
-  Monitor,
-  Cpu,
-  Cloud,
-  ShoppingCart,
-  Cog,
-  MoveRight,
-} from '@lucide/astro';
+import { MoveRight } from '@lucide/astro';
 
 interface Props {
   services: Array<{
     title: string;
     slug: { current: string };
-    shortDescription: string;
-    iconName?: string;
+    tagline?: string;
     iconCustom?: SanityImageSource;
   }>;
 }
 
 const { services } = Astro.props;
 
-// Map of Lucide icon names to components
-const lucideIcons: Record<string, typeof PenTool> = {
-  'pen-tool': PenTool,
-  'code': Code,
-  'smartphone': Smartphone,
-  'layers': Layers,
-  'bar-chart-3': BarChart3,
-  'globe': Globe,
-  'megaphone': Megaphone,
-  'database': Database,
-  'server': Server,
-  'palette': Palette,
-  'layout': Layout,
-  'monitor': Monitor,
-  'cpu': Cpu,
-  'cloud': Cloud,
-  'shopping-cart': ShoppingCart,
-  'cog': Cog,
-};
-
 /**
- * Gets the first letter of the service title as a placeholder
- */
-function getInitial(title: string | null | undefined): string {
-  if (!title) return '?';
-  return title.charAt(0).toUpperCase();
-}
-
-/**
- * Get custom icon URL from Sanity image
+ * Get custom icon URL from Sanity image (larger size for new design)
  */
 function getCustomIconUrl(icon: SanityImageSource | undefined): string | null {
   if (!icon) return null;
   try {
-    return urlFor(icon).width(150).height(150).format('webp').url();
+    // Larger size for the new card design - transparent PNG
+    return urlFor(icon).width(300).height(300).url();
   } catch {
     return null;
   }
-}
-
-/**
- * Get Lucide icon component by name
- */
-function getLucideIcon(name: string | undefined): typeof PenTool | null {
-  if (!name) return null;
-  const normalized = name.toLowerCase().trim();
-  return lucideIcons[normalized] || null;
 }
 ---
 
@@ -95,36 +40,39 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
     <div class="services-grid__cards">
       {services.map((service) => {
         const customIconUrl = getCustomIconUrl(service.iconCustom);
-        const LucideIcon = getLucideIcon(service.iconName);
         return (
           <a
             href={`/services/${service.slug.current}/`}
             class="service-card"
           >
-            <span class="service-card__icon" aria-hidden="true">
+            <div class="service-card__content">
+              <h3 class="service-card__title">
+                {service.title}
+              </h3>
+              {service.tagline && (
+                <p class="service-card__tagline">
+                  {service.tagline}
+                </p>
+              )}
+              <span class="service-card__arrow" aria-hidden="true">
+                <MoveRight size={20} />
+              </span>
+            </div>
+
+            <div class="service-card__visual">
               {customIconUrl ? (
                 <img
                   src={customIconUrl}
                   alt=""
-                  width="44"
-                  height="44"
+                  class="service-card__icon"
                   loading="lazy"
                 />
-              ) : LucideIcon ? (
-                <LucideIcon size={40} />
               ) : (
-                getInitial(service.title)
+                <span class="service-card__placeholder" aria-hidden="true">
+                  {service.title.charAt(0).toUpperCase()}
+                </span>
               )}
-            </span>
-            <h3 class="service-card__title">
-              {service.title}
-            </h3>
-            <p class="service-card__description">
-              {service.shortDescription}
-            </p>
-            <span class="service-card__arrow" aria-hidden="true">
-              <MoveRight size={20} />
-            </span>
+            </div>
           </a>
         );
       })}
@@ -162,13 +110,14 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
     gap: 1.5rem;
   }
 
-  /* Service Card */
+  /* Service Card - New horizontal split layout */
   .service-card {
-    display: block;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border);
     border-left: 3px solid transparent;
+    overflow: hidden;
     transition: border-color 0.3s ease, transform 0.3s ease;
   }
 
@@ -182,47 +131,27 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
     outline-offset: 2px;
   }
 
-  .service-card__icon {
+  /* Left side - Text content */
+  .service-card__content {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    width: 4.5rem;
-    height: 4.5rem;
-    margin-bottom: 1.5rem;
-    border-radius: 50%;
-    border: 1px solid var(--border-light);
-    background-color: var(--bg-primary);
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    transition: border-color 0.3s ease, transform 0.3s ease;
-    overflow: hidden;
-  }
-
-  .service-card:hover .service-card__icon {
-    border-color: var(--accent);
-    transform: scale(1.1);
-  }
-
-  .service-card__icon img {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
+    padding: 2rem;
+    order: 1;
   }
 
   .service-card__title {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-weight: 500;
     color: var(--text-primary);
     margin: 0 0 0.75rem 0;
     line-height: 1.2;
   }
 
-  .service-card__description {
+  .service-card__tagline {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 300;
     color: var(--text-secondary);
     margin: 0;
@@ -232,29 +161,132 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
   .service-card__arrow {
     display: flex;
     align-items: center;
-    margin-top: 1.5rem;
-    opacity: 0;
-    transform: translateX(-8px);
+    margin-top: 1.25rem;
     color: var(--accent);
+    opacity: 0.6;
+    transform: translateX(0);
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   .service-card:hover .service-card__arrow {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(4px);
   }
 
-  /* Tablet: 2 columns */
+  /* Right side - Visual/Icon */
+  .service-card__visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    order: 2;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 168, 124, 0.03) 0%,
+      transparent 50%
+    );
+  }
+
+  .service-card__icon {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+
+  .service-card:hover .service-card__icon {
+    transform: scale(1.05);
+  }
+
+  .service-card__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-primary);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--accent);
+    transition: border-color 0.3s ease;
+  }
+
+  .service-card:hover .service-card__placeholder {
+    border-color: var(--accent);
+  }
+
+  /* Tablet: Horizontal layout */
   @media (min-width: 640px) {
     .services-grid__cards {
       grid-template-columns: repeat(2, 1fr);
     }
+
+    .service-card {
+      flex-direction: row;
+      min-height: 200px;
+    }
+
+    .service-card__content {
+      flex: 1;
+      order: 1;
+      padding: 1.75rem;
+    }
+
+    .service-card__visual {
+      flex: 0 0 40%;
+      order: 2;
+      padding: 1.5rem;
+    }
+
+    .service-card__icon {
+      max-width: 140px;
+    }
   }
 
-  /* Desktop: 3 columns */
+  /* Desktop: 2 columns, larger cards */
   @media (min-width: 1024px) {
     .services-grid__cards {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .service-card {
+      min-height: 220px;
+    }
+
+    .service-card__content {
+      padding: 2rem;
+    }
+
+    .service-card__title {
+      font-size: 1.5rem;
+    }
+
+    .service-card__tagline {
+      font-size: 1rem;
+    }
+
+    .service-card__visual {
+      flex: 0 0 45%;
+    }
+
+    .service-card__icon {
+      max-width: 160px;
+    }
+  }
+
+  /* Large Desktop */
+  @media (min-width: 1280px) {
+    .service-card__content {
+      padding: 2.5rem;
+    }
+
+    .service-card__icon {
+      max-width: 180px;
     }
   }
 
@@ -262,7 +294,8 @@ function getLucideIcon(name: string | undefined): typeof PenTool | null {
   @media (prefers-reduced-motion: reduce) {
     .service-card,
     .service-card__icon,
-    .service-card__arrow {
+    .service-card__arrow,
+    .service-card__placeholder {
       transition: none;
     }
   }
