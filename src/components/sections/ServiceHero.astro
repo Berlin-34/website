@@ -1,7 +1,6 @@
 ---
 import PageHero from './PageHero.astro';
 import SectionLabel from '../ui/SectionLabel.astro';
-import HighlightedText from '../ui/HighlightedText.astro';
 import Button from '../ui/Button.astro';
 
 interface Props {
@@ -26,9 +25,7 @@ const description = excerpt || tagline;
 
   <SectionLabel text="Service" />
 
-  <h1>
-    <HighlightedText text={`*${title}*`} />
-  </h1>
+  <h1>{title}</h1>
 
   {description && (
     <p class="page-hero__description">{description}</p>
