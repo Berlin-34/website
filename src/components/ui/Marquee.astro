@@ -1,0 +1,107 @@
+---
+interface Props {
+  items: string[];
+  separator?: string;
+  speed?: number;
+  class?: string;
+}
+
+const {
+  items,
+  separator = '\u2022',
+  speed = 30,
+  class: className,
+} = Astro.props;
+---
+
+{items && items.length > 0 && (
+  <div
+    class:list={['marquee', className]}
+    style={`--marquee-speed: ${speed}s;`}
+    aria-label={items.join(', ')}
+  >
+    <div class="marquee__track">
+      <div class="marquee__group">
+        {items.map((item) => (
+          <Fragment>
+            <span class="marquee__item">{item}</span>
+            <span class="marquee__separator" aria-hidden="true">{separator}</span>
+          </Fragment>
+        ))}
+      </div>
+      <div class="marquee__group" aria-hidden="true">
+        {items.map((item) => (
+          <Fragment>
+            <span class="marquee__item">{item}</span>
+            <span class="marquee__separator" aria-hidden="true">{separator}</span>
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .marquee {
+    --marquee-gap: 2rem;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+  }
+
+  .marquee__track {
+    display: flex;
+    animation: marquee-scroll var(--marquee-speed, 30s) linear infinite;
+  }
+
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: var(--marquee-gap);
+    padding-right: var(--marquee-gap);
+  }
+
+  .marquee__item {
+    white-space: nowrap;
+    cursor: default;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .marquee__separator {
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+    }
+  }
+</style>

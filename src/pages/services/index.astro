@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import SectionLabel from '../../components/ui/SectionLabel.astro';
+import HighlightedText from '../../components/ui/HighlightedText.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { MoveRight } from '@lucide/astro';
+import { client } from '../../lib/sanity';
+import { allServicesQuery } from '../../lib/queries';
+
+// Fetch services from Sanity
+const services = await client.fetch<Array<{
+  _id: string;
+  title: string;
+  slug: { current: string };
+  tagline?: string;
+  iconName?: string;
+}>>(allServicesQuery);
+---
+
+<BaseLayout
+  title="Services"
+  description="Explore our comprehensive range of digital services including UI/UX design, web development, mobile apps, ERP solutions, and digital marketing."
+>
+  <!-- Hero Section -->
+  <PageHero variant="inner">
+    <SectionLabel text="Services" />
+    <h1>
+      <HighlightedText text="What We *Do*" />
+    </h1>
+    <p class="page-hero__description">
+      We offer end-to-end digital solutions, from initial concept and design
+      through development and launch. Each service is tailored to your unique needs.
+    </p>
+  </PageHero>
+
+  <!-- Services List -->
+  <section class="services-list">
+    <div class="services-list__container">
+      {services.map((service, index) => (
+        <a href={`/services/${service.slug.current}/`} class="service-item">
+          <div class="service-item__number">
+            {String(index + 1).padStart(2, '0')}
+          </div>
+          <div class="service-item__content">
+            <h2 class="service-item__title">{service.title}</h2>
+            {service.tagline && (
+              <p class="service-item__tagline">{service.tagline}</p>
+            )}
+          </div>
+          <div class="service-item__arrow">
+            <MoveRight size={24} />
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <CTASection
+    headline="Not sure what you *need*?"
+    description="Let's talk about your project. We'll help you identify the right solution for your goals."
+    buttonText="Get in Touch"
+    buttonHref="/contact/"
+  />
+</BaseLayout>
+
+<style>
+  /* ============================================
+     SERVICES LIST
+     ============================================ */
+  .services-list {
+    padding: 0 0 6rem;
+    background: var(--bg-primary);
+  }
+
+  .services-list__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .service-item {
+    display: grid;
+    grid-template-columns: 60px 1fr 40px;
+    gap: 2rem;
+    align-items: center;
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+
+  .service-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .service-item:hover {
+    background: var(--bg-secondary);
+    margin: 0 -1.5rem;
+    padding: 3rem 1.5rem;
+  }
+
+  .service-item:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .service-item__number {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .service-item__content {
+    min-width: 0;
+  }
+
+  .service-item__title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+  }
+
+  .service-item:hover .service-item__title {
+    color: var(--accent);
+  }
+
+  .service-item__tagline {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .service-item__arrow {
+    color: var(--text-muted);
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .service-item:hover .service-item__arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 768px) {
+    .services-list {
+      padding: 0 0 4rem;
+    }
+
+    .service-item {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding: 2rem 0;
+    }
+
+    .service-item:hover {
+      margin: 0 -1rem;
+      padding: 2rem 1rem;
+    }
+
+    .service-item__number {
+      font-size: 0.875rem;
+    }
+
+    .service-item__title {
+      font-size: 1.5rem;
+    }
+
+    .service-item__arrow {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .service-item {
+      padding: 1.5rem 0;
+    }
+
+    .service-item:hover {
+      padding: 1.5rem 1rem;
+    }
+  }
+</style>

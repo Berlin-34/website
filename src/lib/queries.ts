@@ -82,22 +82,30 @@ export const serviceBySlugQuery = `
     title,
     slug,
     tagline,
-    fullDescription,
+    excerpt,
     iconName,
     "iconCustom": coalesce(iconCustom, icon),
     heroImage,
-    features,
+    contentHeading,
+    content,
+    processHeading,
     process,
-    deliverables,
+    techHeading,
+    technologies,
+    faqHeading,
     faqs,
-    seo,
-    "relatedWork": *[_type == "caseStudy" && references(^._id)] | order(_createdAt desc)[0...3] {
+    workHeading,
+    relatedWork[]->{
       _id,
       title,
       slug,
+      client,
       thumbnailImage,
-      client
-    }
+      excerpt
+    },
+    seoTitle,
+    seoDescription,
+    order
   }
 `;
 

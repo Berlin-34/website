@@ -1,0 +1,360 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+import Button from '../ui/Button.astro';
+import SanityPicture from '../ui/SanityPicture.astro';
+import { urlFor } from '../../lib/sanity';
+
+interface CaseStudy {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  client?: string;
+  thumbnailImage?: any;
+  excerpt?: string;
+}
+
+interface Props {
+  heading?: string;
+  projects?: CaseStudy[];
+}
+
+const {
+  heading = 'Featured *Projects*',
+  projects: rawProjects,
+} = Astro.props;
+
+// Filter out null references (unresolved Sanity refs)
+const projects = (rawProjects || []).filter((p): p is CaseStudy => p != null && p.title != null);
+const featured = projects[0] || null;
+const rest = projects.slice(1, 3);
+
+function getImageUrl(image: any): string | null {
+  if (!image) return null;
+  try {
+    return urlFor(image).width(1200).format('webp').url();
+  } catch {
+    return null;
+  }
+}
+---
+
+{projects && projects.length > 0 && (
+  <section class="service-work">
+    <div class="service-work__container">
+      <div class="service-work__header">
+        <div>
+          <SectionLabel text="Related Work" />
+          <h2 class="service-work__title">
+            <HighlightedText text={heading} />
+          </h2>
+        </div>
+        <Button variant="text" href="/work/">
+          View All Work
+        </Button>
+      </div>
+
+      <div class="service-work__grid">
+        {/* Featured hero card */}
+        {featured && (
+          <a
+            href={`/work/${featured.slug.current}/`}
+            class="work-card work-card--featured"
+          >
+            <div class="work-card__image">
+              {getImageUrl(featured.thumbnailImage) ? (
+                <SanityPicture
+                  src={getImageUrl(featured.thumbnailImage)!}
+                  alt={featured.title}
+                  width={800}
+                  height={500}
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                />
+              ) : (
+                <div class="work-card__placeholder">Featured Project</div>
+              )}
+            </div>
+            <div class="work-card__content">
+              {featured.client && (
+                <span class="work-card__client">{featured.client}</span>
+              )}
+              <h3 class="work-card__title">{featured.title}</h3>
+              {featured.excerpt && (
+                <p class="work-card__excerpt">{featured.excerpt}</p>
+              )}
+              <span class="work-card__link">View Project &rarr;</span>
+            </div>
+          </a>
+        )}
+
+        {/* Smaller cards below */}
+        {rest.map((project) => (
+          <a
+            href={`/work/${project.slug.current}/`}
+            class="work-card work-card--small"
+          >
+            <div class="work-card__image">
+              {getImageUrl(project.thumbnailImage) ? (
+                <SanityPicture
+                  src={getImageUrl(project.thumbnailImage)!}
+                  alt={project.title}
+                  width={600}
+                  height={400}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div class="work-card__placeholder">Project Image</div>
+              )}
+            </div>
+            <div class="work-card__content">
+              {project.client && (
+                <span class="work-card__client">{project.client}</span>
+              )}
+              <h3 class="work-card__title">{project.title}</h3>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .service-work {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .service-work__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .service-work__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+
+  .service-work__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+  }
+
+  /* Grid: featured full-width, then 2 columns below */
+  .service-work__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  /* Featured card spans full width, split layout */
+  .work-card--featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .work-card--featured:hover {
+    border-left-color: var(--accent);
+  }
+
+  .work-card--featured:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .work-card--featured .work-card__image {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+  }
+
+  .work-card--featured .work-card__image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .work-card--featured:hover .work-card__image :global(img) {
+    transform: scale(1.03);
+  }
+
+  .work-card--featured .work-card__content {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .work-card--featured .work-card__title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .work-card--featured .work-card__excerpt {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Small cards */
+  .work-card--small {
+    display: block;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .work-card--small:hover {
+    border-left-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  .work-card--small:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .work-card--small .work-card__image {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+  }
+
+  .work-card--small .work-card__image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .work-card--small:hover .work-card__image :global(img) {
+    transform: scale(1.05);
+  }
+
+  .work-card--small .work-card__content {
+    padding: 1.5rem;
+  }
+
+  /* Shared card elements */
+  .work-card__client {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .work-card__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .work-card__link {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    transition: color 0.2s;
+  }
+
+  .work-card--featured:hover .work-card__link {
+    color: var(--accent-light);
+  }
+
+  /* Placeholder */
+  .work-card__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .work-card--featured {
+      grid-template-columns: 1fr;
+    }
+
+    .work-card--featured .work-card__content {
+      padding: 2rem;
+    }
+
+    .work-card--featured .work-card__title {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .service-work {
+      padding: 4rem 0;
+    }
+
+    .service-work__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .service-work__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .service-work {
+      padding: 3rem 0;
+    }
+
+    .work-card--featured .work-card__content {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .work-card--featured .work-card__image :global(img),
+    .work-card--small .work-card__image :global(img),
+    .work-card--small,
+    .work-card--featured {
+      transition: none;
+    }
+  }
+</style>

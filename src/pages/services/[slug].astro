@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceHero from '../../components/sections/ServiceHero.astro';
+import ServiceContent from '../../components/sections/ServiceContent.astro';
+import ServiceProcess from '../../components/sections/ServiceProcess.astro';
+import ServiceTechMarquee from '../../components/sections/ServiceTechMarquee.astro';
+import ServiceWork from '../../components/sections/ServiceWork.astro';
+import ServiceFAQ from '../../components/sections/ServiceFAQ.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { allServicesQuery, serviceBySlugQuery } from '../../lib/queries';
+
+export async function getStaticPaths() {
+  const services = await client.fetch<Array<{ slug: { current: string } }>>(allServicesQuery);
+
+  return services.map((service) => ({
+    params: { slug: service.slug.current },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const service = await client.fetch(serviceBySlugQuery, { slug });
+
+if (!service) {
+  return Astro.redirect('/404');
+}
+
+// Build hero image URL
+let heroImageUrl: string | undefined;
+if (service.heroImage) {
+  try {
+    heroImageUrl = urlFor(service.heroImage).width(1920).format('webp').url();
+  } catch {
+    // No hero image available
+  }
+}
+
+const seoTitle = service.seoTitle || service.title;
+const seoDescription = service.seoDescription || service.excerpt || service.tagline;
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+>
+  <ServiceHero
+    title={service.title}
+    tagline={service.tagline}
+    excerpt={service.excerpt}
+    heroImageUrl={heroImageUrl}
+  />
+
+  <ServiceContent
+    heading={service.contentHeading}
+    content={service.content}
+  />
+
+  <ServiceProcess
+    heading={service.processHeading}
+    steps={service.process}
+  />
+
+  <ServiceTechMarquee
+    heading={service.techHeading}
+    technologies={service.technologies}
+  />
+
+  <ServiceWork
+    heading={service.workHeading}
+    projects={service.relatedWork}
+  />
+
+  <ServiceFAQ
+    heading={service.faqHeading}
+    faqs={service.faqs}
+  />
+
+  <CTASection
+    headline="Ready to discuss your *project*?"
+    description="Let's explore how we can help bring your vision to life."
+    buttonText="Start a Conversation"
+    buttonHref="/contact/"
+  />
+</BaseLayout>

@@ -26,7 +26,10 @@
       "Bash(powershell -Command \"\\(Get-Content dist\\\\client\\\\index.html -Raw\\) -match ''section-label.*?</span></span>'' | Out-Null; $matches[0].Substring\\(0, 500\\)\")",
       "Bash(npm run preview:*)",
       "Bash(npm run dev:*)",
-      "mcp__plugin_serena_serena__find_symbol"
+      "mcp__plugin_serena_serena__find_symbol",
+      "Bash(npm audit:*)",
+      "Bash(npm view:*)",
+      "Bash(npx astro check:*)"
     ]
   },
   "prefersReducedMotion": true

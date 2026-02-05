@@ -1,0 +1,76 @@
+---
+import PageHero from './PageHero.astro';
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+import Button from '../ui/Button.astro';
+
+interface Props {
+  title: string;
+  tagline?: string;
+  excerpt?: string;
+  heroImageUrl?: string;
+}
+
+const { title, tagline, excerpt, heroImageUrl } = Astro.props;
+const description = excerpt || tagline;
+---
+
+<PageHero image={heroImageUrl} variant="inner">
+  <nav class="service-hero__breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="service-hero__sep">/</span>
+    <a href="/services/">Services</a>
+    <span class="service-hero__sep">/</span>
+    <span class="service-hero__current">{title}</span>
+  </nav>
+
+  <SectionLabel text="Service" />
+
+  <h1>
+    <HighlightedText text={`*${title}*`} />
+  </h1>
+
+  {description && (
+    <p class="page-hero__description">{description}</p>
+  )}
+
+  <div class="page-hero__actions">
+    <Button href="/contact/" variant="primary">Discuss Your Project</Button>
+    <Button href="/services/" variant="text">All Services</Button>
+  </div>
+</PageHero>
+
+<style>
+  .service-hero__breadcrumb {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .service-hero__breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .service-hero__breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .service-hero__sep {
+    margin: 0 8px;
+    color: var(--text-muted);
+  }
+
+  .service-hero__current {
+    color: var(--accent);
+  }
+
+  @media (max-width: 480px) {
+    .service-hero__breadcrumb {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,203 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+
+interface ProcessStep {
+  stepNumber: number;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  heading?: string;
+  steps?: ProcessStep[];
+}
+
+const {
+  heading = 'How We *Work*',
+  steps = [],
+} = Astro.props;
+---
+
+{steps && steps.length > 0 && (
+  <section class="service-process">
+    <div class="service-process__container">
+      <div class="service-process__header">
+        <SectionLabel text="Our Process" />
+        <h2 class="service-process__title">
+          <HighlightedText text={heading} />
+        </h2>
+      </div>
+
+      <div class="service-process__timeline">
+        {steps.map((step) => (
+          <div class="process-step">
+            <div class="process-step__marker">
+              <span class="process-step__dot" />
+            </div>
+            <div class="process-step__content">
+              <span class="process-step__phase">
+                Phase {String(step.stepNumber).padStart(2, '0')}
+              </span>
+              <h3 class="process-step__title">{step.title}</h3>
+              <p class="process-step__desc">{step.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .service-process {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .service-process__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .service-process__header {
+    margin-bottom: 4rem;
+  }
+
+  .service-process__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+  }
+
+  /* Timeline */
+  .service-process__timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  /* Vertical connecting line */
+  .service-process__timeline::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      var(--accent),
+      var(--accent-dim) 50%,
+      var(--border) 100%
+    );
+  }
+
+  /* Step */
+  .process-step {
+    position: relative;
+    padding: 0 0 3rem 2rem;
+  }
+
+  .process-step:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Dot marker */
+  .process-step__marker {
+    position: absolute;
+    left: -40px;
+    top: 6px;
+  }
+
+  .process-step__dot {
+    display: block;
+    width: 9px;
+    height: 9px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 4px var(--bg-primary),
+      0 0 0 5px var(--accent-dim);
+  }
+
+  /* Phase label */
+  .process-step__phase {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .process-step__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .process-step__desc {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 550px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .service-process {
+      padding: 4rem 0;
+    }
+
+    .service-process__header {
+      margin-bottom: 3rem;
+    }
+
+    .service-process__timeline {
+      padding-left: 32px;
+    }
+
+    .service-process__timeline::before {
+      left: 4px;
+    }
+
+    .process-step__marker {
+      left: -32px;
+    }
+
+    .process-step {
+      padding-left: 1.5rem;
+      padding-bottom: 2.5rem;
+    }
+
+    .process-step__title {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .service-process {
+      padding: 3rem 0;
+    }
+
+    .process-step {
+      padding-bottom: 2rem;
+    }
+
+    .process-step__desc {
+      font-size: 0.9375rem;
+    }
+  }
+</style>
