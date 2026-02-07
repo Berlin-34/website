@@ -1,0 +1,273 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+
+interface SolutionItem {
+  title: string;
+  description?: string;
+}
+
+interface Props {
+  heading?: string;
+  statement?: string;
+  solutions?: SolutionItem[];
+}
+
+const {
+  heading = 'Our *Solutions*',
+  statement,
+  solutions: rawSolutions,
+} = Astro.props;
+
+// Filter valid solutions and take first 4 only
+const solutions = (rawSolutions || [])
+  .filter((s): s is SolutionItem => s != null && s.title != null)
+  .slice(0, 4);
+
+// Split into left (items 0,2) and right (items 1,3)
+const leftSolutions = solutions.filter((_, i) => i % 2 === 0);
+const rightSolutions = solutions.filter((_, i) => i % 2 !== 0);
+---
+
+{solutions.length > 0 && (
+  <section class="orbit">
+    <div class="orbit__container">
+      <div class="orbit__head">
+        <SectionLabel text="Solutions" />
+        <h2 class="orbit__title"><HighlightedText text={heading} /></h2>
+      </div>
+
+      <div class="orbit-grid">
+        {/* Left column — items 1 & 3 */}
+        <div class="orbit-col orbit-col--left">
+          {leftSolutions.map((solution, i) => (
+            <div class="orbit-card">
+              <span class="orbit-tag">
+                {String(i * 2 + 1).padStart(2, '0')}
+              </span>
+              <h3 class="orbit-card__title">{solution.title}</h3>
+              {solution.description && (
+                <p class="orbit-card__desc">{solution.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Center — concentric circles + statement */}
+        <div class="orbit-center">
+          <div class="orbit-rings" aria-hidden="true">
+            <span class="orbit-ring orbit-ring--inner"></span>
+            <span class="orbit-ring orbit-ring--outer"></span>
+          </div>
+          {statement && (
+            <p class="orbit-statement">
+              <HighlightedText text={statement} />
+            </p>
+          )}
+        </div>
+
+        {/* Right column — items 2 & 4 */}
+        <div class="orbit-col orbit-col--right">
+          {rightSolutions.map((solution, i) => (
+            <div class="orbit-card">
+              <span class="orbit-tag">
+                {String(i * 2 + 2).padStart(2, '0')}
+              </span>
+              <h3 class="orbit-card__title">{solution.title}</h3>
+              {solution.description && (
+                <p class="orbit-card__desc">{solution.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .orbit {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .orbit__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .orbit__head {
+    margin-bottom: 4rem;
+  }
+
+  .orbit__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+  }
+
+  /* ---- 3-column orbit grid ---- */
+  .orbit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  /* Solution columns */
+  .orbit-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ---- Center: rings + statement ---- */
+  .orbit-center {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 340px;
+    padding: 3rem 2rem;
+  }
+
+  /* Ring container */
+  .orbit-rings {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .orbit-ring--inner {
+    width: 220px;
+    height: 220px;
+    border: 1px solid var(--border);
+  }
+
+  .orbit-ring--outer {
+    width: 320px;
+    height: 320px;
+    border: 1px dashed rgba(201, 168, 124, 0.12);
+  }
+
+  .orbit-statement {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 280px;
+  }
+
+  /* ---- Solution cards ---- */
+  .orbit-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    transition: all 0.3s ease;
+  }
+
+  .orbit-card:hover {
+    border-color: var(--accent-dim);
+    background: var(--bg-hover, #161616);
+    transform: translateY(-4px);
+  }
+
+  .orbit-tag {
+    font-family: var(--font-body);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-dim);
+    margin-bottom: 0.75rem;
+    display: block;
+    transition: color 0.3s ease;
+  }
+
+  .orbit-card:hover .orbit-tag {
+    color: var(--accent);
+  }
+
+  .orbit-card__title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .orbit-card__desc {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1024px) {
+    .orbit-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    /* On mobile: statement first, then cards */
+    .orbit-center {
+      order: -1;
+      min-height: auto;
+      padding: 2rem;
+    }
+
+    .orbit-rings {
+      display: none;
+    }
+
+    .orbit-statement {
+      max-width: 100%;
+      font-size: 1.25rem;
+      text-align: left;
+    }
+
+    .orbit-col {
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .orbit {
+      padding: 4rem 0;
+    }
+
+    .orbit__head {
+      margin-bottom: 3rem;
+    }
+
+    .orbit-card {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-card {
+      transition: none;
+    }
+  }
+</style>

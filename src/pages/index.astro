@@ -7,7 +7,7 @@ import { homepageDataQuery } from '../lib/queries';
 import Hero from '../components/sections/Hero.astro';
 import ServicesMarquee from '../components/sections/ServicesMarquee.astro';
 import FeaturedWork from '../components/sections/FeaturedWork.astro';
-import ServicesGrid from '../components/sections/ServicesGrid.astro';
+import RelatedServicesGrid from '../components/sections/RelatedServicesGrid.astro';
 import StatsSection from '../components/sections/StatsSection.astro';
 import Industries from '../components/sections/Industries.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
@@ -56,7 +56,7 @@ const heroDescription = "We craft premium digital experiences for startups and b
 
   <!-- Services Grid -->
   {services && services.length > 0 && (
-    <ServicesGrid services={services} />
+    <RelatedServicesGrid services={services} />
   )}
 
   <!-- Stats Section -->

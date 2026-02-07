@@ -1,0 +1,298 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+
+interface ChallengeItem {
+  title: string;
+  description?: string;
+}
+
+interface Props {
+  heading?: string;
+  quote?: string;
+  challenges?: ChallengeItem[];
+}
+
+const {
+  heading = 'Industry *Challenges*',
+  quote,
+  challenges: rawChallenges,
+} = Astro.props;
+
+const challenges = (rawChallenges || []).filter((c): c is ChallengeItem => c != null && c.title != null);
+---
+
+{challenges.length > 0 && (
+  <section class="tension">
+    <div class="tension__container">
+      <div class="tension__head">
+        <SectionLabel text="Challenges" />
+        <h2 class="tension__title"><HighlightedText text={heading} /></h2>
+      </div>
+
+      <div class="tension-layout">
+        {/* Left: atmospheric quote panel */}
+        <div class="tension-left">
+          {quote && (
+            <div class="big-quote">
+              {quote}
+            </div>
+          )}
+          <span class="ghost-text" aria-hidden="true">CHALLENGE</span>
+        </div>
+
+        {/* Right: stacked challenge blocks with pulse dots */}
+        <div class="tension-right">
+          {challenges.map((challenge) => (
+            <div class="tension-block">
+              <span class="pulse" aria-hidden="true"></span>
+              <div class="tension-block__content">
+                <h3 class="tension-block__title">{challenge.title}</h3>
+                {challenge.description && (
+                  <p class="tension-block__desc">{challenge.description}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .tension {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .tension__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .tension__head {
+    margin-bottom: 4rem;
+  }
+
+  .tension__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+  }
+
+  /* Split layout: equal halves */
+  .tension-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 500px;
+  }
+
+  /* ---- Left: quote panel ---- */
+  .tension-left {
+    position: relative;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3rem;
+    overflow: hidden;
+  }
+
+  /* Dashed accent line on right edge */
+  .tension-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--accent-dim) 0,
+      var(--accent-dim) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+
+  .big-quote {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.4;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+  }
+
+  .big-quote::before {
+    content: '\201C';
+    display: block;
+    font-family: var(--font-display);
+    font-size: 5rem;
+    color: var(--accent-dim);
+    line-height: 0.5;
+    margin-bottom: 1rem;
+    font-style: normal;
+  }
+
+  .ghost-text {
+    position: absolute;
+    bottom: -20px;
+    right: 20px;
+    font-family: var(--font-display);
+    font-size: 8rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.015);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ---- Right: challenge blocks ---- */
+  .tension-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tension-block {
+    flex: 1;
+    padding: 2rem 2.5rem;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    transition: background 0.3s ease, border-left-color 0.3s ease;
+  }
+
+  .tension-block:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tension-block:hover {
+    background: var(--bg-secondary);
+    border-left-color: var(--accent);
+  }
+
+  /* Pulse dot */
+  .pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    flex-shrink: 0;
+    margin-top: 6px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .tension-block:hover .pulse {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(201, 168, 124, 0.4);
+  }
+
+  .pulse::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--accent-dim);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .tension-block:hover .pulse::after {
+    opacity: 0.4;
+  }
+
+  .tension-block__title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .tension-block__desc {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .tension-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .tension-left {
+      border-right: 1px solid var(--border);
+      border-bottom: none;
+      padding: 3rem 2rem;
+    }
+
+    .tension-left::before {
+      display: none;
+    }
+
+    .ghost-text {
+      font-size: 5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tension {
+      padding: 4rem 0;
+    }
+
+    .tension__head {
+      margin-bottom: 3rem;
+    }
+
+    .tension-left {
+      padding: 2rem 1.5rem;
+    }
+
+    .tension-block {
+      padding: 1.5rem;
+      gap: 1rem;
+    }
+
+    .big-quote {
+      font-size: 1.25rem;
+    }
+
+    .big-quote::before {
+      font-size: 3.5rem;
+    }
+
+    .ghost-text {
+      font-size: 3.5rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .tension-block,
+    .pulse {
+      transition: none;
+    }
+  }
+</style>
