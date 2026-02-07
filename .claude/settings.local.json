@@ -29,7 +29,13 @@
       "mcp__plugin_serena_serena__find_symbol",
       "Bash(npm audit:*)",
       "Bash(npm view:*)",
-      "Bash(npx astro check:*)"
+      "Bash(npx astro check:*)",
+      "Bash(dir:*)",
+      "mcp__Sanity__get_schema",
+      "mcp__Sanity__query_documents",
+      "mcp__Sanity__patch_document_from_json",
+      "mcp__Sanity__patch_document_from_markdown",
+      "Bash(start \"\" \"C:\\\\Users\\\\user\\\\Desktop\\\\Poojan\\\\KP Infotech\\\\website\\\\services-accordion-image-playground.html\")"
     ]
   },
   "prefersReducedMotion": true

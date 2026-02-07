@@ -71,6 +71,9 @@ export const allServicesQuery = `
     title,
     slug,
     tagline,
+    excerpt,
+    technologies,
+    heroImage,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   }

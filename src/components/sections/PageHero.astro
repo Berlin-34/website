@@ -8,17 +8,19 @@ interface Props {
   image?: string | ImageMetadata;
   imageAlt?: string;
   variant?: 'default' | 'inner';
+  /** View Transition name for the background image */
+  imageTransitionName?: string;
   class?: string;
 }
 
-const { image, imageAlt = '', variant = 'default', class: className } = Astro.props;
+const { image, imageAlt = '', variant = 'default', imageTransitionName, class: className } = Astro.props;
 
 // Always show a background — use placeholder when no image provided
 const resolvedImage = image || heroPlaceholder;
 ---
 
 <section class:list={['page-hero', 'page-hero--has-image', { 'page-hero--inner': variant === 'inner' }, className]}>
-  <div class="page-hero__bg">
+  <div class="page-hero__bg" style={imageTransitionName ? `view-transition-name: ${imageTransitionName}` : undefined}>
     <Picture
       src={resolvedImage}
       alt={imageAlt}
@@ -85,6 +87,15 @@ const resolvedImage = image || heroPlaceholder;
     z-index: 1;
   }
 
+  /* Inner pages: directional gradient — heavy left, transparent right */
+  .page-hero--inner .page-hero__bg::after {
+    background: linear-gradient(
+      to right,
+      rgba(10, 10, 10, 0.95) 40%,
+      rgba(10, 10, 10, 0.4) 100%
+    );
+  }
+
   /* --- Content layer --- */
   .page-hero__container {
     position: relative;
@@ -136,10 +147,11 @@ const resolvedImage = image || heroPlaceholder;
      RESPONSIVE
      ============================================ */
 
-  /* Mobile: stronger overlay for readability */
+  /* Mobile: uniform overlay for readability (no gradient) */
   @media (max-width: 767px) {
-    .page-hero__bg::after {
-      background: rgba(10, 10, 10, 0.7);
+    .page-hero__bg::after,
+    .page-hero--inner .page-hero__bg::after {
+      background: rgba(10, 10, 10, 0.8);
     }
 
     .page-hero__content {

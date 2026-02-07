@@ -4,8 +4,8 @@ import PageHero from '../../components/sections/PageHero.astro';
 import SectionLabel from '../../components/ui/SectionLabel.astro';
 import HighlightedText from '../../components/ui/HighlightedText.astro';
 import CTASection from '../../components/sections/CTASection.astro';
-import { MoveRight } from '@lucide/astro';
-import { client } from '../../lib/sanity';
+import { ChevronDown, MoveRight } from '@lucide/astro';
+import { client, urlFor } from '../../lib/sanity';
 import { allServicesQuery } from '../../lib/queries';
 
 // Fetch services from Sanity
@@ -14,8 +14,25 @@ const services = await client.fetch<Array<{
   title: string;
   slug: { current: string };
   tagline?: string;
-  iconName?: string;
+  excerpt?: string;
+  technologies?: string[];
+  heroImage?: any;
 }>>(allServicesQuery);
+
+// Build image URLs for each service
+const servicesWithImages = services.map((service) => {
+  let heroUrl: string | undefined;
+  let thumbUrl: string | undefined;
+  if (service.heroImage) {
+    try {
+      heroUrl = urlFor(service.heroImage).width(1920).format('webp').url();
+      thumbUrl = urlFor(service.heroImage).width(480).height(270).format('webp').url();
+    } catch {
+      // No image
+    }
+  }
+  return { ...service, heroUrl, thumbUrl };
+});
 ---
 
 <BaseLayout
@@ -34,24 +51,89 @@ const services = await client.fetch<Array<{
     </p>
   </PageHero>
 
-  <!-- Services List -->
-  <section class="services-list">
-    <div class="services-list__container">
-      {services.map((service, index) => (
-        <a href={`/services/${service.slug.current}/`} class="service-item">
-          <div class="service-item__number">
-            {String(index + 1).padStart(2, '0')}
-          </div>
-          <div class="service-item__content">
-            <h2 class="service-item__title">{service.title}</h2>
+  <!-- Services Accordion -->
+  <section class="services-accordion">
+    <div class="services-accordion__container">
+      {servicesWithImages.map((service, index) => (
+        <div class="accordion-item" data-accordion-item>
+          {/* Full-bleed background image (atmospheric) */}
+          {service.heroUrl && (
+            <div class="accordion-item__bg" aria-hidden="true">
+              <img
+                src={service.heroUrl}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="accordion-item__bg-overlay" />
+            </div>
+          )}
+
+          <button
+            class="accordion-item__header"
+            type="button"
+            aria-expanded="false"
+            aria-controls={`accordion-panel-${index}`}
+          >
+            <span class="accordion-item__number">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span
+              class="accordion-item__title"
+              style={`view-transition-name: service-title-${service.slug.current}`}
+            >
+              {service.title}
+            </span>
             {service.tagline && (
-              <p class="service-item__tagline">{service.tagline}</p>
+              <span class="accordion-item__tagline">{service.tagline}</span>
             )}
+            <span class="accordion-item__icon">
+              <ChevronDown size={20} />
+            </span>
+          </button>
+
+          <div
+            class="accordion-item__panel"
+            id={`accordion-panel-${index}`}
+            role="region"
+            hidden
+          >
+            <div class="accordion-item__body">
+              <div class="accordion-item__details">
+                <div class="accordion-item__content">
+                  {service.excerpt && (
+                    <p class="accordion-item__description">{service.excerpt}</p>
+                  )}
+                  <a href={`/services/${service.slug.current}/`} class="accordion-item__link">
+                    <span>View Service</span>
+                    <MoveRight size={16} />
+                  </a>
+                </div>
+                {service.technologies && service.technologies.length > 0 && (
+                  <div class="accordion-item__tags">
+                    {service.technologies.map((tech: string) => (
+                      <span class="accordion-tag">{tech}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Framed thumbnail — View Transition source */}
+              {service.thumbUrl && (
+                <div class="accordion-item__image-frame">
+                  <img
+                    src={service.thumbUrl}
+                    alt={`${service.title} preview`}
+                    width="480"
+                    height="270"
+                    loading="lazy"
+                    decoding="async"
+                    style={`view-transition-name: service-hero-${service.slug.current}`}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <div class="service-item__arrow">
-            <MoveRight size={24} />
-          </div>
-        </a>
+        </div>
       ))}
     </div>
   </section>
@@ -67,127 +149,427 @@ const services = await client.fetch<Array<{
 
 <style>
   /* ============================================
-     SERVICES LIST
+     SERVICES ACCORDION
      ============================================ */
-  .services-list {
+  .services-accordion {
     padding: 0 0 6rem;
     background: var(--bg-primary);
   }
 
-  .services-list__container {
+  .services-accordion__container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
   }
 
-  .service-item {
-    display: grid;
-    grid-template-columns: 60px 1fr 40px;
-    gap: 2rem;
-    align-items: center;
-    padding: 3rem 0;
+  /* ============================================
+     ACCORDION ITEM
+     ============================================ */
+  .accordion-item {
+    position: relative;
     border-bottom: 1px solid var(--border);
-    text-decoration: none;
-    transition: background 0.3s ease;
+    overflow: hidden;
   }
 
-  .service-item:first-child {
+  .accordion-item:first-child {
     border-top: 1px solid var(--border);
   }
 
-  .service-item:hover {
-    background: var(--bg-secondary);
-    margin: 0 -1.5rem;
-    padding: 3rem 1.5rem;
+  /* ============================================
+     ATMOSPHERIC BACKGROUND IMAGE
+     ============================================ */
+  .accordion-item__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
   }
 
-  .service-item:focus-visible {
+  .accordion-item__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Left-to-right gradient overlay: solid at left, transparent at right */
+  .accordion-item__bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      var(--bg-primary) 40%,
+      transparent 100%
+    );
+  }
+
+  /* Hover: subtle reveal */
+  .accordion-item:hover .accordion-item__bg {
+    opacity: 0.15;
+  }
+
+  /* Open: slightly more visible */
+  .accordion-item[data-open] .accordion-item__bg {
+    opacity: 0.2;
+  }
+
+  /* ============================================
+     HEADER (trigger button)
+     ============================================ */
+  .accordion-item__header {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 48px 1fr auto 32px;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    padding: 2.25rem 0;
+    padding-left: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: padding-left 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .accordion-item__header:hover {
+    padding-left: 1rem;
+  }
+
+  .accordion-item__header:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
-  .service-item__number {
+  /* ---- Number ---- */
+  .accordion-item__number {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--text-muted);
-  }
-
-  .service-item__content {
-    min-width: 0;
-  }
-
-  .service-item__title {
-    font-family: var(--font-display);
-    font-size: 1.75rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
     transition: color 0.3s ease;
   }
 
-  .service-item:hover .service-item__title {
+  .accordion-item__header:hover .accordion-item__number {
+    color: var(--accent-dim);
+  }
+
+  /* ---- Title ---- */
+  .accordion-item__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+  }
+
+  .accordion-item__header:hover .accordion-item__title {
     color: var(--accent);
   }
 
-  .service-item__tagline {
+  .accordion-item[data-open] .accordion-item__title {
+    color: var(--accent);
+  }
+
+  /* ---- Tagline ---- */
+  .accordion-item__tagline {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .accordion-item__tagline {
+      display: block;
+    }
+  }
+
+  /* ---- Chevron icon ---- */
+  .accordion-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                color 0.3s ease;
+  }
+
+  .accordion-item__header:hover .accordion-item__icon {
+    color: var(--accent);
+  }
+
+  .accordion-item[data-open] .accordion-item__icon {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  /* ============================================
+     ACCORDION PANEL (expandable content)
+     ============================================ */
+  .accordion-item__panel {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.35s ease;
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .accordion-item__panel[hidden] {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .accordion-item[data-open] .accordion-item__panel {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ---- Body layout: details left, image right ---- */
+  .accordion-item__body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 0 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .accordion-item__body {
+      grid-template-columns: 1fr 320px;
+      gap: 2.5rem;
+      padding-left: calc(48px + 1.5rem); /* align with title */
+      padding-right: 10px; /* align image right edge with chevron icon */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .accordion-item__body {
+      grid-template-columns: 1fr 400px;
+    }
+  }
+
+  /* ---- Framed thumbnail (View Transition source) ---- */
+  .accordion-item__image-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+  }
+
+  .accordion-item__image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .accordion-item__image-frame:hover img {
+    transform: scale(1.03);
+  }
+
+  /* ---- Details: description + tags ---- */
+  .accordion-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .accordion-item__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .accordion-item__description {
     font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 300;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
-  .service-item__arrow {
-    color: var(--text-muted);
-    transition: color 0.3s ease, transform 0.3s ease;
+  /* ---- View Service link ---- */
+  .accordion-item__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease, gap 0.3s ease;
   }
 
-  .service-item:hover .service-item__arrow {
+  .accordion-item__link:hover {
     color: var(--accent);
-    transform: translateX(4px);
+    gap: 0.75rem;
+  }
+
+  .accordion-item__link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---- Tags ---- */
+  .accordion-item__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-content: flex-start;
+  }
+
+  .accordion-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .accordion-item[data-open] .accordion-tag:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
   }
 
   /* ============================================
      RESPONSIVE
      ============================================ */
   @media (max-width: 768px) {
-    .services-list {
+    .services-accordion {
       padding: 0 0 4rem;
     }
 
-    .service-item {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      padding: 2rem 0;
+    .accordion-item__header {
+      grid-template-columns: 36px 1fr 28px;
+      gap: 1rem;
+      padding: 1.75rem 0;
     }
 
-    .service-item:hover {
-      margin: 0 -1rem;
-      padding: 2rem 1rem;
+    .accordion-item__header:hover {
+      padding-left: 0.5rem;
     }
 
-    .service-item__number {
-      font-size: 0.875rem;
+    .accordion-item__body {
+      padding-left: calc(36px + 1rem);
     }
 
-    .service-item__title {
-      font-size: 1.5rem;
-    }
-
-    .service-item__arrow {
+    /* Hide atmospheric bg on mobile for performance */
+    .accordion-item__bg {
       display: none;
     }
   }
 
   @media (max-width: 480px) {
-    .service-item {
+    .services-accordion {
+      padding: 0 0 3rem;
+    }
+
+    .services-accordion__container {
+      padding: 0 1rem;
+    }
+
+    .accordion-item__header {
+      grid-template-columns: 1fr 28px;
+      gap: 0.75rem;
       padding: 1.5rem 0;
     }
 
-    .service-item:hover {
-      padding: 1.5rem 1rem;
+    .accordion-item__number {
+      display: none;
     }
+
+    .accordion-item__title {
+      font-size: 1.25rem;
+    }
+
+    .accordion-item__body {
+      padding-left: 0;
+    }
+
   }
 </style>
+
+<script>
+  function initAccordion() {
+    const items = document.querySelectorAll<HTMLElement>('[data-accordion-item]');
+
+    items.forEach((item) => {
+      const header = item.querySelector<HTMLButtonElement>('.accordion-item__header');
+      const panel = item.querySelector<HTMLElement>('.accordion-item__panel');
+
+      if (!header || !panel) return;
+
+      header.addEventListener('click', () => {
+        const isOpen = item.hasAttribute('data-open');
+
+        // Close all other items
+        items.forEach((otherItem) => {
+          if (otherItem !== item && otherItem.hasAttribute('data-open')) {
+            closeItem(otherItem);
+          }
+        });
+
+        // Toggle current
+        if (isOpen) {
+          closeItem(item);
+        } else {
+          openItem(item);
+        }
+      });
+    });
+  }
+
+  function openItem(item: HTMLElement) {
+    const header = item.querySelector<HTMLButtonElement>('.accordion-item__header');
+    const panel = item.querySelector<HTMLElement>('.accordion-item__panel');
+    if (!header || !panel) return;
+
+    item.setAttribute('data-open', '');
+    header.setAttribute('aria-expanded', 'true');
+    panel.removeAttribute('hidden');
+
+    // Animate open
+    const scrollHeight = panel.scrollHeight;
+    panel.style.maxHeight = scrollHeight + 'px';
+  }
+
+  function closeItem(item: HTMLElement) {
+    const header = item.querySelector<HTMLButtonElement>('.accordion-item__header');
+    const panel = item.querySelector<HTMLElement>('.accordion-item__panel');
+    if (!header || !panel) return;
+
+    item.removeAttribute('data-open');
+    header.setAttribute('aria-expanded', 'false');
+    panel.style.maxHeight = '0';
+
+    // Wait for animation to finish before hiding
+    panel.addEventListener('transitionend', function handler() {
+      if (!item.hasAttribute('data-open')) {
+        panel.setAttribute('hidden', '');
+      }
+      panel.removeEventListener('transitionend', handler);
+    });
+  }
+
+  // Init on page load and view transitions
+  initAccordion();
+  document.addEventListener('astro:after-swap', initAccordion);
+</script>

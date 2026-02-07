@@ -8,13 +8,14 @@ interface Props {
   tagline?: string;
   excerpt?: string;
   heroImageUrl?: string;
+  slug?: string;
 }
 
-const { title, tagline, excerpt, heroImageUrl } = Astro.props;
+const { title, tagline, excerpt, heroImageUrl, slug } = Astro.props;
 const description = excerpt || tagline;
 ---
 
-<PageHero image={heroImageUrl} variant="inner">
+<PageHero image={heroImageUrl} variant="inner" imageTransitionName={slug ? `service-hero-${slug}` : undefined}>
   <nav class="service-hero__breadcrumb" aria-label="Breadcrumb">
     <a href="/">Home</a>
     <span class="service-hero__sep">/</span>
@@ -25,7 +26,7 @@ const description = excerpt || tagline;
 
   <SectionLabel text="Service" />
 
-  <h1>{title}</h1>
+  <h1 style={slug ? `view-transition-name: service-title-${slug}` : undefined}>{title}</h1>
 
   {description && (
     <p class="page-hero__description">{description}</p>
