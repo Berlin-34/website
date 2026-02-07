@@ -19,9 +19,8 @@
 
   /* Colors - Text */
   --color-text-primary: #ffffff;
-  --color-text-secondary: #6b6b6b;
+  --color-text-secondary: rgba(255, 255, 255, 0.5);
   --color-text-muted: #3a3a3a;
-  --color-text-on-image: rgba(255, 255, 255, 0.7);
 
   /* Colors - Accent (Warm Gold) */
   --color-accent: #c9a87c;
@@ -47,9 +46,8 @@
   --bg-secondary: #0f0f0f;
   --bg-tertiary: #161616;
   --text-primary: #ffffff;
-  --text-secondary: #6b6b6b;
+  --text-secondary: rgba(255, 255, 255, 0.5);
   --text-muted: #3a3a3a;
-  --text-on-image: rgba(255, 255, 255, 0.7);
   --accent: #c9a87c;
   --accent-light: #e4d4bc;
   --accent-dim: #8b7355;
