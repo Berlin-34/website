@@ -1,5 +1,7 @@
 ---
 import { Linkedin, Twitter, Instagram, Dribbble } from '@lucide/astro';
+import { urlFor, isSvgAsset } from '../lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface SocialLinks {
   linkedin?: string;
@@ -10,6 +12,7 @@ interface SocialLinks {
 
 interface Props {
   siteName?: string;
+  logo?: SanityImageSource;
   footerText?: string;
   contactEmail?: string;
   contactPhone?: string;
@@ -19,12 +22,20 @@ interface Props {
 
 const {
   siteName = 'KP Infotech',
+  logo,
   footerText = 'Crafting digital experiences that elevate brands and drive measurable business growth.',
   contactEmail = 'hello@kpinfo.tech',
   contactPhone,
   address = 'Ahmedabad, India',
   socialLinks = {},
 } = Astro.props;
+
+// Get logo URL - same logic as Navigation
+const logoUrl = logo
+  ? isSvgAsset(logo)
+    ? urlFor(logo).url()
+    : urlFor(logo).height(120).format('webp').url()
+  : null;
 
 const currentYear = new Date().getFullYear();
 
@@ -58,10 +69,18 @@ const socials = [
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
       <!-- Column 1: Logo + Tagline + Social -->
       <div class="lg:col-span-1">
-        <a href="/" class="inline-block mb-6">
-          <span class="font-playfair text-2xl font-medium text-[var(--text-primary)]">
-            {siteName}
-          </span>
+        <a href="/" class="inline-block mb-6" aria-label={`${siteName} - Home`}>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={siteName}
+              class="footer-logo"
+            />
+          ) : (
+            <span class="font-playfair text-2xl font-medium text-[var(--text-primary)]">
+              {siteName}
+            </span>
+          )}
         </a>
         <p class="text-[var(--text-secondary)] text-sm leading-relaxed mb-8 max-w-xs">
           {footerText}
@@ -172,6 +191,11 @@ const socials = [
 </footer>
 
 <style>
+  .footer-logo {
+    height: 40px;
+    width: auto;
+  }
+
   .footer-label {
     font-size: 11px;
     font-weight: 500;
