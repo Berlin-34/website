@@ -15,7 +15,7 @@ export const jobListing = defineType({
     }),
     defineField({ name: 'location', type: 'string', title: 'Location' }),
     defineField({ name: 'department', type: 'string', title: 'Department' }),
-    defineField({ name: 'description', type: 'array', title: 'Description', of: [{ type: 'block' }] }),
+    defineField({ name: 'description', type: 'array', title: 'Description', of: [{ type: 'richText' }] }),
     defineField({ name: 'requirements', type: 'array', title: 'Requirements', of: [{ type: 'string' }] }),
     defineField({ name: 'applicationUrl', type: 'url', title: 'Application URL' }),
     defineField({ name: 'active', type: 'boolean', title: 'Active', initialValue: true }),

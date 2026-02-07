@@ -13,7 +13,7 @@ export const blogPost = defineType({
     defineField({ name: 'featuredImage', type: 'image', title: 'Featured Image', options: { hotspot: true } }),
     defineField({ name: 'excerpt', type: 'text', title: 'Excerpt', rows: 3 }),
     defineField({ name: 'content', type: 'array', title: 'Content', of: [
-      { type: 'block' },
+      { type: 'richText' },
       { type: 'image', options: { hotspot: true } },
       { type: 'code' },
     ] }),

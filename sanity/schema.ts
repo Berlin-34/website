@@ -17,6 +17,7 @@ import { faqItem } from './schemas/objects/faqItem';
 import { resultMetric } from './schemas/objects/resultMetric';
 import { statItem } from './schemas/objects/statItem';
 import { code } from './schemas/objects/code';
+import { richText } from './schemas/objects/richText';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -36,5 +37,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     resultMetric,
     statItem,
     code,
+    richText,
   ],
 };

@@ -1,0 +1,32 @@
+---
+import SanityPicture from './SanityPicture.astro';
+import { urlFor } from '../../lib/sanity';
+
+const { node } = Astro.props;
+
+// Build URL from Sanity image asset
+let imageUrl: string | undefined;
+try {
+  imageUrl = urlFor(node).url();
+} catch {
+  // Skip if image can't be resolved
+}
+---
+
+{imageUrl && (
+  <figure class="portable-text-image">
+    <SanityPicture
+      src={imageUrl}
+      alt={node.alt || ''}
+      width={1200}
+      height={800}
+      sizes="(max-width: 800px) 100vw, 800px"
+      widths={[400, 800, 1200]}
+      loading="lazy"
+      quality={85}
+    />
+    {node.caption && (
+      <figcaption>{node.caption}</figcaption>
+    )}
+  </figure>
+)}

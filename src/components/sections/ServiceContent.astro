@@ -1,6 +1,8 @@
 ---
 import SectionLabel from '../ui/SectionLabel.astro';
 import HighlightedText from '../ui/HighlightedText.astro';
+import PortableTextImage from '../ui/PortableTextImage.astro';
+import PortableTextHighlight from '../ui/PortableTextHighlight.astro';
 import { PortableText } from 'astro-portabletext';
 
 interface Props {
@@ -12,6 +14,15 @@ const {
   heading = 'What We *Do*',
   content = [],
 } = Astro.props;
+
+const components = {
+  type: {
+    image: PortableTextImage,
+  },
+  mark: {
+    highlight: PortableTextHighlight,
+  },
+};
 ---
 
 {content && content.length > 0 && (
@@ -22,7 +33,7 @@ const {
         <HighlightedText text={heading} />
       </h2>
       <div class="service-content__body">
-        <PortableText value={content} />
+        <PortableText value={content} components={components} />
       </div>
     </div>
   </section>
@@ -82,14 +93,42 @@ const {
     color: var(--accent-light);
   }
 
-  .service-content__body :global(ul),
+  .service-content__body :global(ul) {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+    list-style: none;
+  }
+
   .service-content__body :global(ol) {
     margin: 1.5rem 0;
     padding-left: 1.5rem;
+    list-style: decimal;
+    color: var(--accent);
+  }
+
+  .service-content__body :global(ol > li) {
+    padding-left: 0.5rem;
+    color: var(--text-secondary);
   }
 
   .service-content__body :global(li) {
     margin-bottom: 0.5rem;
+  }
+
+  .service-content__body :global(ul > li) {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+
+  .service-content__body :global(ul > li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
   }
 
   .service-content__body :global(h2),
@@ -109,9 +148,21 @@ const {
     font-size: 1.375rem;
   }
 
-  .service-content__body :global(img) {
+  .service-content__body :global(.portable-text-image) {
+    margin: 2.5rem 0;
+  }
+
+  .service-content__body :global(.portable-text-image img) {
     width: 100%;
-    margin: 2rem 0;
+    height: auto;
+    border: 1px solid var(--border-light);
+  }
+
+  .service-content__body :global(.portable-text-image figcaption) {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    font-style: italic;
   }
 
   /* Responsive */

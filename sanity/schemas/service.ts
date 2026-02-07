@@ -31,7 +31,7 @@ export const service = defineType({
       title: 'Content Section Heading',
       description: 'Use *asterisks* to highlight a word in accent color. E.g., "Designing for *Impact*"',
     }),
-    defineField({ name: 'content', type: 'array', title: 'Content', of: [{ type: 'block' }, { type: 'image', options: { hotspot: true } }] }),
+    defineField({ name: 'content', type: 'array', title: 'Content', of: [{ type: 'richText' }, { type: 'image', options: { hotspot: true } }] }),
     defineField({
       name: 'processHeading',
       type: 'string',

@@ -1,0 +1,11 @@
+---
+const { node } = Astro.props;
+---
+
+<span class="text-highlight"><slot /></span>
+
+<style>
+  .text-highlight {
+    color: var(--accent);
+  }
+</style>

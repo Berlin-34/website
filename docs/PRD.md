@@ -372,7 +372,7 @@ kpinfo.tech/
 
 **Purpose:** Overview of all services
 
-**Layout:** Grid of service cards linking to detail pages
+**Layout:** Accordion Reveal — numbered list rows with expand-on-click. Each row shows step number, service title, tagline, and chevron. Expanded panel contains description + technology tags on left, framed 16:9 hero image thumbnail on right. Atmospheric full-bleed background image behind each item (opacity 0 → 0.15 on hover → 0.2 on open, with left-to-right gradient overlay). View Transitions connect thumbnails and titles to service detail pages.
 
 **Data Source:** Sanity: service[]
 
@@ -388,7 +388,7 @@ kpinfo.tech/
 |---|---------|---------|
 | 1 | Hero | Service name, tagline, intro paragraph |
 | 2 | What We Do | Service description, key offerings |
-| 3 | Process | How we work (3-5 steps) |
+| 3 | Process | Blueprint-style 2-column grid with dashed-border cards, corner bracket markers, ghost step numbers, duration dimension lines, and hover-activated deliverables spec panels |
 | 4 | Technologies | Tech stack badges/icons |
 | 5 | Related Work | 2-3 relevant case studies |
 | 6 | FAQ | Service-specific questions (accordion) |
@@ -595,12 +595,18 @@ export default {
     { name: 'slug', type: 'slug', options: { source: 'title' } },
     { name: 'tagline', type: 'string', title: 'Tagline' },
     { name: 'excerpt', type: 'text', title: 'Excerpt', rows: 3 },
-    { name: 'icon', type: 'string', title: 'Icon Name' },
+    { name: 'iconName', type: 'string', title: 'Icon Name (Lucide)' },
+    { name: 'iconCustom', type: 'image', title: 'Custom Icon (SVG)' },
     { name: 'heroImage', type: 'image', title: 'Hero Image' },
-    { name: 'content', type: 'portableText', title: 'Content' },
+    { name: 'contentHeading', type: 'string', title: 'Content Section Heading' },  // *asterisks* for highlight
+    { name: 'content', type: 'array', of: [{ type: 'richText' }, { type: 'image' }], title: 'Content' },
+    { name: 'processHeading', type: 'string', title: 'Process Section Heading' },
     { name: 'process', type: 'array', of: [{ type: 'processStep' }], title: 'Process Steps' },
+    { name: 'techHeading', type: 'string', title: 'Technologies Section Heading' },
     { name: 'technologies', type: 'array', of: [{ type: 'string' }], title: 'Technologies' },
+    { name: 'faqHeading', type: 'string', title: 'FAQ Section Heading' },
     { name: 'faqs', type: 'array', of: [{ type: 'faqItem' }], title: 'FAQs' },
+    { name: 'workHeading', type: 'string', title: 'Related Work Section Heading' },
     { name: 'relatedWork', type: 'array', of: [{ type: 'reference', to: [{ type: 'caseStudy' }] }] },
     { name: 'seoTitle', type: 'string', title: 'SEO Title' },
     { name: 'seoDescription', type: 'text', title: 'SEO Description', rows: 2 },
@@ -771,23 +777,23 @@ export default {
 ### 6.2 Object Types
 
 ```typescript
-// schemas/objects/portableText.ts
+// schemas/objects/richText.tsx — shared Portable Text block with highlight decorator
 export default {
-  name: 'portableText',
-  title: 'Content',
-  type: 'array',
-  of: [
-    { type: 'block', styles: [
-      { title: 'Normal', value: 'normal' },
-      { title: 'H2', value: 'h2' },
-      { title: 'H3', value: 'h3' },
-      { title: 'H4', value: 'h4' },
-      { title: 'Quote', value: 'blockquote' },
-    ]},
-    { type: 'image', options: { hotspot: true } },
-    { type: 'codeBlock' },
-  ],
+  name: 'richText',
+  type: 'block',
+  marks: {
+    decorators: [
+      { title: 'Bold', value: 'strong' },
+      { title: 'Italic', value: 'em' },
+      { title: 'Underline', value: 'underline' },
+      { title: 'Strike', value: 'strike-through' },
+      { title: 'Code', value: 'code' },
+      { title: 'Highlight', value: 'highlight', icon: HighlightIcon, component: HighlightDecorator },
+    ],
+  },
 }
+// Note: All schemas use { type: 'richText' } instead of { type: 'block' } for Portable Text fields.
+// The 'highlight' decorator renders as accent color (#c9a87c) in both Sanity Studio and frontend.
 
 // schemas/objects/processStep.ts
 export default {
@@ -795,9 +801,11 @@ export default {
   title: 'Process Step',
   type: 'object',
   fields: [
-    { name: 'number', type: 'string', title: 'Step Number' },
+    { name: 'stepNumber', type: 'number', title: 'Step Number' },
     { name: 'title', type: 'string', title: 'Title' },
     { name: 'description', type: 'text', title: 'Description', rows: 2 },
+    { name: 'duration', type: 'string', title: 'Duration' },         // e.g. "2-3 Weeks"
+    { name: 'deliverables', type: 'array', of: [{ type: 'string' }], title: 'Deliverables' },
   ],
 }
 
@@ -1167,12 +1175,13 @@ Sitemap: https://kpinfo.tech/sitemap.xml
 - [ ] Contact page (with HubSpot form)
 - [ ] 404 page
 
-### Phase 3: Services (Week 3-4)
+### Phase 3: Services (Week 3-4) ✅
 
-- [ ] Services index page
-- [ ] 5 service detail pages
-- [ ] Service cards component
-- [ ] FAQ accordion component
+- [x] Services index page (Accordion Reveal layout with View Transitions)
+- [x] 5 service detail pages (dynamic route)
+- [x] Service sections: Hero (PageHero), Content (PortableText + images + highlight), Process (Blueprint grid), Tech (Marquee), Related Work (Featured + Grid), FAQ (Side-by-Side accordion), CTA
+- [x] richText schema type with custom Highlight decorator (accent color in Studio + frontend)
+- [x] processStep schema updated with duration and deliverables fields
 
 ### Phase 4: Industries (Week 4)
 

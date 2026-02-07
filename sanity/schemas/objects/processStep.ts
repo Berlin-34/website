@@ -24,6 +24,19 @@ export const processStep = defineType({
       rows: 3,
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'duration',
+      title: 'Duration',
+      type: 'string',
+      description: "e.g. '2-3 Weeks'",
+    }),
+    defineField({
+      name: 'deliverables',
+      title: 'Deliverables',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Key deliverables for this phase',
+    }),
   ],
   preview: {
     select: {
