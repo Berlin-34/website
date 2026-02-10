@@ -1,0 +1,215 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import HighlightedText from '../ui/HighlightedText.astro';
+import IndustryCard from '../ui/IndustryCard.astro';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+
+interface Props {
+  industries: Array<{
+    _id: string;
+    title: string;
+    slug: { current: string };
+    tagline?: string;
+    excerpt?: string;
+    iconName?: string;
+    iconCustom?: SanityImageSource;
+  }>;
+}
+
+const { industries = [] } = Astro.props;
+
+// First industry is featured, rest are regular
+const featuredIndustry = industries[0];
+const regularIndustries = industries.slice(1);
+---
+
+<section class="industries-bento">
+  <div class="industries-bento__container">
+    <header class="industries-bento__header">
+      <SectionLabel text="Our Expertise" />
+      <h2 class="industries-bento__title">
+        <HighlightedText text="Industries where we deliver *results*" />
+      </h2>
+      <a href="/industries/" class="industries-bento__view-all">
+        View all industries
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </header>
+
+    <div class="industries-bento__grid">
+      {featuredIndustry && (
+        <IndustryCard
+          title={featuredIndustry.title}
+          slug={featuredIndustry.slug.current}
+          tagline={featuredIndustry.tagline}
+          iconCustom={featuredIndustry.iconCustom}
+          iconName={featuredIndustry.iconName}
+          index={0}
+          variant="bento-featured"
+        />
+      )}
+      {regularIndustries.map((industry, index) => (
+        <IndustryCard
+          title={industry.title}
+          slug={industry.slug.current}
+          tagline={industry.tagline}
+          iconCustom={industry.iconCustom}
+          iconName={industry.iconName}
+          index={index + 1}
+          variant="bento"
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion) {
+    // Animate section header
+    gsap.from('.industries-bento__header', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.industries-bento__header',
+        start: 'top 95%',
+      },
+    });
+
+    // Animate cards with stagger
+    gsap.from('.industries-bento__grid .industry-card', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.industries-bento__grid',
+        start: 'top 95%',
+      },
+    });
+  }
+</script>
+
+<style>
+  .industries-bento {
+    padding: 6rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .industries-bento {
+      padding: 4rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .industries-bento {
+      padding: 3rem 0;
+    }
+  }
+
+  .industries-bento__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ─── Header ─── */
+  .industries-bento__header {
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .industries-bento__header {
+      margin-bottom: 4rem;
+    }
+  }
+
+  .industries-bento__title {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  .industries-bento__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .industries-bento__view-all svg {
+    transition: transform 0.3s ease;
+  }
+
+  .industries-bento__view-all:hover {
+    color: var(--accent);
+  }
+
+  .industries-bento__view-all:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* ─── Bento Grid ─── */
+  .industries-bento__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Featured card spans 2 rows on desktop, full height */
+  .industries-bento__grid :global(.industry-card:first-child) {
+    min-height: 280px;
+  }
+
+  /* Tablet: 2 columns, featured spans 2 columns */
+  @media (min-width: 640px) {
+    .industries-bento__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .industries-bento__grid :global(.industry-card:first-child) {
+      grid-column: span 2;
+    }
+  }
+
+  /* Desktop: Classic bento layout */
+  @media (min-width: 1024px) {
+    .industries-bento__grid {
+      grid-template-columns: 1.3fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+    }
+
+    .industries-bento__grid :global(.industry-card:first-child) {
+      grid-row: span 2;
+      grid-column: auto;
+      min-height: 100%;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .industries-bento__view-all svg {
+      transition: none;
+    }
+  }
+</style>

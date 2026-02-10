@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import SectionLabel from '../../components/ui/SectionLabel.astro';
+import HighlightedText from '../../components/ui/HighlightedText.astro';
+import IndustryCard from '../../components/ui/IndustryCard.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client } from '../../lib/sanity';
+import { allIndustriesQuery } from '../../lib/queries';
+
+// Fetch all industries
+const industries = await client.fetch(allIndustriesQuery);
+
+// Build stacked rows pattern: full → grid → full → grid...
+interface StackedRow {
+  type: 'full' | 'grid';
+  industries: typeof industries;
+}
+
+const rows: StackedRow[] = [];
+let idx = 0;
+let rowNum = 0;
+
+while (idx < industries.length) {
+  if (rowNum % 2 === 0) {
+    // Full-width feature row
+    rows.push({
+      type: 'full',
+      industries: [industries[idx]],
+    });
+    idx++;
+  } else {
+    // 2-3 card grid row
+    const chunk = industries.slice(idx, idx + 3);
+    rows.push({
+      type: 'grid',
+      industries: chunk,
+    });
+    idx += chunk.length;
+  }
+  rowNum++;
+}
+
+// SEO
+const seoTitle = 'Industries — KP Infotech';
+const seoDescription = 'Deep domain expertise across sectors that power the modern economy. From healthcare to energy, we bring vertical expertise to every project.';
+---
+
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <PageHero variant="inner">
+    <h1><HighlightedText text="Industries we *serve*" /></h1>
+    <p class="page-hero__description">
+      Deep domain expertise across sectors that power the modern economy. From healthcare to energy, we bring vertical expertise to every project.
+    </p>
+  </PageHero>
+
+  <section class="industries-stacked">
+    <div class="industries-stacked__container">
+      <header class="industries-stacked__header">
+        <SectionLabel text="Our Expertise" />
+        <h2 class="industries-stacked__title">
+          <HighlightedText text="Where we deliver *results*" />
+        </h2>
+      </header>
+
+      <div class="industries-stacked__rows">
+        {rows.map((row, rowIndex) => (
+          <div
+            class:list={['stacked-row', `stacked-row--${row.type}`]}
+            data-row={rowIndex}
+          >
+            {row.type === 'full' ? (
+              <IndustryCard
+                title={row.industries[0].title}
+                slug={row.industries[0].slug.current}
+                tagline={row.industries[0].excerpt || row.industries[0].tagline}
+                iconCustom={row.industries[0].iconCustom}
+                iconName={row.industries[0].iconName}
+                index={rowIndex}
+                variant="stacked-full"
+              />
+            ) : (
+              row.industries.map((industry, cardIndex) => (
+                <IndustryCard
+                  title={industry.title}
+                  slug={industry.slug.current}
+                  tagline={industry.tagline}
+                  iconCustom={industry.iconCustom}
+                  iconName={industry.iconName}
+                  index={rowIndex * 3 + cardIndex}
+                  variant="stacked"
+                />
+              ))
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    headline="Ready to transform your *industry*?"
+    description="Let's discuss how our vertical expertise can drive results for your business."
+    buttonText="Get in Touch"
+  />
+</BaseLayout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion) {
+    // Animate each row as it enters viewport
+    document.querySelectorAll('.stacked-row').forEach((row) => {
+      gsap.from(row, {
+        y: 30,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: row,
+          start: 'top 95%',
+        },
+      });
+    });
+  }
+</script>
+
+<style>
+  .industries-stacked {
+    padding: 6rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .industries-stacked {
+      padding: 4rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .industries-stacked {
+      padding: 3rem 0;
+    }
+  }
+
+  .industries-stacked__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ─── Header ─── */
+  .industries-stacked__header {
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .industries-stacked__header {
+      margin-bottom: 4rem;
+    }
+  }
+
+  .industries-stacked__title {
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  /* ─── Stacked Rows ─── */
+  .industries-stacked__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Full-width row */
+  .stacked-row--full {
+    display: block;
+  }
+
+  /* Grid row */
+  .stacked-row--grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* 2 cards: 2 columns */
+  .stacked-row--grid:has(> :nth-child(2):last-child) {
+    grid-template-columns: 1fr;
+  }
+
+  /* 3 cards: 3 columns */
+  .stacked-row--grid:has(> :nth-child(3):last-child) {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tablet: 2 columns for grid rows */
+  @media (min-width: 640px) {
+    .stacked-row--grid:has(> :nth-child(2):last-child) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stacked-row--grid:has(> :nth-child(3):last-child) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Desktop: full grid layout */
+  @media (min-width: 1024px) {
+    .stacked-row--grid:has(> :nth-child(2):last-child) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stacked-row--grid:has(> :nth-child(3):last-child) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

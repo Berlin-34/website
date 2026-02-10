@@ -9,7 +9,7 @@ import ServicesMarquee from '../components/sections/ServicesMarquee.astro';
 import FeaturedWork from '../components/sections/FeaturedWork.astro';
 import RelatedServicesGrid from '../components/sections/RelatedServicesGrid.astro';
 import StatsSection from '../components/sections/StatsSection.astro';
-import Industries from '../components/sections/Industries.astro';
+import IndustriesBento from '../components/sections/IndustriesBento.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import CTASection from '../components/sections/CTASection.astro';
 
@@ -64,9 +64,9 @@ const heroDescription = "We craft premium digital experiences for startups and b
     <StatsSection stats={stats} />
   )}
 
-  <!-- Industries Section -->
+  <!-- Industries Bento -->
   {industries && industries.length > 0 && (
-    <Industries industries={industries} />
+    <IndustriesBento industries={industries} />
   )}
 
   <!-- Testimonials Carousel -->
