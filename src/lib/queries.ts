@@ -42,6 +42,8 @@ export const homepageDataQuery = `
     _id,
     title,
     slug,
+    tagline,
+    excerpt,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   },
@@ -133,6 +135,7 @@ export const allIndustriesQuery = `
     title,
     slug,
     tagline,
+    excerpt,
     iconName,
     "iconCustom": coalesce(iconCustom, icon)
   }
