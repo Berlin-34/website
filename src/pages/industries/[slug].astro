@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import SectionLabel from '../../components/ui/SectionLabel.astro';
+import Button from '../../components/ui/Button.astro';
+import IndustryChallenges from '../../components/sections/IndustryChallenges.astro';
+import IndustrySolutions from '../../components/sections/IndustrySolutions.astro';
+import RelatedServicesGrid from '../../components/sections/RelatedServicesGrid.astro';
+import ServiceWork from '../../components/sections/ServiceWork.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { allIndustriesQuery, industryBySlugQuery } from '../../lib/queries';
+
+export async function getStaticPaths() {
+  const industries = await client.fetch<Array<{ slug: { current: string } }>>(allIndustriesQuery);
+
+  return industries.map((industry) => ({
+    params: { slug: industry.slug.current },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const industry = await client.fetch(industryBySlugQuery, { slug });
+
+if (!industry) {
+  return Astro.redirect('/404');
+}
+
+// Build hero image URL
+let heroImageUrl: string | undefined;
+if (industry.heroImage) {
+  try {
+    heroImageUrl = urlFor(industry.heroImage).width(1920).format('webp').url();
+  } catch {
+    // No hero image available
+  }
+}
+
+// Filter null references
+const relatedWork = (industry.relatedWork || []).filter((w: any) => w != null && w.title != null);
+const relatedServices = (industry.relatedServices || []).filter((s: any) => s != null && s.title != null);
+
+const seoTitle = industry.seoTitle || industry.title;
+const seoDescription = industry.seoDescription || industry.excerpt || industry.tagline;
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+>
+  <PageHero image={heroImageUrl} variant="inner">
+    <nav class="industry-hero__breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="industry-hero__sep">/</span>
+      <a href="/industries/">Industries</a>
+      <span class="industry-hero__sep">/</span>
+      <span class="industry-hero__current">{industry.title}</span>
+    </nav>
+
+    <SectionLabel text="Industry" />
+
+    <h1>{industry.title}</h1>
+
+    {(industry.excerpt || industry.tagline) && (
+      <p class="page-hero__description">{industry.excerpt || industry.tagline}</p>
+    )}
+
+    <div class="page-hero__actions">
+      <Button href="/contact/" variant="primary">Discuss Your Project</Button>
+      <Button href="/industries/" variant="text">All Industries</Button>
+    </div>
+  </PageHero>
+
+  <IndustryChallenges
+    heading={industry.challengesHeading}
+    quote={industry.challengeQuote}
+    challenges={industry.challenges}
+  />
+
+  <IndustrySolutions
+    heading={industry.solutionsHeading}
+    statement={industry.solutionStatement}
+    solutions={industry.solutions}
+  />
+
+  {relatedServices.length > 0 && (
+    <RelatedServicesGrid
+      heading={industry.servicesHeading || 'How We *Help*'}
+      services={relatedServices}
+    />
+  )}
+
+  <ServiceWork
+    heading={industry.workHeading}
+    projects={relatedWork}
+  />
+
+  <CTASection
+    headline={`Ready to transform your *${industry.title.toLowerCase()}* business?`}
+    description="Let's explore how we can help bring your vision to life."
+    buttonText="Start a Conversation"
+    buttonHref="/contact/"
+  />
+</BaseLayout>
+
+<style>
+  .industry-hero__breadcrumb {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .industry-hero__breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .industry-hero__breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .industry-hero__sep {
+    margin: 0 8px;
+    color: var(--text-muted);
+  }
+
+  .industry-hero__current {
+    color: var(--accent);
+  }
+
+  @media (max-width: 480px) {
+    .industry-hero__breadcrumb {
+      display: none;
+    }
+  }
+</style>

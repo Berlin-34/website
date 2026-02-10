@@ -35,7 +35,8 @@ export const homepageDataQuery = `
     slug,
     tagline,
     iconName,
-    "iconCustom": coalesce(iconCustom, icon)
+    "iconCustom": coalesce(iconCustom, icon),
+    heroImage
   },
   "industries": *[_type == "industry"] | order(order asc) {
     _id,
@@ -143,27 +144,37 @@ export const industryBySlugQuery = `
     title,
     slug,
     tagline,
-    fullDescription,
+    excerpt,
     iconName,
     "iconCustom": coalesce(iconCustom, icon),
     heroImage,
+    challengesHeading,
+    challengeQuote,
     challenges,
+    solutionsHeading,
+    solutionStatement,
     solutions,
-    faqs,
-    seo,
-    "relatedWork": *[_type == "caseStudy" && references(^._id)] | order(_createdAt desc)[0...3] {
+    servicesHeading,
+    workHeading,
+    relatedWork[]->{
       _id,
       title,
       slug,
+      client,
       thumbnailImage,
-      client
+      excerpt
     },
-    "relatedServices": *[_type == "service"] | order(order asc)[0...4] {
+    relatedServices[]->{
       _id,
       title,
       slug,
-      tagline
-    }
+      tagline,
+      "iconCustom": coalesce(iconCustom, icon),
+      heroImage
+    },
+    seoTitle,
+    seoDescription,
+    order
   }
 `;
 

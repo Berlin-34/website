@@ -18,6 +18,8 @@ import { resultMetric } from './schemas/objects/resultMetric';
 import { statItem } from './schemas/objects/statItem';
 import { code } from './schemas/objects/code';
 import { richText } from './schemas/objects/richText';
+import { challengeItem } from './schemas/objects/challengeItem';
+import { solutionItem } from './schemas/objects/solutionItem';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -38,5 +40,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     statItem,
     code,
     richText,
+    challengeItem,
+    solutionItem,
   ],
 };
