@@ -3,3 +3,8 @@ name = "website"
 compatibility_date = "2026-02-11"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
+
+# Environment variables (available at build time + runtime)
+[vars]
+PUBLIC_SANITY_PROJECT_ID = "5rux0mv2"
+PUBLIC_SANITY_DATASET = "production"
