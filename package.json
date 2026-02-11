@@ -5,16 +5,18 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "wrangler pages dev dist",
     "astro": "astro",
     "sanity:dev": "sanity dev",
     "sanity:deploy": "sanity deploy",
-    "sanity:build": "sanity build"
+    "sanity:build": "sanity build",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:preview": "npm run build && wrangler pages deploy dist --branch preview"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.7.0",
-    "@astrojs/vercel": "^9.0.4",
     "@fontsource/outfit": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",
     "@iconify-json/lucide": "^1.2.87",
@@ -36,5 +38,8 @@
     "sanity": "^5.7.0",
     "styled-components": "^6.3.8",
     "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
   }
 }

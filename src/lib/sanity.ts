@@ -8,7 +8,7 @@ const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production';
 if (!projectId) {
   throw new Error(
     'PUBLIC_SANITY_PROJECT_ID is not defined. ' +
-    'Ensure environment variables are set in Vercel for the Production environment.'
+    'Ensure environment variables are set in your hosting provider\'s dashboard.'
   );
 }
 

@@ -1,0 +1,5 @@
+/services/website-design/   /services/web-development/   301
+/services/graphics-design/  /services/ui-ux-design/      301
+/services/erp-software/     /services/erp-solutions/     301
+/blogs/                     /insights/                   301
+/blogs/*                    /insights/:splat             301

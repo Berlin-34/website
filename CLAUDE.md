@@ -28,7 +28,7 @@ KP Infotech website rebuild: WordPress + Elementor → Astro + Sanity CMS. Premi
 | Icons | @lucide/astro |
 | Animations | GSAP + ScrollTrigger |
 | Forms | HubSpot Forms API |
-| Hosting | Vercel |
+| Hosting | Cloudflare Pages |
 
 ## Commands
 
@@ -40,6 +40,8 @@ npm run sanity:dev       # Start Sanity Studio
 # Build & Deploy
 npm run build            # Production build
 npm run preview          # Preview production build
+npm run deploy           # Build + deploy to Cloudflare Pages (production)
+npm run deploy:preview   # Build + deploy as preview branch
 
 # Sanity
 npm run sanity:deploy    # Deploy Sanity Studio
@@ -139,7 +141,7 @@ const imageUrl = builder.image(source).height(120).format('webp').url();
 
 ## Image Optimization
 
-**Strategy:** Build-time optimization via Astro (free) instead of Vercel Image Optimization (paid per request)
+**Strategy:** Build-time optimization via Astro (free, runs at build time on any hosting provider)
 
 ### SanityPicture Component
 Always use `<SanityPicture>` for Sanity images (not raw `<img>`):
@@ -253,9 +255,9 @@ All cards use `--bg-secondary` background with `1px solid var(--border)`. Hover 
 
 ## Environment Variables
 
-**Loading pattern** (for Vercel + local dev compatibility):
+**Loading pattern** (for Cloudflare Pages + local dev compatibility):
 ```typescript
-// Check process.env first (Vercel), then loadEnv (local .env.local)
+// Check process.env first (hosting provider), then loadEnv (local .env.local)
 const value = process.env.VAR_NAME || env.VAR_NAME;
 ```
 
@@ -267,6 +269,8 @@ PUBLIC_HUBSPOT_PORTAL_ID=     # HubSpot form embed
 PUBLIC_HUBSPOT_FORM_ID=
 PUBLIC_GA_MEASUREMENT_ID=     # GA4 tracking
 ```
+
+Set these in Cloudflare Pages dashboard → Settings → Environment Variables (for both Production and Preview environments).
 
 ## Integration Notes
 
@@ -281,11 +285,18 @@ await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalI
 });
 ```
 
-### Vercel Deployment
+### Cloudflare Pages Deployment
 
-- Production: Push to `main`
-- Preview: PR deployments
-- Rebuild trigger: Sanity webhook to Vercel deploy hook
+- **Staging:** Push to `main` → auto-deploys to `<project>.pages.dev`
+- **Preview:** PR branches → `<branch>.<project>.pages.dev`
+- **Manual:** `npm run deploy` / `npm run deploy:preview`
+- **Production:** Custom domain `kpinfo.tech` (to be configured when site goes live)
+- **Rebuild trigger:** Sanity webhook → Cloudflare Pages deploy hook
+
+### Static Files
+
+- `public/_redirects` — WordPress → Astro URL redirects (Cloudflare Pages format)
+- `public/_headers` — Security headers and cache rules for static assets
 
 ## Accessibility
 
