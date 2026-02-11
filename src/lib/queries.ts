@@ -185,13 +185,16 @@ export const industryBySlugQuery = `
 // Case Studies
 // ============================================
 export const allCaseStudiesQuery = `
-  *[_type == "caseStudy"] | order(_createdAt desc) {
+  *[_type == "caseStudy"] | order(coalesce(order, 999) asc, _createdAt desc) {
     _id,
     title,
     slug,
     client,
+    year,
+    excerpt,
+    cardSize,
     thumbnailImage,
-    industry->{
+    industries[]->{
       _id,
       title,
       slug
@@ -212,7 +215,7 @@ export const featuredCaseStudiesQuery = `
     slug,
     client,
     thumbnailImage,
-    industry->{
+    industries[]->{
       _id,
       title,
       slug
@@ -226,9 +229,11 @@ export const caseStudyBySlugQuery = `
     title,
     slug,
     client,
+    year,
+    excerpt,
     thumbnailImage,
     heroImage,
-    industry->{
+    industries[]->{
       _id,
       title,
       slug
@@ -239,20 +244,28 @@ export const caseStudyBySlugQuery = `
       slug
     },
     challenge,
-    solution,
+    approach,
+    resultsSummary,
+    content,
     results,
-    testimonial,
-    gallery,
-    seo,
-    "relatedWork": *[_type == "caseStudy" && slug.current != $slug && (
-      industry._ref == ^.industry._ref ||
-      count(services[@._ref in ^.^.services[]._ref]) > 0
-    )] | order(_createdAt desc)[0...3] {
+    testimonial->{
+      _id,
+      quote,
+      authorName,
+      authorRole,
+      company,
+      companyLogo,
+      authorPhoto
+    },
+    seoTitle,
+    seoDescription,
+    order,
+    "nextProject": *[_type == "caseStudy" && slug.current != $slug] | order(coalesce(order, 999) asc, _createdAt desc)[0] {
       _id,
       title,
       slug,
-      thumbnailImage,
-      client
+      client,
+      thumbnailImage
     }
   }
 `;
