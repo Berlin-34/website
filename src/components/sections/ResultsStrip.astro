@@ -1,0 +1,171 @@
+---
+interface ResultMetric {
+  metric: string;
+  label: string;
+}
+
+interface Props {
+  results?: ResultMetric[];
+}
+
+const { results = [] } = Astro.props;
+const hasResults = results && results.length > 0;
+---
+
+{hasResults && (
+  <section class="results-strip">
+    <div class="results-strip__container">
+      {results.map((result) => (
+        <div class="results-strip__item">
+          <span class="results-strip__metric" data-metric={result.metric}>
+            {result.metric}
+          </span>
+          <span class="results-strip__label">{result.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .results-strip {
+    padding: 4rem 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .results-strip__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .results-strip__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .results-strip__metric {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .results-strip__label {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    max-width: 180px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .results-strip {
+      padding: 3rem 0;
+    }
+
+    .results-strip__container {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .results-strip__item {
+      flex: 0 0 calc(50% - 1rem);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .results-strip__container {
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .results-strip__item {
+      flex: none;
+    }
+  }
+</style>
+
+<script>
+  function initCounters() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const metrics = document.querySelectorAll<HTMLElement>('.results-strip__metric');
+    if (!metrics.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          if (el.dataset.animated) return;
+          el.dataset.animated = 'true';
+          animateMetric(el);
+          observer.unobserve(el);
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    metrics.forEach((m) => observer.observe(m));
+  }
+
+  function animateMetric(el: HTMLElement) {
+    const raw = el.dataset.metric || el.textContent || '';
+
+    // Parse: extract prefix (e.g. "$"), number, suffix (e.g. "%", "x", "+", "M")
+    const match = raw.match(/^([^\d]*)([\d,.]+)(.*)$/);
+    if (!match) return;
+
+    const prefix = match[1];
+    const numStr = match[2].replace(/,/g, '');
+    const suffix = match[3];
+    const target = parseFloat(numStr);
+    const isFloat = numStr.includes('.');
+    const hasCommas = match[2].includes(',');
+
+    const duration = 2000;
+    const startTime = performance.now();
+
+    function update(currentTime: number) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out quad
+      const eased = 1 - (1 - progress) * (1 - progress);
+      const current = eased * target;
+
+      let formatted: string;
+      if (isFloat) {
+        formatted = current.toFixed(1);
+      } else {
+        const rounded = Math.round(current);
+        formatted = hasCommas ? rounded.toLocaleString() : String(rounded);
+      }
+
+      el.textContent = prefix + formatted + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  initCounters();
+  document.addEventListener('astro:after-swap', initCounters);
+</script>

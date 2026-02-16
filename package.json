@@ -2,6 +2,10 @@
   "name": "kpinfotech-website",
   "type": "module",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kp-infotech/website.git"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

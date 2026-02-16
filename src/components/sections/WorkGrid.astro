@@ -1,0 +1,378 @@
+---
+import { urlFor } from '../../lib/sanity';
+
+interface CaseStudy {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  client?: string;
+  year?: string;
+  excerpt?: string;
+  cardSize?: string;
+  thumbnailImage?: any;
+  services?: Array<{ _id: string; title: string; slug: { current: string } }>;
+}
+
+interface Props {
+  caseStudies: CaseStudy[];
+  services?: Array<{ _id: string; title: string }>;
+}
+
+const { caseStudies, services = [] } = Astro.props;
+
+// Deduplicate services from case studies if not provided
+const filterServices = services.length > 0
+  ? services
+  : Array.from(
+      new Map(
+        caseStudies
+          .flatMap((cs) => cs.services || [])
+          .map((s) => [s._id, s])
+      ).values()
+    );
+---
+
+<section class="work-grid">
+  <div class="work-grid__container">
+    {/* Filter pills */}
+    {filterServices.length > 0 && (
+      <div class="work-grid__filters" role="tablist" aria-label="Filter projects by service">
+        <button class="work-grid__pill work-grid__pill--active" data-filter="all" role="tab" aria-selected="true">
+          All
+        </button>
+        {filterServices.map((service) => (
+          <button class="work-grid__pill" data-filter={service._id} role="tab" aria-selected="false">
+            {service.title}
+          </button>
+        ))}
+      </div>
+    )}
+
+    {/* Masonry grid */}
+    <div class="work-grid__masonry">
+      {caseStudies.map((study) => {
+        let thumbUrl: string | undefined;
+        if (study.thumbnailImage) {
+          try {
+            thumbUrl = urlFor(study.thumbnailImage).width(800).height(600).format('webp').url();
+          } catch { /* no image */ }
+        }
+        const serviceIds = (study.services || []).map((s) => s._id).join(',');
+        const isLarge = study.cardSize === 'large';
+
+        return (
+          <a
+            href={`/work/${study.slug.current}/`}
+            class:list={['work-card', { 'work-card--large': isLarge }]}
+            data-services={serviceIds}
+            style={study.slug?.current ? `view-transition-name: work-card-${study.slug.current}` : undefined}
+          >
+            <div class="work-card__image">
+              {thumbUrl ? (
+                <img
+                  src={thumbUrl}
+                  alt={study.title}
+                  width="800"
+                  height="600"
+                  loading="lazy"
+                  decoding="async"
+                  style={study.slug?.current ? `view-transition-name: work-hero-${study.slug.current}` : undefined}
+                />
+              ) : (
+                <div class="work-card__placeholder" />
+              )}
+              <div class="work-card__overlay" />
+            </div>
+            <div class="work-card__content">
+              {study.client && (
+                <span class="work-card__client">{study.client}</span>
+              )}
+              <h3
+                class="work-card__title"
+                style={study.slug?.current ? `view-transition-name: work-title-${study.slug.current}` : undefined}
+              >
+                {study.title}
+              </h3>
+              <div class="work-card__footer">
+                {study.services && study.services.length > 0 && (
+                  <div class="work-card__tags">
+                    {study.services.slice(0, 2).map((s) => (
+                      <span class="work-card__tag">{s.title}</span>
+                    ))}
+                  </div>
+                )}
+                {study.year && <span class="work-card__year">{study.year}</span>}
+              </div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    {caseStudies.length === 0 && (
+      <div class="work-grid__empty">
+        <p>No projects to show yet. Check back soon.</p>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .work-grid {
+    padding: 0 0 6rem;
+    background: var(--bg-primary);
+  }
+
+  .work-grid__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- Filter pills ---- */
+  .work-grid__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .work-grid__pill {
+    display: inline-block;
+    padding: 8px 20px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .work-grid__pill:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .work-grid__pill--active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.08);
+  }
+
+  .work-grid__pill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---- Masonry grid ---- */
+  .work-grid__masonry {
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+
+  /* ---- Work card ---- */
+  .work-card {
+    display: block;
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .work-card:hover {
+    border-left-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ---- Card image ---- */
+  .work-card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .work-card--large .work-card__image {
+    aspect-ratio: 16 / 12;
+  }
+
+  .work-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .work-card:hover .work-card__image img {
+    transform: scale(1.05);
+  }
+
+  .work-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.6) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .work-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary);
+  }
+
+  /* ---- Card content ---- */
+  .work-card__content {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .work-card__client {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .work-card__title {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+    transition: color 0.3s ease;
+  }
+
+  .work-card:hover .work-card__title {
+    color: var(--accent);
+  }
+
+  .work-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .work-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .work-card__tag {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+  }
+
+  .work-card__year {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ---- Empty state ---- */
+  .work-grid__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 300;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .work-grid {
+      padding: 0 0 4rem;
+    }
+
+    .work-grid__filters {
+      margin-bottom: 2rem;
+    }
+
+    .work-grid__masonry {
+      columns: 1;
+    }
+
+    .work-card__title {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .work-grid {
+      padding: 0 0 3rem;
+    }
+
+    .work-grid__container {
+      padding: 0 1rem;
+    }
+
+    .work-grid__filters {
+      gap: 0.375rem;
+    }
+
+    .work-grid__pill {
+      padding: 6px 14px;
+      font-size: 10px;
+    }
+  }
+</style>
+
+<script>
+  function initWorkGrid() {
+    const pills = document.querySelectorAll<HTMLButtonElement>('.work-grid__pill');
+    const cards = document.querySelectorAll<HTMLElement>('.work-card');
+
+    if (!pills.length || !cards.length) return;
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const filter = pill.dataset.filter;
+
+        // Update active states
+        pills.forEach((p) => {
+          p.classList.remove('work-grid__pill--active');
+          p.setAttribute('aria-selected', 'false');
+        });
+        pill.classList.add('work-grid__pill--active');
+        pill.setAttribute('aria-selected', 'true');
+
+        // Filter cards
+        cards.forEach((card) => {
+          if (filter === 'all') {
+            card.style.display = '';
+            return;
+          }
+          const cardServices = card.dataset.services || '';
+          const match = cardServices.split(',').includes(filter!);
+          card.style.display = match ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  initWorkGrid();
+  document.addEventListener('astro:after-swap', initWorkGrid);
+</script>

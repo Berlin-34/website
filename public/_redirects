@@ -3,3 +3,4 @@
 /services/erp-software/     /services/erp-solutions/     301
 /blogs/                     /insights/                   301
 /blogs/*                    /insights/:splat             301
+/casestudy/*                /work/:splat                 301

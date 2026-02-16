@@ -1,0 +1,154 @@
+---
+import { urlFor } from '../../lib/sanity';
+
+interface Props {
+  testimonial?: {
+    quote?: string;
+    authorName?: string;
+    authorRole?: string;
+    company?: string;
+    authorPhoto?: any;
+  };
+}
+
+const { testimonial } = Astro.props;
+
+let photoUrl: string | undefined;
+if (testimonial?.authorPhoto) {
+  try {
+    photoUrl = urlFor(testimonial.authorPhoto).width(80).height(80).format('webp').url();
+  } catch { /* no photo */ }
+}
+
+const hasTestimonial = testimonial?.quote;
+---
+
+{hasTestimonial && (
+  <section class="project-testimonial">
+    <div class="project-testimonial__container">
+      <div class="project-testimonial__card">
+        <blockquote class="project-testimonial__quote">
+          <p>&ldquo;{testimonial.quote}&rdquo;</p>
+        </blockquote>
+        <div class="project-testimonial__author">
+          {photoUrl && (
+            <img
+              src={photoUrl}
+              alt={testimonial.authorName || ''}
+              width="48"
+              height="48"
+              loading="lazy"
+              decoding="async"
+              class="project-testimonial__photo"
+            />
+          )}
+          <div class="project-testimonial__info">
+            {testimonial.authorName && (
+              <span class="project-testimonial__name">{testimonial.authorName}</span>
+            )}
+            {(testimonial.authorRole || testimonial.company) && (
+              <span class="project-testimonial__role">
+                {[testimonial.authorRole, testimonial.company].filter(Boolean).join(', ')}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .project-testimonial {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .project-testimonial__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .project-testimonial__card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 3rem 3rem calc(3rem + 4px);
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--accent);
+  }
+
+  .project-testimonial__quote {
+    margin: 0 0 2rem;
+  }
+
+  .project-testimonial__quote p {
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .project-testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .project-testimonial__photo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+
+  .project-testimonial__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .project-testimonial__name {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .project-testimonial__role {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .project-testimonial {
+      padding: 4rem 0;
+    }
+
+    .project-testimonial__card {
+      padding: 2rem 2rem 2rem calc(2rem + 4px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-testimonial {
+      padding: 3rem 0;
+    }
+
+    .project-testimonial__container {
+      padding: 0 1rem;
+    }
+
+    .project-testimonial__card {
+      padding: 1.5rem 1.5rem 1.5rem calc(1.5rem + 4px);
+    }
+  }
+</style>

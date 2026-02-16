@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CaseStudyHero from '../../components/sections/CaseStudyHero.astro';
+import ProjectOverview from '../../components/sections/ProjectOverview.astro';
+import CaseStudyContent from '../../components/sections/CaseStudyContent.astro';
+import ResultsStrip from '../../components/sections/ResultsStrip.astro';
+import ProjectTestimonial from '../../components/sections/ProjectTestimonial.astro';
+import NextProject from '../../components/sections/NextProject.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { allCaseStudiesQuery, caseStudyBySlugQuery } from '../../lib/queries';
+
+export async function getStaticPaths() {
+  const caseStudies = await client.fetch<Array<{ slug: { current: string } }>>(allCaseStudiesQuery);
+
+  return caseStudies.map((study) => ({
+    params: { slug: study.slug.current },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const study = await client.fetch(caseStudyBySlugQuery, { slug });
+
+if (!study) {
+  return Astro.redirect('/404');
+}
+
+// Build hero image URL
+let heroImageUrl: string | undefined;
+if (study.heroImage) {
+  try {
+    heroImageUrl = urlFor(study.heroImage).width(1920).format('webp').url();
+  } catch {
+    // No hero image available
+  }
+}
+
+const seoTitle = study.seoTitle || study.title;
+const seoDescription = study.seoDescription || study.excerpt;
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+>
+  <CaseStudyHero
+    title={study.title}
+    client={study.client}
+    year={study.year}
+    services={study.services}
+    heroImageUrl={heroImageUrl}
+    slug={slug}
+  />
+
+  {study.results && study.results.length > 0 && (
+    <ResultsStrip results={study.results} />
+  )}
+
+  <ProjectOverview
+    challenge={study.challenge}
+    approach={study.approach}
+    resultsSummary={study.resultsSummary}
+  />
+
+  {study.content && study.content.length > 0 && (
+    <CaseStudyContent content={study.content} />
+  )}
+
+  {study.testimonial?.quote && (
+    <ProjectTestimonial testimonial={study.testimonial} />
+  )}
+
+  {study.nextProject && (
+    <NextProject project={study.nextProject} />
+  )}
+
+  <CTASection
+    headline="Ready to discuss your *project*?"
+    description="Let's explore how we can help bring your vision to life."
+    buttonText="Start a Conversation"
+    buttonHref="/contact/"
+  />
+</BaseLayout>

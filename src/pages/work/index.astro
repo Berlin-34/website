@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import SectionLabel from '../../components/ui/SectionLabel.astro';
+import HighlightedText from '../../components/ui/HighlightedText.astro';
+import WorkGrid from '../../components/sections/WorkGrid.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client } from '../../lib/sanity';
+import { allCaseStudiesQuery } from '../../lib/queries';
+
+const caseStudies = await client.fetch(allCaseStudiesQuery);
+
+// Extract unique services for filter pills
+const servicesMap = new Map<string, { _id: string; title: string }>();
+for (const study of caseStudies) {
+  for (const service of study.services || []) {
+    if (!servicesMap.has(service._id)) {
+      servicesMap.set(service._id, { _id: service._id, title: service.title });
+    }
+  }
+}
+const services = Array.from(servicesMap.values());
+---
+
+<BaseLayout
+  title="Our Work"
+  description="Explore our portfolio of digital projects. From web applications to mobile apps and enterprise solutions, see how we help businesses grow."
+>
+  <PageHero variant="inner">
+    <SectionLabel text="Portfolio" />
+    <h1>
+      <HighlightedText text="Our *Work*" />
+    </h1>
+    <p class="page-hero__description">
+      A selection of projects where strategy, design, and technology
+      come together to deliver measurable results.
+    </p>
+  </PageHero>
+
+  <WorkGrid caseStudies={caseStudies} services={services} />
+
+  <CTASection
+    headline="Have a project in *mind*?"
+    description="Let's discuss how we can bring your vision to life with the right strategy and technology."
+    buttonText="Start a Project"
+    buttonHref="/contact/"
+  />
+</BaseLayout>

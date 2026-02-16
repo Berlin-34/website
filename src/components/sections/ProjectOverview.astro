@@ -1,0 +1,206 @@
+---
+import { PortableText } from 'astro-portabletext';
+import SectionLabel from '../ui/SectionLabel.astro';
+import PortableTextHighlight from '../ui/PortableTextHighlight.astro';
+
+interface Props {
+  challenge?: any[];
+  approach?: any[];
+  resultsSummary?: string;
+}
+
+const { challenge, approach, resultsSummary } = Astro.props;
+
+const components = {
+  mark: {
+    highlight: PortableTextHighlight,
+  },
+};
+
+const blocks = [
+  { number: '01', heading: 'The Challenge', content: challenge, type: 'portable' as const },
+  { number: '02', heading: 'Our Approach', content: approach, type: 'portable' as const },
+  { number: '03', heading: 'The Results', content: resultsSummary, type: 'text' as const },
+].filter((b) => (b.type === 'portable' ? b.content && (b.content as any[]).length > 0 : !!b.content));
+
+const hasContent = blocks.length > 0;
+---
+
+{hasContent && (
+  <section class="project-overview">
+    <div class="project-overview__container">
+      <SectionLabel text="Project Overview" />
+      <h2 class="project-overview__title">How we got there</h2>
+
+      <div class="overview-stack">
+        {blocks.map((block) => (
+          <div class="overview-block">
+            <div class="overview-block__number-col">
+              <span class="overview-block__number">{block.number}</span>
+            </div>
+            <div class="overview-block__content">
+              <h3 class="overview-block__heading">{block.heading}</h3>
+              <div class="overview-block__body">
+                {block.type === 'portable' ? (
+                  <PortableText value={block.content as any[]} components={components} />
+                ) : (
+                  <p>{block.content as string}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .project-overview {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+  }
+
+  .project-overview__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .project-overview__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 1rem 0 3rem;
+  }
+
+  /* ---- Stack with left accent border ---- */
+  .overview-stack {
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid rgba(201, 168, 124, 0.15);
+  }
+
+  /* ---- Block ---- */
+  .overview-block {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 2rem;
+    padding: 3rem 0 3rem 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .overview-block:last-child {
+    border-bottom: none;
+  }
+
+  /* ---- Number ---- */
+  .overview-block__number-col {
+    padding-top: 0.25rem;
+  }
+
+  .overview-block__number {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 500;
+    color: rgba(201, 168, 124, 0.1);
+    line-height: 1;
+  }
+
+  /* ---- Content ---- */
+  .overview-block__heading {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin: 0 0 1rem;
+    line-height: 1.2;
+  }
+
+  .overview-block__body {
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    max-width: 600px;
+  }
+
+  .overview-block__body :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .overview-block__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .overview-block__body :global(strong) {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .overview-block__body :global(ul) {
+    margin: 1.25rem 0;
+    padding-left: 1.5rem;
+    list-style: none;
+  }
+
+  .overview-block__body :global(li) {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .overview-block__body :global(li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .project-overview {
+      padding: 4rem 0;
+    }
+
+    .project-overview__title {
+      margin: 1rem 0 2rem;
+    }
+
+    .overview-block {
+      grid-template-columns: 1fr;
+      padding-left: 1.5rem;
+      gap: 1rem;
+    }
+
+    .overview-block__number {
+      font-size: 3rem;
+    }
+
+    .overview-block__body {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-overview {
+      padding: 3rem 0;
+    }
+
+    .project-overview__container {
+      padding: 0 1rem;
+    }
+
+    .overview-block {
+      padding-left: 1rem;
+    }
+  }
+</style>

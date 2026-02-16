@@ -1,0 +1,84 @@
+---
+interface Props {
+  node: {
+    language?: string;
+    filename?: string;
+    code: string;
+  };
+}
+
+const { node } = Astro.props;
+const { language, filename, code } = node;
+---
+
+<div class="portable-text-code">
+  {(filename || language) && (
+    <div class="portable-text-code__header">
+      {filename && <span class="portable-text-code__filename">{filename}</span>}
+      {language && language !== 'text' && (
+        <span class="portable-text-code__lang">{language}</span>
+      )}
+    </div>
+  )}
+  <pre class="portable-text-code__pre"><code>{code}</code></pre>
+</div>
+
+<style>
+  .portable-text-code {
+    margin: 2.5rem 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .portable-text-code__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+  }
+
+  .portable-text-code__filename {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+  }
+
+  .portable-text-code__lang {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+
+  .portable-text-code__pre {
+    margin: 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .portable-text-code__pre code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    white-space: pre;
+    tab-size: 2;
+  }
+
+  @media (max-width: 768px) {
+    .portable-text-code__pre {
+      padding: 1rem;
+    }
+
+    .portable-text-code__pre code {
+      font-size: 0.8125rem;
+    }
+  }
+</style>
