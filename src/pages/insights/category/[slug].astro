@@ -1,0 +1,403 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/sections/PageHero.astro';
+import SectionLabel from '../../../components/ui/SectionLabel.astro';
+import HighlightedText from '../../../components/ui/HighlightedText.astro';
+import BlogCard from '../../../components/cards/BlogCard.astro';
+import CTASection from '../../../components/sections/CTASection.astro';
+import { client, urlFor } from '../../../lib/sanity';
+import { allBlogCategoriesQuery, blogPostsByCategoryQuery } from '../../../lib/queries';
+import { formatDate } from '../../../lib/utils';
+
+export async function getStaticPaths() {
+  const categories = await client.fetch<Array<{ slug: { current: string } }>>(
+    `*[_type == "blogCategory"] { slug }`
+  );
+
+  return categories.map((cat) => ({
+    params: { slug: cat.slug.current },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// Fetch category info
+const category = await client.fetch<{ title: string; description?: string } | null>(
+  `*[_type == "blogCategory" && slug.current == $slug][0] { title, description }`,
+  { slug }
+);
+
+if (!category) {
+  return Astro.redirect('/404');
+}
+
+// Fetch posts in this category
+const posts = await client.fetch(blogPostsByCategoryQuery, { categorySlug: slug });
+
+// Fetch all categories for filter pills
+const allCategories = await client.fetch(allBlogCategoriesQuery);
+
+// Auto-select first post as featured
+const featuredPost = posts[0];
+const gridPosts = posts.slice(1, 7); // Show 6 more posts
+
+let featuredImageUrl: string | undefined;
+if (featuredPost?.featuredImage) {
+  try {
+    featuredImageUrl = urlFor(featuredPost.featuredImage).width(1200).height(750).format('webp').url();
+  } catch {
+    // No image
+  }
+}
+
+const formattedFeaturedDate = featuredPost?.publishedAt ? formatDate(featuredPost.publishedAt) : undefined;
+
+const seoTitle = `${category.title} Articles`;
+const seoDescription = category.description || `Expert insights and articles about ${category.title.toLowerCase()}. Learn from our experience and practical knowledge.`;
+---
+
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <PageHero variant="inner">
+    <SectionLabel text="Category" />
+    <h1>
+      <HighlightedText text={`*${category.title}* Articles`} />
+    </h1>
+    {category.description && (
+      <p class="page-hero__description">
+        {category.description}
+      </p>
+    )}
+  </PageHero>
+
+  <section class="insights-list">
+    <div class="insights-list__container">
+      <!-- Category filter pills -->
+      {allCategories && allCategories.length > 0 && (
+        <div class="insights-list__filters" role="tablist" aria-label="Filter articles by category">
+          <a href="/insights/" class="insights-list__pill" role="tab">
+            All
+          </a>
+          {allCategories.map((cat) => (
+            <a
+              href={`/insights/category/${cat.slug.current}/`}
+              class:list={['insights-list__pill', { 'insights-list__pill--active': cat.slug.current === slug }]}
+              role="tab"
+              aria-selected={cat.slug.current === slug ? 'true' : 'false'}
+            >
+              {cat.title}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {posts.length > 0 ? (
+        <>
+          <!-- Featured post (large) -->
+          {featuredPost && (
+            <a
+              href={`/insights/${featuredPost.slug.current}/`}
+              class="featured-post"
+              style={featuredPost.slug?.current ? `view-transition-name: blog-card-${featuredPost.slug.current}` : undefined}
+            >
+              <div class="featured-post__image">
+                {featuredImageUrl ? (
+                  <img
+                    src={featuredImageUrl}
+                    alt={featuredPost.title}
+                    width="1200"
+                    height="750"
+                    loading="eager"
+                    style={featuredPost.slug?.current ? `view-transition-name: blog-hero-${featuredPost.slug.current}` : undefined}
+                  />
+                ) : (
+                  <div class="featured-post__placeholder" />
+                )}
+                <div class="featured-post__overlay" />
+              </div>
+              <div class="featured-post__content">
+                {featuredPost.category && (
+                  <span class="featured-post__category">{featuredPost.category.title}</span>
+                )}
+                <h2
+                  class="featured-post__title"
+                  style={featuredPost.slug?.current ? `view-transition-name: blog-title-${featuredPost.slug.current}` : undefined}
+                >
+                  {featuredPost.title}
+                </h2>
+                {featuredPost.excerpt && (
+                  <p class="featured-post__excerpt">{featuredPost.excerpt}</p>
+                )}
+                <div class="featured-post__meta">
+                  {formattedFeaturedDate && (
+                    <span>{formattedFeaturedDate}</span>
+                  )}
+                  {featuredPost.readTime && (
+                    <span>{featuredPost.readTime} read</span>
+                  )}
+                </div>
+              </div>
+            </a>
+          )}
+
+          <!-- Grid of posts -->
+          {gridPosts && gridPosts.length > 0 && (
+            <div class="insights-list__grid">
+              {gridPosts.map((post) => (
+                <BlogCard post={post} />
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="insights-list__empty">
+          <p>No articles in this category yet. Check back soon for new insights.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CTASection
+    headline="Ready to *elevate* your digital presence?"
+    description="Let's discuss how we can help you achieve your business goals with the right strategy and technology."
+    buttonText="Start a Project"
+    buttonHref="/contact/"
+  />
+</BaseLayout>
+
+<style>
+  .insights-list {
+    padding: 0 0 6rem;
+    background: var(--bg-primary);
+  }
+
+  .insights-list__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- Filter pills ---- */
+  .insights-list__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .insights-list__pill {
+    display: inline-block;
+    padding: 8px 20px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .insights-list__pill:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .insights-list__pill--active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.08);
+  }
+
+  .insights-list__pill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---- Featured post ---- */
+  .featured-post {
+    display: block;
+    margin-bottom: 3rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .featured-post:hover {
+    border-left-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .featured-post__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .featured-post__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .featured-post:hover .featured-post__image img {
+    transform: scale(1.05);
+  }
+
+  .featured-post__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.8) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .featured-post__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary);
+  }
+
+  .featured-post__content {
+    padding: 2rem 2.5rem 2.5rem;
+  }
+
+  .featured-post__category {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.1);
+    padding: 6px 12px;
+    margin-bottom: 1rem;
+  }
+
+  .featured-post__title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+    transition: color 0.3s ease;
+  }
+
+  .featured-post:hover .featured-post__title {
+    color: var(--accent);
+  }
+
+  .featured-post__excerpt {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .featured-post__meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--text-muted);
+  }
+
+  .featured-post__meta span:not(:first-child)::before {
+    content: '•';
+    margin-right: 1.5rem;
+    color: var(--border-light);
+  }
+
+  /* ---- Posts grid ---- */
+  .insights-list__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  /* ---- Empty state ---- */
+  .insights-list__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 300;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1024px) {
+    .insights-list__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .insights-list {
+      padding: 0 0 4rem;
+    }
+
+    .insights-list__filters {
+      margin-bottom: 2rem;
+    }
+
+    .featured-post__content {
+      padding: 1.5rem 2rem 2rem;
+    }
+
+    .featured-post__title {
+      font-size: 1.5rem;
+    }
+
+    .featured-post__excerpt {
+      font-size: 1rem;
+    }
+
+    .insights-list__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .insights-list {
+      padding: 0 0 3rem;
+    }
+
+    .insights-list__container {
+      padding: 0 1rem;
+    }
+
+    .insights-list__filters {
+      gap: 0.375rem;
+    }
+
+    .insights-list__pill {
+      padding: 6px 14px;
+      font-size: 10px;
+    }
+
+    .featured-post__content {
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+
+    .featured-post__title {
+      font-size: 1.375rem;
+    }
+  }
+</style>
