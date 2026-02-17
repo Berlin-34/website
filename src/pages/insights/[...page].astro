@@ -8,13 +8,20 @@ import CTASection from '../../components/sections/CTASection.astro';
 import { client, urlFor } from '../../lib/sanity';
 import { allBlogPostsQuery, allBlogCategoriesQuery } from '../../lib/queries';
 import { formatDate } from '../../lib/utils';
+import type { GetStaticPathsOptions } from 'astro';
 
-const posts = await client.fetch(allBlogPostsQuery);
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = await client.fetch(allBlogPostsQuery);
+  // 7 per page: page 1 = 1 featured + 6 grid; page 2+ = 7 grid
+  return paginate(posts, { pageSize: 7 });
+}
+
+const { page } = Astro.props;
 const categories = await client.fetch(allBlogCategoriesQuery);
 
-// Auto-select first post as featured
-const featuredPost = posts[0];
-const gridPosts = posts.slice(1, 7); // Show 6 more posts (1 featured + 6 grid = 7 total)
+const isFirstPage = page.currentPage === 1;
+const featuredPost = isFirstPage ? page.data[0] : undefined;
+const gridPosts = isFirstPage ? page.data.slice(1) : page.data;
 
 let featuredImageUrl: string | undefined;
 if (featuredPost?.featuredImage) {
@@ -25,10 +32,16 @@ if (featuredPost?.featuredImage) {
   }
 }
 
-const formattedFeaturedDate = featuredPost?.publishedAt ? formatDate(featuredPost.publishedAt) : undefined;
+const formattedFeaturedDate = featuredPost?.publishedAt
+  ? formatDate(featuredPost.publishedAt)
+  : undefined;
 
-const seoTitle = 'Insights & Articles';
-const seoDescription = 'Expert insights on design, development, and digital transformation. Learn from our experience building digital products that drive business growth.';
+const seoTitle =
+  page.currentPage === 1
+    ? 'Insights & Articles'
+    : `Insights & Articles — Page ${page.currentPage}`;
+const seoDescription =
+  'Expert insights on design, development, and digital transformation. Learn from our experience building digital products that drive business growth.';
 ---
 
 <BaseLayout title={seoTitle} description={seoDescription}>
@@ -45,26 +58,29 @@ const seoDescription = 'Expert insights on design, development, and digital tran
 
   <section class="insights-list">
     <div class="insights-list__container">
-      <!-- Category filter pills -->
+
+      <!-- Category filter pills — nav links to category pages -->
       {categories && categories.length > 0 && (
-        <div class="insights-list__filters" role="tablist" aria-label="Filter articles by category">
-          <button class="insights-list__pill insights-list__pill--active" data-filter="all" role="tab" aria-selected="true">
+        <nav class="insights-list__filters" aria-label="Filter articles by category">
+          <a href="/insights/" class="insights-list__pill insights-list__pill--active" aria-current="page">
             All
-          </button>
+          </a>
           {categories.map((cat) => (
-            <button class="insights-list__pill" data-filter={cat._id} role="tab" aria-selected="false">
+            <a
+              href={`/insights/category/${cat.slug.current}/`}
+              class="insights-list__pill"
+            >
               {cat.title}
-            </button>
+            </a>
           ))}
-        </div>
+        </nav>
       )}
 
-      <!-- Featured post (large) -->
+      <!-- Featured post — only on page 1 -->
       {featuredPost && (
         <a
           href={`/insights/${featuredPost.slug.current}/`}
           class="featured-post"
-          data-categories={featuredPost.category?._id || ''}
           style={featuredPost.slug?.current ? `view-transition-name: blog-card-${featuredPost.slug.current}` : undefined}
         >
           <div class="featured-post__image">
@@ -96,12 +112,8 @@ const seoDescription = 'Expert insights on design, development, and digital tran
               <p class="featured-post__excerpt">{featuredPost.excerpt}</p>
             )}
             <div class="featured-post__meta">
-              {formattedFeaturedDate && (
-                <span>{formattedFeaturedDate}</span>
-              )}
-              {featuredPost.readTime && (
-                <span>{featuredPost.readTime} read</span>
-              )}
+              {formattedFeaturedDate && <span>{formattedFeaturedDate}</span>}
+              {featuredPost.readTime && <span>{featuredPost.readTime} read</span>}
             </div>
           </div>
         </a>
@@ -111,19 +123,53 @@ const seoDescription = 'Expert insights on design, development, and digital tran
       {gridPosts && gridPosts.length > 0 && (
         <div class="insights-list__grid">
           {gridPosts.map((post) => (
-            <div data-categories={post.category?._id || ''}>
-              <BlogCard post={post} />
-            </div>
+            <BlogCard post={post} />
           ))}
         </div>
       )}
 
-      {/* Empty state */}
-      {posts.length === 0 && (
+      <!-- Empty state -->
+      {page.data.length === 0 && (
         <div class="insights-list__empty">
           <p>No articles published yet. Check back soon for insights on design, development, and digital transformation.</p>
         </div>
       )}
+
+      <!-- Pagination -->
+      {page.lastPage > 1 && (
+        <nav class="pagination" aria-label="Article pages">
+          <a
+            href={page.url.prev ?? undefined}
+            class:list={['pagination__btn', 'pagination__btn--nav', { 'pagination__btn--disabled': !page.url.prev }]}
+            aria-disabled={!page.url.prev ? 'true' : undefined}
+            tabindex={!page.url.prev ? -1 : undefined}
+            aria-label="Previous page"
+          >
+            ←
+          </a>
+
+          {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((num) => (
+            <a
+              href={num === 1 ? '/insights/' : `/insights/${num}/`}
+              class:list={['pagination__btn', { 'pagination__btn--active': num === page.currentPage }]}
+              aria-current={num === page.currentPage ? 'page' : undefined}
+            >
+              {num}
+            </a>
+          ))}
+
+          <a
+            href={page.url.next ?? undefined}
+            class:list={['pagination__btn', 'pagination__btn--nav', { 'pagination__btn--disabled': !page.url.next }]}
+            aria-disabled={!page.url.next ? 'true' : undefined}
+            tabindex={!page.url.next ? -1 : undefined}
+            aria-label="Next page"
+          >
+            →
+          </a>
+        </nav>
+      )}
+
     </div>
   </section>
 
@@ -167,7 +213,7 @@ const seoDescription = 'Expert insights on design, development, and digital tran
     color: var(--text-secondary);
     background: transparent;
     border: 1px solid var(--border);
-    cursor: pointer;
+    text-decoration: none;
     transition: all 0.3s ease;
   }
 
@@ -312,6 +358,62 @@ const seoDescription = 'Expert insights on design, development, and digital tran
     font-weight: 300;
   }
 
+  /* ---- Pagination ---- */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .pagination__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .pagination__btn:hover:not(.pagination__btn--disabled) {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .pagination__btn--active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.08);
+  }
+
+  .pagination__btn--nav {
+    font-size: 16px;
+    min-width: 44px;
+  }
+
+  .pagination__btn--disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .pagination__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   /* ---- Responsive ---- */
   @media (max-width: 1024px) {
     .insights-list__grid {
@@ -343,6 +445,11 @@ const seoDescription = 'Expert insights on design, development, and digital tran
     .insights-list__grid {
       grid-template-columns: 1fr;
     }
+
+    .pagination {
+      margin-top: 3rem;
+      padding-top: 2rem;
+    }
   }
 
   @media (max-width: 480px) {
@@ -370,54 +477,12 @@ const seoDescription = 'Expert insights on design, development, and digital tran
     .featured-post__title {
       font-size: 1.375rem;
     }
+
+    .pagination__btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      font-size: 11px;
+    }
   }
 </style>
-
-<script>
-  function initInsightsFilters() {
-    const pills = document.querySelectorAll<HTMLButtonElement>('.insights-list__pill');
-    const featuredPost = document.querySelector<HTMLElement>('.featured-post');
-    const gridItems = document.querySelectorAll<HTMLElement>('.insights-list__grid > div');
-
-    if (!pills.length) return;
-
-    pills.forEach((pill) => {
-      pill.addEventListener('click', () => {
-        const filter = pill.dataset.filter;
-
-        // Update active states
-        pills.forEach((p) => {
-          p.classList.remove('insights-list__pill--active');
-          p.setAttribute('aria-selected', 'false');
-        });
-        pill.classList.add('insights-list__pill--active');
-        pill.setAttribute('aria-selected', 'true');
-
-        // Filter featured post
-        if (featuredPost) {
-          if (filter === 'all') {
-            featuredPost.style.display = '';
-          } else {
-            const categories = featuredPost.dataset.categories || '';
-            const match = categories.split(',').includes(filter!);
-            featuredPost.style.display = match ? '' : 'none';
-          }
-        }
-
-        // Filter grid items
-        gridItems.forEach((item) => {
-          if (filter === 'all') {
-            item.style.display = '';
-            return;
-          }
-          const categories = item.dataset.categories || '';
-          const match = categories.split(',').includes(filter!);
-          item.style.display = match ? '' : 'none';
-        });
-      });
-    });
-  }
-
-  initInsightsFilters();
-  document.addEventListener('astro:after-swap', initInsightsFilters);
-</script>

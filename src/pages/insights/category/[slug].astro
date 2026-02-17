@@ -39,7 +39,7 @@ const allCategories = await client.fetch(allBlogCategoriesQuery);
 
 // Auto-select first post as featured
 const featuredPost = posts[0];
-const gridPosts = posts.slice(1, 7); // Show 6 more posts
+const gridPosts = posts.slice(1);
 
 let featuredImageUrl: string | undefined;
 if (featuredPost?.featuredImage) {
