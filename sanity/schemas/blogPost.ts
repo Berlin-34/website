@@ -12,6 +12,27 @@ export const blogPost = defineType({
     defineField({ name: 'publishedAt', type: 'datetime', title: 'Published At' }),
     defineField({ name: 'featuredImage', type: 'image', title: 'Featured Image', options: { hotspot: true } }),
     defineField({ name: 'excerpt', type: 'text', title: 'Excerpt', rows: 3 }),
+    defineField({
+      name: 'readTime',
+      type: 'string',
+      title: 'Read Time',
+      description: 'e.g., "5 min" or "10 min"',
+      placeholder: '5 min'
+    }),
+    defineField({
+      name: 'featured',
+      type: 'boolean',
+      title: 'Featured',
+      description: 'Mark as featured post for homepage',
+      initialValue: false
+    }),
+    defineField({
+      name: 'tags',
+      type: 'array',
+      title: 'Tags',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' }
+    }),
     defineField({ name: 'content', type: 'array', title: 'Content', of: [
       { type: 'richText' },
       { type: 'image', options: { hotspot: true } },

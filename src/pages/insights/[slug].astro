@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPostHero from '../../components/sections/BlogPostHero.astro';
+import BlogPostContent from '../../components/sections/BlogPostContent.astro';
+import AuthorBio from '../../components/sections/AuthorBio.astro';
+import RelatedPosts from '../../components/sections/RelatedPosts.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { allBlogPostsQuery, blogPostBySlugQuery } from '../../lib/queries';
+
+export async function getStaticPaths() {
+  const posts = await client.fetch<Array<{ slug: { current: string } }>>(
+    `*[_type == "blogPost"] { slug }`
+  );
+
+  return posts.map((post) => ({
+    params: { slug: post.slug.current },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const post = await client.fetch(blogPostBySlugQuery, { slug });
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+// Build hero image URL
+let heroImageUrl: string | undefined;
+if (post.featuredImage) {
+  try {
+    heroImageUrl = urlFor(post.featuredImage).width(1920).format('webp').url();
+  } catch {
+    // No hero image available
+  }
+}
+
+// Prepare post data for hero
+const heroPost = {
+  title: post.title,
+  slug: post.slug,
+  category: post.category,
+  publishedAt: post.publishedAt,
+  readTime: post.readTime,
+  author: post.author,
+  heroImageUrl,
+};
+
+// Prepare author data with social links
+const authorData = post.author ? {
+  name: post.author.name,
+  role: post.author.role,
+  bio: post.author.bio,
+  photo: post.author.photo,
+  linkedin: post.author.linkedin,
+  twitter: post.author.twitter,
+} : undefined;
+
+const seoTitle = post.seoTitle || `${post.title}`;
+const seoDescription = post.seoDescription || post.excerpt;
+---
+
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <BlogPostHero post={heroPost} />
+
+  {post.content && post.content.length > 0 && (
+    <BlogPostContent content={post.content} />
+  )}
+
+  {authorData && (
+    <AuthorBio author={authorData} />
+  )}
+
+  {post.relatedPosts && post.relatedPosts.length > 0 && (
+    <RelatedPosts posts={post.relatedPosts} />
+  )}
+
+  <CTASection
+    headline="Ready to *elevate* your digital presence?"
+    description="Let's discuss how we can help you achieve your business goals with the right strategy and technology."
+    buttonText="Start a Project"
+    buttonHref="/contact/"
+  />
+</BaseLayout>

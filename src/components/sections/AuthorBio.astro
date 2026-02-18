@@ -1,0 +1,223 @@
+---
+import { urlFor } from '../../lib/sanity';
+import { Linkedin, Twitter } from '@lucide/astro';
+
+interface Props {
+  author: {
+    name: string;
+    role?: string;
+    bio?: string;
+    photo?: any;
+    linkedin?: string;
+    twitter?: string;
+  };
+}
+
+const { author } = Astro.props;
+
+let photoUrl: string | undefined;
+if (author.photo) {
+  try {
+    photoUrl = urlFor(author.photo).width(96).height(96).format('webp').url();
+  } catch {
+    // No photo
+  }
+}
+---
+
+<section class="author-bio">
+  <div class="author-bio__container">
+    <div class="author-bio__content">
+      <div class="author-bio__profile">
+        {photoUrl ? (
+          <img
+            src={photoUrl}
+            alt={author.name}
+            class="author-bio__photo"
+            width="48"
+            height="48"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="author-bio__photo-placeholder">
+            {author.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <div class="author-bio__info">
+          <h3 class="author-bio__name">{author.name}</h3>
+          {author.role && (
+            <p class="author-bio__role">{author.role}</p>
+          )}
+          {author.bio && (
+            <p class="author-bio__bio">{author.bio}</p>
+          )}
+        </div>
+      </div>
+      {(author.linkedin || author.twitter) && (
+        <div class="author-bio__social">
+          {author.linkedin && (
+            <a
+              href={author.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-bio__social-link"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </a>
+          )}
+          {author.twitter && (
+            <a
+              href={author.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-bio__social-link"
+              aria-label="Twitter"
+            >
+              <Twitter size={18} />
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .author-bio {
+    padding: 4rem 0;
+    background: var(--bg-secondary);
+  }
+
+  .author-bio__container {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .author-bio__content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .author-bio__profile {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .author-bio__photo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .author-bio__photo-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .author-bio__info {
+    flex: 1;
+  }
+
+  .author-bio__name {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+  }
+
+  .author-bio__role {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem;
+  }
+
+  .author-bio__bio {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .author-bio__social {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .author-bio__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+
+  .author-bio__social-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.05);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .author-bio {
+      padding: 3rem 0;
+    }
+
+    .author-bio__content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .author-bio__social {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .author-bio__container {
+      padding: 0 1rem;
+    }
+
+    .author-bio__content {
+      padding: 1.5rem 0;
+    }
+
+    .author-bio__bio {
+      font-size: 0.875rem;
+    }
+  }
+</style>

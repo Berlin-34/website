@@ -332,10 +332,13 @@ export const blogPostBySlugQuery = `
       name,
       role,
       photo,
-      bio
+      bio,
+      linkedin,
+      twitter
     },
     tags,
-    seo,
+    seoTitle,
+    seoDescription,
     "relatedPosts": *[_type == "blogPost" && slug.current != $slug && (
       category._ref == ^.category._ref ||
       count(tags[@in ^.^.tags]) > 0

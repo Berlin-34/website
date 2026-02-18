@@ -1,0 +1,208 @@
+---
+import { urlFor } from '../../lib/sanity';
+import { formatDate } from '../../lib/utils';
+
+interface Props {
+  post: {
+    _id: string;
+    title: string;
+    slug: { current: string };
+    excerpt?: string;
+    featuredImage?: any;
+    publishedAt?: string;
+    readTime?: string;
+    category?: { title: string; slug: { current: string } };
+  };
+}
+
+const { post } = Astro.props;
+
+let imageUrl: string | undefined;
+if (post.featuredImage) {
+  try {
+    imageUrl = urlFor(post.featuredImage).width(800).height(500).format('webp').url();
+  } catch {
+    // No image
+  }
+}
+
+const formattedDate = post.publishedAt ? formatDate(post.publishedAt) : undefined;
+---
+
+<a
+  href={`/insights/${post.slug.current}/`}
+  class="blog-card"
+  style={post.slug?.current ? `view-transition-name: blog-card-${post.slug.current}` : undefined}
+>
+  <div class="blog-card__image">
+    {imageUrl ? (
+      <img
+        src={imageUrl}
+        alt={post.title}
+        width="800"
+        height="500"
+        loading="lazy"
+        decoding="async"
+        style={post.slug?.current ? `view-transition-name: blog-hero-${post.slug.current}` : undefined}
+      />
+    ) : (
+      <div class="blog-card__placeholder" />
+    )}
+    <div class="blog-card__overlay" />
+  </div>
+  <div class="blog-card__content">
+    {post.category && (
+      <span class="blog-card__category">{post.category.title}</span>
+    )}
+    <h3
+      class="blog-card__title"
+      style={post.slug?.current ? `view-transition-name: blog-title-${post.slug.current}` : undefined}
+    >
+      {post.title}
+    </h3>
+    {post.excerpt && (
+      <p class="blog-card__excerpt">{post.excerpt}</p>
+    )}
+    <div class="blog-card__footer">
+      {formattedDate && (
+        <span class="blog-card__date">{formattedDate}</span>
+      )}
+      {post.readTime && (
+        <span class="blog-card__read-time">{post.readTime}</span>
+      )}
+    </div>
+  </div>
+</a>
+
+<style>
+  .blog-card {
+    display: block;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .blog-card:hover {
+    border-left-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ---- Card image ---- */
+  .blog-card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .blog-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .blog-card:hover .blog-card__image img {
+    transform: scale(1.05);
+  }
+
+  .blog-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.6) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .blog-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-tertiary);
+  }
+
+  /* ---- Card content ---- */
+  .blog-card__content {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .blog-card__category {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(201, 168, 124, 0.1);
+    padding: 4px 10px;
+    margin-bottom: 0.75rem;
+  }
+
+  .blog-card__title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+    transition: color 0.3s ease;
+  }
+
+  .blog-card:hover .blog-card__title {
+    color: var(--accent);
+  }
+
+  .blog-card__excerpt {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .blog-card__footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .blog-card__date {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-muted);
+  }
+
+  .blog-card__read-time {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-muted);
+  }
+
+  .blog-card__read-time::before {
+    content: '•';
+    margin-right: 1rem;
+    color: var(--border-light);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 768px) {
+    .blog-card__title {
+      font-size: 1rem;
+    }
+
+    .blog-card__excerpt {
+      font-size: 0.875rem;
+    }
+  }
+</style>

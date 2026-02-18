@@ -1,0 +1,104 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+import BlogCard from '../cards/BlogCard.astro';
+
+interface Props {
+  posts: Array<{
+    _id: string;
+    title: string;
+    slug: { current: string };
+    excerpt?: string;
+    featuredImage?: any;
+    publishedAt?: string;
+    readTime?: string;
+    category?: { title: string; slug: { current: string } };
+  }>;
+}
+
+const { posts } = Astro.props;
+---
+
+{posts && posts.length > 0 && (
+  <section class="related-posts">
+    <div class="related-posts__container">
+      <div class="related-posts__header">
+        <SectionLabel text="Related" />
+        <h2>Related Articles</h2>
+      </div>
+      <div class="related-posts__grid">
+        {posts.slice(0, 3).map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .related-posts {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+  }
+
+  .related-posts__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .related-posts__header {
+    margin-bottom: 4rem;
+  }
+
+  .related-posts__header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 1rem 0 0;
+  }
+
+  .related-posts__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1024px) {
+    .related-posts__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .related-posts {
+      padding: 4rem 0;
+    }
+
+    .related-posts__header {
+      margin-bottom: 3rem;
+    }
+
+    .related-posts__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .related-posts {
+      padding: 3rem 0;
+    }
+
+    .related-posts__container {
+      padding: 0 1rem;
+    }
+
+    .related-posts__header {
+      margin-bottom: 2rem;
+    }
+  }
+</style>
